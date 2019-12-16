@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.dinas.datadriver.dao.mapper.DinasCustomerMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.dinas.datadriver.entity.DinasCustomer">
+        <id column="id" property="id"/>
+        <result column="company_id" property="companyId"/>
+        <result column="customer_name" property="customerName"/>
+        <result column="type" property="type"/>
+        <result column="status" property="status"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_id, customer_name, type, status, deleted, create_user, create_time, update_user, update_time
+    </sql>
+
+    <select id="getCustomerList" parameterType="com.bee.platform.dinas.datadriver.rq.DinasCustomerQueryRQ"
+            resultType="com.bee.platform.dinas.datadriver.dto.DinasCustomerListDTO">
+        SELECT
+        dc.id,
+        CONCAT( dp.product_name, '-', dps.spec_name ) product,
+        dc.customer_name customerName,
+        dc.`status`
+        FROM
+        dinas_customer dc
+        LEFT JOIN dinas_customer_product dcp ON dc.id = dcp.customer_id AND dcp.deleted = 0
+        LEFT JOIN dinas_product dp ON dcp.product_id = dp.id AND dp.deleted = 0
+        LEFT JOIN dinas_product_spec dps ON dcp.product_spec_id = dps.id AND dps.deleted = 0
+        WHERE 1=1
+        AND dc.deleted = 0
+        AND dc.company_id = #{companyId}
+        AND dc.type = #{type}
+        <if test="customerName!=null and  customerName!=''">
+            and dc.customer_name like concat('%',#{customerName},'%')
+        </if>
+        <if test="status!=null">
+            and dc.status = #{status}
+        </if>
+
+    </select>
+
+    <select id="getCustomerByTypeAndProduct" parameterType="map" resultType="com.bee.platform.dinas.datadriver.dto.DinasCustomerBoxDTO">
+SELECT
+	dc.id,
+	dc.customer_name customerName
+FROM
+	dinas_customer_product dcp
+	LEFT JOIN dinas_customer dc ON dcp.customer_id = dc.id
+	AND dc.company_id = #{orgId}
+	AND dc.type = #{type}
+	AND dc.deleted = 0
+WHERE
+	1 = 1
+	AND dcp.deleted = 0
+	AND dcp.product_id = #{productId}
+GROUP BY
+	dc.id
+
+    </select>
+</mapper>

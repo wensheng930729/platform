@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.authority.dao.mapper.AuthResourceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.authority.entity.AuthResource">
+        <id column="id" property="id" />
+        <result column="pid" property="pid" />
+        <result column="sub_sys" property="subSys" />
+        <result column="name" property="name" />
+        <result column="type" property="type" />
+        <result column="icon" property="icon" />
+        <result column="path" property="path" />
+        <result column="component" property="component" />
+        <result column="show_type" property="showType" />
+        <result column="order_num" property="orderNum" />
+        <result column="is_hide" property="hide"/>
+        <result column="deleted" property="deleted" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, pid, sub_sys, name, type, icon, path, component, show_type, order_num, is_hide, deleted, create_time, update_time
+    </sql>
+    <!--<sql id="Base_Column_List_sub">
+        ar.id, ar.pid, ar.sub_sys, ar.text, ar.type, ar.icon, ar.url, ar.order_num, ar.is_hide, ar.deleted, ar.create_time, ar.update_time
+    </sql>-->
+    <sql id="Base_Column_List_sub">
+        distinct ar.id as id, ar.pid as pid, ar.sub_sys as sub_sys, ar.name as name, ar.type as type, ar.icon as icon, ar.path as path, ar.component as component,
+        ar.order_num as order_num, ar.is_hide as is_hide, ar.show_type as show_type, ar.deleted as deleted, ar.create_time as create_time, ar.update_time as update_time
+    </sql>
+
+    <select id="listResourcesByUser" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            auth_resource ar
+        WHERE
+            EXISTS (
+                SELECT
+                    arr.resource_id
+                FROM
+                    auth_role_resource arr
+                WHERE
+                    EXISTS (
+                        SELECT
+                            aer.role_id
+                        FROM
+                            auth_enterprise_role aer
+                        WHERE
+                            aer.enterprise_id = #{orgId}
+                        AND aer.role_id = arr.role_id
+                    )
+                AND ar.id = arr.resource_id
+            )
+
+    </select>
+    <!--<select id="selectResources" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            auth_resource ar
+        WHERE 1=1
+        <if test="subSys != null and subSys != ''">
+            and ar.sub_sys = #{subSys}
+        </if>
+            and ar.id in
+        (
+        <foreach collection="list" item="item" index="index" separator=",">
+            #{item.resourceId}
+        </foreach>
+        )
+    </select>-->
+    <select id="selectResourcesByCondition" resultMap="BaseResultMap" parameterType="map">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            auth_resource ar
+        where ar.deleted = 0
+          AND ar.type = 0
+        <if test="resourceName != null and resourceName != ''">
+            AND ar.name like "%"#{resourceName}"%"
+        </if>
+        <if test="subSystemType != null and subSystemType != ''">
+            AND ar.sub_sys = #{subSystemType}
+        </if>
+        <if test="createStartTime != null and createStartTime != ''">
+            AND ar.create_time <![CDATA[>= ]]> #{createStartTime}
+        </if>
+        <if test="createEndTime != null and createEndTime != ''">
+            AND ar.create_time <![CDATA[<= ]]> #{createEndTime}
+        </if>
+        order by ar.create_time desc
+    </select>
+    <!--<select id="selectSubResource" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List_sub"/>
+        FROM
+            auth_resource ar,
+            auth_role_resource arr
+        WHERE ar.id = arr.resource_id
+          AND arr.role_id = #{id}
+          AND ar.deleted = 0
+    </select>-->
+
+    <insert id="insertAll" parameterType="com.bee.platform.user.authority.entity.AuthResource">
+        insert into auth_resource (id,pid, sub_sys, `name`, `type`, icon, path, show_type, component, order_num, is_hide, deleted, create_time, update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id,jdbcType=INTEGER},
+            #{item.pid,jdbcType=INTEGER},
+            #{item.subSys,jdbcType=VARCHAR},
+            #{item.name,jdbcType=VARCHAR},
+            #{item.type,jdbcType=TINYINT},
+            #{item.icon,jdbcType=VARCHAR},
+            #{item.path,jdbcType=VARCHAR},
+            #{item.showType,jdbcType=TINYINT},
+            #{item.component,jdbcType=VARCHAR},
+            #{item.orderNum,jdbcType=INTEGER},
+            #{item.hide,jdbcType=TINYINT},
+            #{item.deleted,jdbcType=TINYINT},
+            #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updateTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+    <select id="selectResourcesByOrgRoles" parameterType="com.bee.platform.user.authority.entity.AuthEnterpriseRole" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List_sub" />
+        from
+            auth_resource ar,
+            auth_role_resource arr
+        where ar.id = arr.resource_id
+          and ar.sub_sys = #{subSys}
+          and ar.deleted = 0
+          and arr.deleted = 0
+        <if test="list != null and list.size!=0">
+            and arr.role_id in
+            <foreach item="item" collection="list" separator="," open="(" close=")">
+                #{item.roleId}
+            </foreach>
+        </if>
+        order by ar.order_num asc
+    </select>
+    <select id="selectResourcesByUserRoles" parameterType="com.bee.platform.user.authority.entity.AuthUserRole" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List_sub" />
+        from
+            auth_resource ar,
+            auth_role_resource arr
+        where ar.id = arr.resource_id
+        and ar.sub_sys = #{subSys}
+        and ar.deleted = 0
+        <if test="list != null and list.size!=0">
+            and arr.role_id in
+            <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </if>
+        order by order_num asc
+    </select>
+</mapper>

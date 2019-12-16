@@ -1,0 +1,355 @@
+# 服务的端口
+server:
+   tomcat:
+    basedir: /home/bee/project
+   port: 8075
+bee:
+  platform:
+    login:
+      excludes: /+authPlatformUser/login, /+authPlatformUser/verification/code/login,/+api/user/info,/+api/files/uploadFile,/+number/getAllNumbers
+  common:
+    auth:
+      address: 
+      switch-on: false
+      platform: bee_industrial_brain
+      excludes: /swagger-resources/**, /webjars/**, /v2/**, /swagger-ui.html/**
+
+# 配置mybatis-plus
+mybatis-plus:
+  # 配置扫描xml
+  mapper-locations:
+    - classpath*:mapper/*.xml
+  type-handlers-package: com.bee.platform.user.config.handler.mybatis
+  # 实体扫描，多个package用逗号或者分号分隔
+  type-aliases-package: com.bee.platform.user.entity,com.bee.platform.user.authority.entity
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    idType: 0
+    # 逻辑删除配置
+    logic-delete-value: 0
+    logic-not-delete-value: 1
+    sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+
+spring:
+    profiles:
+      active: dev  #默认启用的环境标识
+    main:
+      allow-bean-definition-overriding: true
+    application: 
+        name: platform-user
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        platform: mysql
+        initialSize: 5
+        minIdle: 5
+        maxActive: 200
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        filters: 
+            stat:
+                enabled: true
+                logSlowSql: true
+                slow-sql-millis: 1000
+                merge-sql: true
+    redis:  
+        password:
+        timeout: 10000 
+        jedis:
+          pool:
+            max-active: 200
+            max-wait: -1
+            max-idle: 8
+            min-idle: 0
+    #邮件相关参数
+    mail:
+      host: smtp.exmail.qq.com    #SMTP服务器地址
+      username: goldenbeecloud@beesrv.com   #发送方邮箱
+      password: Goldenbee147258    #发送方邮箱密码
+      port: 465
+      properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+              required: true
+        
+    servlet:
+        multipart:
+            max-file-size: 100MB #最大支持文件大小
+            max-request-size: 100MB # 最大支持请求大小
+
+    jackson:
+        date-format: yyyy-MM-dd HH:mm:ss
+        time-zone: GMT+8
+        default-property-inclusion: NON_NULL
+        deserialization:
+            ADJUST_DATES_TO_CONTEXT_TIME_ZONE: true
+    
+#druid数据源的监控用户名和密码
+druid:
+  monitor:
+    loginUsername: admin
+    loginPassword: 123456
+    
+#日志
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    com.bee.supply.chain.finance.user.dao.mapper: info     # 打印sql
+    com.bee.supply.chain.finance.user.authority.dao.mapper: info     # 打印sql
+
+###注意：springcloud feign 请求超时处理：高版本的springcloud-openfeign请求分为两层，先ribbon控制，后hystrix控制，hystrix默认处于关闭状态###
+#ribbon的超时时间配置
+ribbon:
+  ConnectTimeout: 8000    #ribbon的请求连接的超时时间
+  ReadTimeout: 60000    #ribbon的请求处理的超时时间 
+
+#打开feign-hystrix
+feign:
+  hystrix:
+    enabled: true
+  client: 
+    config:
+      default:
+        connectTimeout: 8000    #feign的请求连接的超时时间，修改配置为8s
+        readTimeout: 10000    #feign的请求处理的超时时间，修改配置为10s
+
+#hystrix 超时时间配置
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true    #如果enabled设置为false，则请求超时交给ribbon控制
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000    #熔断器hystrix默认的超时时间是1s，所有是远远不够的，修改配置为10s
+
+#短信相关参数
+aliyun:
+  oss:
+    endpoint: http://oss-cn-hangzhou.aliyuncs.com
+    accessKeyId: LTAIMNm1ZirwliHu
+    accessKeySecret: YIDYgROT2PZuJbKxuls9XYHKP9d6WJ
+    roleArn: acs:ram::1350477467365822:role/beedev-write
+    roleSessionName: beedev-001
+    bucket: beedev
+    baseUrl: https://img.scmdjt.com/
+    smsRegister: SMS_161895663
+    smsInvite: SMS_48345059
+    signName: 金蜜工服
+
+#腾讯云文件服务器相关配置
+qcloud:
+  cos:
+    appId: 1252637635
+    secretId: AKIDiDTTEjhzjEUYO2seYDckccOvBBuN2YFk
+    secretKey: NVO1NTIsCG3arrb5KJ2UheaGhsmQowKS
+    bucketName: beesrv
+    imageLocalpath: /home/bee/project/temp/
+
+#贸易相关接口
+beetrade:
+  inquiryInfoListForPlatform: /beetrade-business/product/getInquiryInfoListForPlatform
+  saleInfoListForPlatform: /beetrade-business/product/getSaleInfoListForPlatform
+  tradeCount : /beetrade-business/count/getHomePageCount
+
+#华为文件上传配置
+huawei:
+  obs:
+    endPoint: https://obs.cn-south-1.myhuaweicloud.com
+    ak: Y5C8SVCPHA3SUGK0FTQK
+    sk: xIVglSyrKMkiq8mmRxHQZT7rfqCIcBguM8LcsajA
+    bucketName : obs-fe91
+    imageLocalpath: /home/bee/project/temp/
+#    imageLocalpath: F://ImgTest/
+
+---
+spring:
+    profiles: dev    #环境标识
+    datasource:
+      #url: jdbc:mysql://192.168.3.8:3306/st_new_platform2?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&useSSL=true&verifyServerCertificate=false
+      #url: jdbc:mysql://192.168.3.11:3306/st_platform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&useSSL=true&verifyServerCertificate=false
+      url: jdbc:mysql://192.168.3.78:3306/st_platform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=GMT%2b8&useSSL=true&verifyServerCertificate=false
+      username: root
+      password: bee@123456
+    redis:
+      host: 192.168.3.8
+      port: 6003
+      
+#网关地址
+api-gateway:
+    remote-addr: http://192.168.3.199:81/bee-web
+    #remote-addr: http://127.0.0.1:8700
+beetrade:
+    addr: http://192.168.3.11:9560
+  
+#模块地址
+platform-business:
+    remote-addr: ${api-gateway.remote-addr}
+
+platform-user:
+    remote-addr: ${api-gateway.remote-addr}
+    
+platform-datadriver:
+    remote-addr: http://127.0.0.1:8600
+    
+bee:
+  common:
+    auth:
+      switch-on: false
+      address: http://127.0.0.1:8075
+      
+#springboot内嵌tomcat参数优化：也就是说并发的请求数量超过(accept-count + max-threads)后拒绝处理
+server:
+   tomcat:
+     accept-count: 500    #等待队列的长度,默认是100,2C/4G的服务器设置为500
+     max-connections: 10000    #最大连接数，默认是10000
+     max-threads: 400    #最大工作线程数，默认是200,2C/4G的服务器配置设置为400
+     min-spare-threads: 50    #最小工作线程数,默认是10,2C/4G的服务器配置设置为50
+     keepAliveTimeout: 30000    #定制化keepalivetimeout,设置30秒内没有请求则服务端自动断开keepalive链接
+     maxKeepAliveRequests: 10000    #当客户端发送超过10000个请求则自动断开keepalive链接
+---
+spring:
+    profiles: qa    #环境标识
+    datasource:
+      url: jdbc:mysql://192.168.3.195:3306/st_platform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=GMT%2b8&useSSL=true&verifyServerCertificate=false
+      username: root
+      password: bee@123456
+    redis:
+      host: 192.168.3.230
+      port: 7007
+      
+#网关地址
+api-gateway:
+    remote-addr: http://127.0.0.1:8700
+    
+beetrade:
+    addr: http://182.139.182.247:9151
+  
+#模块地址
+platform-business:
+    remote-addr: ${api-gateway.remote-addr}
+
+platform-user:
+    remote-addr: ${api-gateway.remote-addr}
+    
+platform-datadriver:
+    remote-addr: ${api-gateway.remote-addr}
+  
+bee:
+  common:
+    auth:
+      switch-on: true
+      address: http://127.0.0.1:8075
+      
+#springboot内嵌tomcat参数优化：也就是说并发的请求数量超过(accept-count + max-threads)后拒绝处理
+server:
+   tomcat:
+     accept-count: 500    #等待队列的长度,默认是100,2C/4G的服务器设置为500
+     max-connections: 10000    #最大连接数，默认是10000
+     max-threads: 400    #最大工作线程数，默认是200,2C/4G的服务器配置设置为400
+     min-spare-threads: 50    #最小工作线程数,默认是10,2C/4G的服务器配置设置为50
+     keepAliveTimeout: 30000    #定制化keepalivetimeout,设置30秒内没有请求则服务端自动断开keepalive链接
+     maxKeepAliveRequests: 10000    #当客户端发送超过10000个请求则自动断开keepalive链接
+---
+spring:
+    profiles: qa1    #环境标识
+    datasource:
+      url: jdbc:mysql://192.168.3.195:3307/st_platform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=GMT%2b8&useSSL=true&verifyServerCertificate=false
+      username: root
+      password: bee@123456
+    redis:
+      host: 192.168.3.231
+      port: 7007
+      
+#网关地址
+api-gateway:
+    remote-addr: http://127.0.0.1:8700
+    
+beetrade:
+    addr: http://192.168.3.205:9151
+  
+#模块地址
+platform-business:
+    remote-addr: ${api-gateway.remote-addr}
+
+platform-user:
+    remote-addr: ${api-gateway.remote-addr}
+    
+platform-datadriver:
+    remote-addr: ${api-gateway.remote-addr}
+  
+bee:
+  common:
+    auth:
+      switch-on: true
+      address: http://127.0.0.1:8075
+
+#springboot内嵌tomcat参数优化：也就是说并发的请求数量超过(accept-count + max-threads)后拒绝处理
+server:
+   tomcat:
+     accept-count: 500    #等待队列的长度,默认是100,2C/4G的服务器设置为500
+     max-connections: 10000    #最大连接数，默认是10000
+     max-threads: 400    #最大工作线程数，默认是200,2C/4G的服务器配置设置为400
+     min-spare-threads: 50    #最小工作线程数,默认是10,2C/4G的服务器配置设置为50
+     keepAliveTimeout: 30000    #定制化keepalivetimeout,设置30秒内没有请求则服务端自动断开keepalive链接
+     maxKeepAliveRequests: 10000    #当客户端发送超过10000个请求则自动断开keepalive链接 
+---
+spring:
+    profiles: prod    #环境标识
+    datasource:
+#      url: jdbc:mysql://127.0.0.1:3306/st_platform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=GMT%2b8&useSSL=true&verifyServerCertificate=false
+#      username: root
+#      password: zFSQI9nhxUb9
+      url: jdbc:mysql://192.168.1.119:3306/st_platform?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=GMT%2b8&useSSL=true&verifyServerCertificate=false
+      username: develop
+      password: Rhty@007
+    redis:
+      host: 192.168.1.119
+      port: 6379
+      
+#网关地址
+api-gateway:
+    remote-addr: http://api.beesrv.com
+    
+beetrade:
+    addr: https://go.beesrv.com
+  
+#模块地址
+platform-business:
+    remote-addr: ${api-gateway.remote-addr}
+
+platform-user:
+    remote-addr: ${api-gateway.remote-addr}
+    
+platform-datadriver:
+    remote-addr: ${api-gateway.remote-addr}
+  
+bee:
+  common:
+    auth:
+      switch-on: false
+      address: http://api.beesrv.com
+      
+#springboot内嵌tomcat参数优化：也就是说并发的请求数量超过(accept-count + max-threads)后拒绝处理
+server:
+   tomcat:
+     accept-count: 1000    #等待队列的长度,默认是100,4C/8G的服务器设置为1000
+     max-connections: 10000    #最大连接数，默认是10000
+     max-threads: 800    #最大工作线程数，默认是200,4C/8G的服务器配置设置为800
+     min-spare-threads: 100    #最小工作线程数,默认是10,4C/8G的服务器配置设置为100
+     keepAliveTimeout: 30000    #长连接属性：定制化keepalivetimeout,设置30秒内没有请求则服务端自动断开keepalive链接
+     maxKeepAliveRequests: 10000    #长连接属性：当客户端发送超过10000个请求则自动断开keepalive链接
+     accesslog:
+      enabled: true    #Tomcat访问日志开关
+      pattern: '%h %l %u %t %r %s %b %D'    #Tomcat访问日志格式
+      directory: /data/application/springcloud_servers/${spring.application.name}

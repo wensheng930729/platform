@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.authority.dao.mapper.AuthEnterpriseMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.authority.entity.AuthEnterprise">
+        <id column="id" property="id"/>
+        <result column="enterprise_no" property="enterpriseNo"/>
+        <result column="name" property="name"/>
+        <result column="simple_name" property="simpleName"/>
+        <result column="pid" property="pid"/>
+        <result column="type" property="type"/>
+        <result column="admin" property="admin"/>
+        <result column="contact" property="contact"/>
+        <result column="linkman" property="linkman"/>
+        <result column="street" property="street"/>
+        <result column="regionid" property="regionid"/>
+        <result column="address" property="address"/>
+        <result column="industry" property="industry"/>
+        <result column="status" property="status"/>
+        <result column="child_num" property="childNum"/>
+        <result column="deleted" property="deleted"/>
+        <result column="reason" property="reason"/>
+        <result column="operate_id" property="operateId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted_time" property="deletedTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, enterprise_no, name, simple_name, pid,type,admin, contact, linkman, street, regionid, address,industry, status,child_num, deleted,reason,create_time, update_time,deleted_time
+    </sql>
+
+    <insert id="insertAll" parameterType="com.bee.platform.user.authority.entity.AuthEnterprise">
+        insert  into auth_enterprise (id, enterprise_no, `name`, simple_name, pid,type,admin, contact, linkman, street,
+        regionid, address,industry, status,child_num, deleted,reason,create_time, update_time,deleted_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id,jdbcType=INTEGER},
+            #{item.enterpriseNo,jdbcType=VARCHAR},
+            #{item.name,jdbcType=VARCHAR},
+            #{item.simpleName,jdbcType=VARCHAR},
+            #{item.pid,jdbcType=INTEGER},
+            #{item.type,jdbcType=INTEGER},
+            #{item.admin,jdbcType=VARCHAR},
+            #{item.contact,jdbcType=VARCHAR},
+            #{item.linkman,jdbcType=VARCHAR},
+            #{item.street,jdbcType=VARCHAR},
+            #{item.regionid,jdbcType=INTEGER},
+            #{item.address,jdbcType=VARCHAR},
+            #{item.industry,jdbcType=TINYINT},
+            #{item.status,jdbcType=TINYINT},
+            #{item.childNum,jdbcType=INTEGER},
+            #{item.deleted,jdbcType=TINYINT},
+            #{item.reason,jdbcType=VARCHAR},
+            #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updateTime,jdbcType=TIMESTAMP},
+            #{item.deletedTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+</mapper>

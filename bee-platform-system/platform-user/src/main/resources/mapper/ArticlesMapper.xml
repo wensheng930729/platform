@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.ArticlesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.Articles">
+        <id column="id" property="id" />
+        <result column="org_id" property="orgId" />
+        <result column="user_id" property="userId" />
+        <result column="title" property="title" />
+        <result column="content" property="content" />
+        <result column="hits" property="hits" />
+        <result column="create_at" property="createAt" />
+        <result column="update_at" property="updateAt" />
+        <result column="type" property="type" />
+        <result column="dep_name" property="depName" />
+        <result column="attachment_name" property="attachmentName" />
+        <result column="attachment_url" property="attachmentUrl" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, org_id, user_id, title, content, hits, create_at, update_at, type, dep_name, attachment_name, attachment_url
+    </sql>
+
+    <!--<select id="getArticles" resultMap="BaseResultMap" parameterType="map">
+        SELECT <include refid="Base_Column_List"/> FROM articles a
+        WHERE 1= 1
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            AND a.create_at <![CDATA[<= ]]> #{endTime}
+            AND a.create_at <![CDATA[>= ]]> #{startTime}
+        </if>
+        <if test="title != null and title != ''">
+            AND a.title like "%"#{title}"%"
+        </if>
+        <if test="orgId != null and orgId != ''">
+            AND a.org_id = #{orgId}
+        </if>
+        <if test="type != null">
+            AND a.type = #{type}
+        </if>
+        ORDER BY a.update_at desc
+    </select>-->
+
+    <select id="getFiveNewest" resultType="java.lang.Integer" >
+        select id from articles where 1=1
+         <if test="orgId !=null">
+            and  org_id=#{orgId}
+         </if>
+         order by  update_at desc limit 0,5
+    </select>
+
+    <select id="getArticlesByCondition" resultType="com.bee.platform.business.dto.ArticlesDTO" parameterType="map">
+        SELECT a.id, a.org_id, a.user_id, c.name username, c.nickname, a.title, a.hits, a.create_at, a.update_at, a.type, a.dep_name, a.attachment_name, a.attachment_url,b.name as typeName FROM articles a,articles_type b, auth_platform_user c
+        WHERE 1= 1
+        <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+            AND a.create_at <![CDATA[<= ]]> #{endTime}
+            AND a.create_at <![CDATA[>= ]]> #{startTime}
+        </if>
+        <if test="title != null and title != ''">
+            AND a.title like "%"#{title}"%"
+        </if>
+        <if test="orgId != null">
+            AND a.org_id = #{orgId}
+        </if>
+        <if test="type != null">
+            AND a.type = #{type}
+        </if>
+        AND a.type = b.id
+        AND b.status=1
+        and c.id = a.user_id
+        and c.deleted = 0
+        ORDER BY a.create_at desc
+    </select>
+
+
+</mapper>

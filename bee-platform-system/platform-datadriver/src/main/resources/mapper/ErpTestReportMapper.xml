@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpTestReportMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.dto.ErpTestReportDTO">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="product" property="product" />
+        <result column="name" property="productName" />
+        <result column="company" property="company" />
+        <result column="company_name" property="companyName" />
+        <result column="test_type" property="testType" />
+        <result column="type" property="testTypeCategory" />
+        <result column="test_type_name" property="testTypeName" />
+        <result column="order_no" property="orderNo" />
+        <result column="order_code" property="orderCode" />
+        <result column="order_type" property="orderType" />
+        <result column="customer" property="customer" />
+        <result column="customer_name" property="customerName" />
+        <result column="boiler_id" property="boilerId" />
+        <result column="shifts_id" property="shiftsId" />
+        <result column="test_user" property="testUser" />
+        <result column="product_date" property="productDate" />
+        <result column="test_date" property="testDate" />
+        <result column="result" property="result" />
+        <result column="state" property="state" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        etr.id, etr.code, etr.product, ep.name, etr.company, etr.company_name, etr.test_type, ett.type, ett.name as test_type_name,
+        etr.order_no, etr.order_code, etr.order_type, etr.customer, etr.customer_name, etr.boiler_id, etr.shifts_id,
+        etr.test_user, etr.test_date, etr.result, etr.state ,etr.product_date
+    </sql>
+
+    <select id="selectReportsByCondition" resultMap="BaseResultMap" parameterType="com.bee.platform.datadriver.rq.TestReportQueryRQ">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            erp_test_report etr
+        left join erp_product ep on etr.product = ep.id
+        left join erp_test_type ett on etr.test_type = ett.id
+        where 1=1
+        and etr.deleted = 0
+        <choose>
+            <when test="company != null and company != ''">
+                AND etr.company = #{company}
+            </when>
+            <otherwise>
+                AND etr.company in
+                <foreach collection="list" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </otherwise>
+        </choose>
+        <if test="testType != null">
+            AND etr.test_type = #{testType}
+        </if>
+        <if test="testCode != null and testCode != ''">
+            AND etr.code like "%"#{testCode}"%"
+        </if>
+        <if test="testProduct != null">
+            AND ep.name like "%"#{testProduct}"%"
+        </if>
+        <if test="testUser != null">
+            AND etr.test_user like "%"#{testUser}"%"
+        </if>
+        <if test="status != null">
+            AND etr.state = #{status}
+        </if>
+        <if test="createStartTime != null and createStartTime != ''">
+            AND etr.test_date <![CDATA[>= ]]> #{createStartTime}
+        </if>
+        <if test="createEndTime != null and createEndTime != ''">
+            AND etr.test_date <![CDATA[<= ]]> #{createEndTime}
+        </if>
+        order by etr.test_date desc
+    </select>
+
+    <select id="findPurchaseStatementInfoByOrderID" resultType="com.bee.platform.datadriver.dto.ErpPurchaseStatementReportDTO">
+        select errd.record_time, errd.num, etr.id, etr.result, etr.code from erp_test_report etr
+        left join erp_repo_receipt_detail errd on errd.test_id = etr.id and errd.deleted = 0
+        left join erp_repository_receipt err on err.id = errd.receipt_id and err.deleted = 0
+        where etr.deleted = 0 and err.type = 'material_stock' and err.related_order_id = #{orderId}
+    </select>
+    <select id="selectDetailById" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            erp_test_report etr
+        -- left join erp_code ec on etr.test_type = ec.id
+        -- left join erp_purchase_order epo on epo.id = etr.order_no
+        left join erp_product ep on etr.product = ep.id and etr.deleted = 0
+        left join erp_test_type ett on etr.test_type = ett.id
+        where etr.deleted = 0
+          and etr.id = #{id}
+    </select>
+
+</mapper>

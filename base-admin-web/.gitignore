@@ -1,0 +1,6 @@
+/node_modules
+/dist
+/src/pages/.umi
+package-lock.json
+yarn-lock*.json
+.idea

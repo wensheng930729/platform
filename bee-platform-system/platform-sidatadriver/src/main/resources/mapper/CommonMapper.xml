@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.CommonMapper">
+
+
+    <select id="getProductNameById" resultType="string">
+        SELECT p.`name`  FROM erp_product p WHERE  p.id = #{productId}
+    </select>
+
+        <select id="getCustomerNameById" resultType="string">
+
+        SELECT c.cus_name AS customerName FROM auth_customer c WHERE  c.id = #{customerId}
+    </select>
+
+
+        <select id="getRepositoryNameById" resultType="string">
+        SELECT r.`name` FROM erp_repository r WHERE  r.id=#{repositoryId}
+    </select>
+
+
+        <select id="getTestCodeById" resultType="string">
+        SELECT t.`code` FROM erp_test_report  t WHERE  t.id=#{testId}
+    </select>
+
+
+        <select id="getFurnaceNameById" resultType="string">
+            SELECT f.`name` FROM erp_furnace  f WHERE  f.id=#{furnaceId}
+
+        </select>
+
+    <select id="getMaterialBatchNameById" resultType="string">
+        SELECT m.material_batch_name  FROM erp_material_batch_order  m WHERE  m.id=#{mId}
+
+    </select>
+
+    <select id="getPurchaseOrderCodeById" resultType="string">
+        SELECT p.contract_no AS pcode FROM erp_purchase_order p WHERE  p.id=#{poId}
+
+    </select>
+
+
+    <select id="getTestResultById" resultType="string">
+        SELECT t.result FROM  erp_test_report  t WHERE  t.id=#{testId}
+
+    </select>
+
+
+    <select id="getSaleOrderCodeById" resultType="string">
+        SELECT s.contract_no AS sCode FROM erp_sale_order s WHERE  s.id=#{soId}
+
+    </select>
+
+
+    <select id="getOutPutFromWHO" resultType="decimal">
+
+        SELECT SUM(w.amount) AS outNum FROM erp_warehousing_order w WHERE  w.deleted=0 AND   w.company_id=#{companyId}  AND w.warehousing_time=#{time}  AND w.furnace_id=#{furnaceId}
+
+    </select>
+
+    <select id="getProductListByPurchaseId"  resultType="com.bee.platform.datadriver.dto.ErpProductAndBatchListDTO">
+        SELECT
+            d.product_id AS productId,
+            d.batch_id AS productBatchId,
+            p.`name` AS productName,
+            p.unit,
+            CONCAT( p.`name`, IFNULL( CONCAT( '-', b.batch_name ), '' ) ) AS productAndBatch
+        FROM
+            erp_purchase_order_detail d
+            LEFT JOIN erp_product p ON d.product_id = p.id
+            LEFT JOIN erp_product_batch b ON d.batch_id = b.id
+        WHERE
+            1 = 1
+            AND d.deleted = 0
+            AND d.order_id = #{purchaseId}
+        GROUP BY
+            d.product_id,d.batch_id
+    </select>
+
+    <select id="getProductListBySaleId" resultType="com.bee.platform.datadriver.dto.ErpProductAndBatchListDTO">
+            SELECT
+                d.product_id AS productId,
+                d.product_batch_id AS productBatchId,
+                p.`name` AS productName,
+                p.unit,
+                CONCAT( p.`name`, IFNULL( CONCAT( '-', b.batch_name ), '' ) ) AS productAndBatch
+            FROM
+                erp_sale_order_detail d
+                LEFT JOIN erp_product p ON d.product_id = p.id
+                LEFT JOIN erp_product_batch b ON d.product_batch_id = b.id
+            WHERE
+                1 = 1
+                AND d.deleted = 0
+                AND d.order_id = #{saleId}
+            GROUP BY
+                d.product_id,d.product_batch_id
+    </select>
+
+</mapper>

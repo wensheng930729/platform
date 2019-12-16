@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.UserTokensMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.UserToken">
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="sys_token" property="sysToken" />
+        <result column="expires_in" property="expiresIn" />
+        <result column="now_company" property="nowCompany" />
+        <result column="creator" property="creator" />
+        <result column="create_time" property="createTime" />
+        <result column="update_user" property="updateUser" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, username, sys_token, expires_in, now_company, creator, create_time, update_user, update_time
+    </sql>
+
+    <sql id="column_List">
+        id, sys_token, expires_in, now_company
+    </sql>
+    <select id="selectBasc" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select  <include refid="column_List"/>  from  user_tokens where  username=#{username}
+    </select>
+
+    <update id="updateByParam" parameterType="com.bee.platform.user.entity.UserToken">
+        update user_tokens
+        <trim prefix="set" suffixOverrides=",">
+            <if test="sysToken!=null and sysToken!=''">
+                sys_token=#{sysToken,jdbcType=VARCHAR},
+            </if>
+            <if test="expiresIn !=null " >
+                expires_in=#{expiresIn,jdbcType=DATE},
+            </if>
+            <if test="nowCompany !=null " >
+                now_company=#{nowCompany,jdbcType=INTEGER},
+            </if>
+            <if test="updateTime !=null " >
+                update_time=#{updateTime,jdbcType=DATE},
+            </if>
+        </trim>
+        where username=#{username,jdbcType=VARCHAR}
+    </update>
+</mapper>

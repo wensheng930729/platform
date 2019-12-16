@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.costcontrol.dao.mapper.ErpCostMaterialBatchSimulationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.costcontrol.entity.ErpCostMaterialBatchSimulation">
+        <id column="id" property="id" />
+        <result column="company_id" property="companyId" />
+        <result column="name" property="name" />
+        <result column="allocation_id" property="allocationId" />
+        <result column="allocation_info" property="allocationInfo" />
+        <result column="creator" property="creator" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_id, name, allocation_id, allocation_info, creator, create_time, update_time, deleted
+    </sql>
+
+    <select id="findList" resultType="com.bee.platform.costcontroller.dto.ErpCostMaterialSimulationListDTO">
+        select ecmbs.id, ecmbs.company_id, ae.name companyName, eca.name allocationName, ecsr.fifty_mine_cost,
+        ecsr.fifty_full_cost, ecsr.grade, ecmbs.name
+        from erp_cost_material_batch_simulation ecmbs
+        left join auth_enterprise ae on ae.id = ecmbs.company_id and ae.deleted = 0
+        left join erp_cost_simulation_result ecsr on ecsr.simulation_id = ecmbs.id and ecsr.deleted = 0 and ecsr.status = 1
+        left join erp_cost_allocation_cr eca on eca.id = ecmbs.allocation_id and eca.deleted = 0 and eca.status = 1
+        where ecmbs.deleted = 0
+        <if test="companyId != null">
+            and ecmbs.company_id = #{companyId}
+        </if>
+        <if test="id != null">
+            and ecmbs.id = #{id}
+        </if>
+        <if test="name != null">
+            and ecmbs.name = #{name}
+        </if>
+        <if test="allocationId != null">
+            and ecmbs.allocation_id = #{allocationId}
+        </if>
+        <if test="enterpriseIdList != null">
+            and ecmbs.company_id in (
+            <foreach collection="enterpriseIdList" item="id" separator=",">
+                #{id}
+            </foreach>
+            )
+        </if>
+        order by ecmbs.create_time desc
+    </select>
+
+    <select id="findInfo" resultType="com.bee.platform.costcontroller.dto.ErpCostMaterialSimulationDetailDTO">
+        select ecmbs.id, ecmbs.company_id, ecmbs.name, ae.name companyName, ecmbs.allocation_id, ecs.name allocationName,
+        ecmbs.allocation_info, ecmbs.creator
+        from erp_cost_material_batch_simulation ecmbs
+        left join erp_cost_simulation_cr ecs on ecs.id = ecmbs.allocation_id and ecs.deleted = 0 and ecs.status = 1
+        left join auth_enterprise ae on ae.id = ecmbs.company_id and ae.deleted = 0 and ae.status = 1
+        where ecmbs.deleted = 0 and ecmbs.id = #{id}
+    </select>
+
+</mapper>

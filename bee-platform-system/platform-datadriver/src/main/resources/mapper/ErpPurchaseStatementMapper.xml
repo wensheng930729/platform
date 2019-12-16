@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpPurchaseStatementMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpPurchaseStatement">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="order_id" property="orderId" />
+        <result column="src_dry_weight" property="srcDryWeight" />
+        <result column="real_dry_weight" property="realDryWeight" />
+        <result column="dry_balance" property="dryBalance" />
+        <result column="amount" property="amount" />
+        <result column="purchase_order" property="purchaseOrder" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, code, order_id, src_dry_weight, real_dry_weight, dry_balance, amount, purchase_order, create_time
+    </sql>
+
+    <update id="batchDelete">
+        update erp_purchase_statement set deleted = 1 where id in
+        (<foreach collection="list" item="id" separator=",">
+          #{id}
+        </foreach>)
+    </update>
+
+    <select id="findStatementList" parameterType="com.bee.platform.datadriver.rq.ErpPurchaseStatementRQ"
+            resultType="com.bee.platform.datadriver.dto.ErpPurchaseStatementDetailDTO">
+        select eps.id, epo.company_name, epo.supply_name, epo.contract_no, ep.name productName, eps.code,
+        eps.order_id, eps.statement_time, eps.src_dry_weight, eps.real_dry_weight,
+        eps.dry_balance, eps.amount realAmount, eps.state, epsd.grade
+        from erp_purchase_statement eps
+        left join erp_purchase_stmt_detail epsd on eps.id = epsd.statement_id and epsd.deleted = 0
+        left join erp_purchase_order epo on epo.id = eps.order_id and epo.deleted = 0
+        left join erp_product ep on ep.id = epsd.product_id and ep.deleted = 0
+        where eps.deleted = 0
+        <if test="companyId != null">
+            and eps.company_id = #{companyId}
+        </if>
+        <if test="contractNo != null">
+            and epo.contract_no like CONCAT('%', #{contractNo}, '%')
+        </if>
+        <if test="supplyName != null">
+            and epo.supply_name like CONCAT('%', #{supplyName}, '%')
+        </if>
+        <if test="productName != null">
+            and ep.name like CONCAT('%', #{productName}, '%')
+        </if>
+        <if test="state != null">
+            and eps.state = #{state}
+        </if>
+        <if test="code != null">
+            and eps.code like CONCAT('%', #{code}, '%')
+        </if>
+        <if test="statementStartTime != null">
+            and eps.statement_time <![CDATA[>=]]> #{statementStartTime}
+        </if>
+        <if test="statementEndTime != null">
+            and eps.statement_time <![CDATA[<=]]>  #{statementEndTime}
+        </if>
+        <if test="enterpriseIdList != null">
+            and eps.company_id in (
+            <foreach collection="enterpriseIdList" item="id" separator=",">
+                #{id}
+            </foreach>
+            )
+        </if>
+        order by eps.create_time desc
+    </select>
+
+</mapper>

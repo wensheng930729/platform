@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpPurchaseOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <!--<resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpPurchaseOrder">
+        <id column="id" property="id" />
+        <result column="contract_no" property="contractNo" />
+        <result column="contract_time" property="contractTime" />
+        <result column="supplier" property="supplier" />
+        <result column="company" property="company" />
+        <result column="place" property="place" />
+        <result column="purchase_method" property="purchaseMethod" />
+        <result column="requirement" property="requirement" />
+        <result column="remark" property="remark" />
+        <result column="state" property="state" />
+        <result column="invoice_state" property="invoiceState" />
+        <result column="receive_state" property="receiveState" />
+        <result column="pay_state" property="payState" />
+        <result column="amount" property="amount" />
+        <result column="total_num" property="totalNum" />
+        <result column="unit" property="unit" />
+        <result column="boiler_id" property="boilerId" />
+        <result column="shifts_id" property="shiftsId" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>-->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.dto.ErpPurchaseOrderInfoDTO">
+        <id column="id" property="id" />
+        <result column="sub_id" property="subId" />
+        <result column="contract_no" property="contractNo" />
+        <result column="contract_time" property="contractTime" />
+        <result column="num" property="num" />
+        <result column="unit" property="unit" />
+        <result column="supplier" property="supplier" />
+        <result column="supply_name" property="supplyName" />
+        <result column="company" property="company" />
+        <result column="company_name" property="companyName" />
+        <result column="product_name" property="productName" />
+        <result column="batch_id" property="batchId" />
+        <result column="batch_name" property="batchName" />
+        <result column="amount" property="amount" />
+        <result column="state" property="state" />
+        <result column="account_state" property="accountState" />
+        <result column="receive_state" property="receiveState" />
+        <result column="invoice_state" property="invoiceState" />
+        <result column="remark" property="remark" />
+        <result column="purchase_user_id" property="purchaseUserId" />
+    </resultMap>
+
+    <resultMap id="BaseResultMap2" type="com.bee.platform.datadriver.dto.ErpPurchaseOrderInfoDetailDTO">
+        <id column="id" property="id" />
+        <result column="contract_no" property="contractNo" />
+        <result column="company" property="company" />
+        <result column="company_name" property="companyName" />
+        <result column="contract_time" property="contractTime" />
+        <result column="product_id" property="productId" />
+        <result column="product_name" property="productName" />
+        <result column="place" property="place" />
+        <result column="purchase_method" property="purchaseMethod" />
+        <result column="supplier" property="supplier" />
+        <result column="supply_name" property="supplyName" />
+        <result column="num" property="num" />
+        <result column="unit" property="unit" />
+        <result column="requirement" property="requirement" />
+        <result column="remark" property="remark" />
+        <result column="purchase_user_id" property="purchaseUserId" />
+    </resultMap>
+
+    <resultMap id="BaseResultMap3" type="com.bee.platform.datadriver.dto.ErpPurchaseOrderDTO">
+        <id column="id" property="id" />
+        <result column="contract_no" property="contractNo" />
+        <result column="company" property="company" />
+        <result column="company_name" property="companyName" />
+        <result column="contract_time" property="contractTime" />
+        <result column="product_id" property="productId" />
+        <result column="product_name" property="productName" />
+        <result column="place" property="place" />
+        <result column="purchase_method" property="purchaseMethod" />
+        <result column="supplier" property="supplier" />
+        <result column="supply_name" property="supplyName" />
+        <result column="num" property="num" />
+        <result column="unit" property="unit" />
+        <result column="requirement" property="requirement" />
+        <result column="remark" property="remark" />
+        <result column="purchase_user_id" property="purchaseUserId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        epo.id as id, epod.id as sub_id, epo.contract_no as contract_no, epo.contract_time as contract_time, sum(epod.num) as num, epo.supplier as supplier,
+        epo.supply_name as supply_name, epo.company as company, epo.company_name as company_name, epo.state as state,
+        sum(epod.amount) AS amount, ep.name as product_name, ep.unit as unit, epo.account_state as account_state, epo.receive_state as receive_state,
+        epo.invoice_state as invoice_state, epo.remark as remark, epod.batch_id as batch_id, epb.batch_name as batch_name, epo.purchase_user_id
+    </sql>
+    <sql id="Base_Column_List_ContractNo">
+        epo.id as id, epo.company,epo.company_name, epo.contract_no as contract_no, epo.contract_time as contract_time, ep.id as product_id, ep.name as product_name,
+        epo.place as place, epo.purchase_method as purchase_method, epo.supplier as supplier, epo.supply_name as supply_name,epod.num as num, epod.unit as unit,
+        epod.tax_price,epo.requirement as requirement, epo.remark as remark, epo.purchase_user_id
+    </sql>
+
+    <select id="selectPurchaseOrderByCondition" resultMap="BaseResultMap" parameterType="com.bee.platform.datadriver.rq.OrderQueryRQ">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            erp_purchase_order epo
+        LEFT JOIN erp_purchase_order_detail epod ON epo.id = epod.order_id AND epod.deleted = 0
+        LEFT JOIN erp_product ep ON ep.id = epod.product_id
+        LEFT JOIN erp_product_batch epb on epb.id = epod.batch_id and epb.deleted = 0
+        WHERE 1=1
+        AND epo.deleted = 0
+        AND epo.company = #{company}
+        <if test="orderId != null and orderId != ''">
+            AND epo.contract_no like "%"#{orderId}"%"
+        </if>
+        <if test="supplyCompany != null and supplyCompany != ''">
+            AND epo.supply_name like "%"#{supplyCompany}"%"
+        </if>
+        <if test="product != null and product != ''">
+            AND ep.name like "%"#{product}"%"
+        </if>
+        <if test="receiveState != null and receiveState != ''">
+            AND epo.receive_state = #{receiveState}
+        </if>
+        <if test="accountState != null and accountState != ''">
+            AND epo.account_state = #{accountState}
+        </if>
+        <if test="invoiceState != null and invoiceState != ''">
+            AND epo.invoice_state = #{invoiceState}
+        </if>
+        <if test="createStartTime != null and createStartTime != ''">
+            AND epo.contract_time <![CDATA[>= ]]> #{createStartTime}
+        </if>
+        <if test="createEndTime != null and createEndTime != ''">
+            AND epo.contract_time <![CDATA[<= ]]> #{createEndTime}
+        </if>
+        GROUP BY epo.id
+        order by epo.contract_time desc
+    </select>
+    <!--<select id="selectByOrderId" resultMap="BaseResultMap2">
+        SELECT
+            <include refid="Base_Column_List_ContractNo"/>
+        FROM
+            erp_purchase_order epo
+        LEFT JOIN erp_purchase_order_detail epod ON epo.id = epod.order_id
+        LEFT JOIN erp_product ep ON ep.id = epod.product_id
+        &#45;&#45; LEFT JOIN erp_product_batch epb ON epb.id = epod.batch_id and epb.deleted = 0
+        WHERE epo.deleted = 0
+          AND epod.deleted = 0
+          AND epo.id = #{id}
+    </select>-->
+
+    <select id="getOrderById" resultMap="BaseResultMap3">
+        SELECT
+            <include refid="Base_Column_List_ContractNo"/>
+        FROM
+            erp_purchase_order epo
+        LEFT JOIN erp_purchase_order_detail epod ON epo.id = epod.order_id
+        LEFT JOIN erp_product ep ON ep.id = epod.product_id
+        -- LEFT JOIN erp_product_batch epb ON epb.id = epod.batch_id and epb.deleted = 0
+        WHERE epo.deleted = 0
+        AND epo.id = #{id}
+        LIMIT 1
+    </select>
+    
+    <select id="getPurchaseGoodsList" resultType="com.bee.platform.datadriver.entity.ErpRepoReceiptDetail">
+        select errd.id, errd.wet_weight, errd.water_rate, IFNULL(errd.num, 0)num, IFNULL(errd.product_batch_id, 0)productBatchId
+        from erp_repo_receipt_detail errd
+        left join erp_repository_receipt err on err.id = errd.receipt_id
+        where errd.deleted = 0
+        and err.deleted = 0
+        and err.type = 'material_stock'
+        and err.related_order_id = #{orderId}
+    </select>
+
+    <select id="findByOrderId" resultType="com.bee.platform.datadriver.dto.ErpPurchaseOrderInfoDetailDTO">
+        select  epo.id as id, epo.company,epo.company_name, epo.contract_no as contract_no, epo.contract_time as contract_time, ep.id as product_id, ep.name as product_name,
+        epo.place as place, epo.purchase_method as purchase_method, epo.supplier as supplier, epo.supply_name as supply_name,epod.num as num, ep.unit as unit,
+        epod.tax_price,epo.requirement as requirement, epo.remark as remark, epo.purchase_user_id, IFNULL(epod.batch_id, 0) productBatchId, epb.batch_name
+        from erp_purchase_order epo
+        left join erp_purchase_order_detail epod on epo.id = epod.order_id and epod.deleted = 0
+        left join erp_product ep on ep.id = epod.product_id and ep.deleted = 0
+        left join erp_product_batch epb on epb.id = epod.batch_id and epb.deleted = 0
+        where epo.deleted = 0 and epo.id = #{id}
+    </select>
+</mapper>

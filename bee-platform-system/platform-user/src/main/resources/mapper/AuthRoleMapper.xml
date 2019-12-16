@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.authority.dao.mapper.AuthRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.authority.entity.AuthRole">
+        <id column="id" property="id" />
+        <result column="role_name" property="roleName" />
+        <result column="role_type" property="roleType" />
+        <result column="level" property="level" />
+        <result column="sub_sys" property="subSys" />
+        <result column="deleted" property="deleted" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <resultMap id="BaseResultMap2" type="com.bee.platform.user.authority.dto.AuthRoleDTO">
+        <id column="id" property="id" />
+        <result column="role_name" property="roleName" />
+        <result column="role_type" property="roleType" />
+        <result column="level" property="level" />
+        <result column="sub_sys" property="subSys" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ar.id, ar.role_name, ar.role_type, ar.level, ar.sub_sys, ar.deleted, ar.create_user, ar.create_time, ar.update_time
+    </sql>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List2">
+        ar.id as id, ar.role_name as role_name, ar.role_type as role_type, ar.level as level, ar.sub_sys as sub_sys
+    </sql>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List_app">
+        distinct ar.id, ar.role_name, ar.role_type, ar.level, ar.sub_sys, ar.deleted, ar.create_user, ar.create_time, ar.update_time
+    </sql>
+
+    <select id="selectRolesByCondition" resultMap="BaseResultMap" parameterType="map">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            auth_role ar
+        where ar.deleted = 0
+        <choose>
+            <when test="roleType != null and roleType != ''">AND ar.role_type = #{roleType}</when>
+            <otherwise>AND (ar.role_type = 'base' or ar.role_type = 'function_one' or ar.role_type = 'function_two' or ar.role_type = 'application')</otherwise>
+        </choose>
+        <if test="roleName != null and roleName != ''">
+            AND ar.role_name like "%"#{roleName}"%"
+        </if>
+        <if test="sysType != null and sysType != ''">
+            AND ar.sub_sys = #{sysType}
+        </if>
+        <if test="createStartTime != null and createStartTime != ''">
+            AND ar.create_time <![CDATA[>= ]]> #{createStartTime}
+        </if>
+        <if test="createEndTime != null and createEndTime != ''">
+            AND ar.create_time <![CDATA[<= ]]> #{createEndTime}
+        </if>
+        order by ar.create_time desc
+    </select>
+    <select id="selectAppRoleByUser" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List_app"/>
+        from
+            auth_role ar inner join auth_user_role aur on ar.id = aur.pid and aur.deleted = 0 and ar.deleted = 0
+        where aur.user_id = #{id}
+          and aur.enterprise_id = #{orgId}
+          and aur.level = 2
+          and ar.sub_sys != 'bee_platform'
+          and ar.sub_sys != 'bee_console'
+          order by ar.id
+    </select>
+    <select id="listSubRolesByUser" resultMap="BaseResultMap2">
+        SELECT
+            <include refid="Base_Column_List2"/>
+        FROM
+            auth_role ar
+        INNER JOIN auth_user_role aur ON aur.role_id = ar.id
+        WHERE aur.pid = #{id}
+        AND aur.enterprise_id = #{orgId}
+        AND ar.deleted = 0
+        AND aur.deleted = 0
+    </select>
+    <select id="selectAppRoleByOrg" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List_app"/>
+        from
+            auth_role ar inner join auth_enterprise_role aur on ar.id = aur.pid and aur.deleted = 0 and ar.deleted = 0
+        where aur.enterprise_id = #{orgId}
+        and aur.level = 2
+        and ar.sub_sys != 'bee_platform'
+        and ar.sub_sys != 'bee_console'
+        order by ar.id
+    </select>
+    <select id="selectUserApp" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            auth_role ar right join auth_user_role aur on ar.id = aur.role_id and aur.deleted = 0 and ar.deleted = 0
+        where aur.user_id = #{id}
+          and aur.enterprise_id = #{orgId}
+          and aur.role_type = 'application'
+          and ar.sub_sys != 'bee_platform'
+          and ar.sub_sys != 'bee_console'
+        order by ar.id
+    </select>
+
+
+    <select id="getBackApplication" resultType="com.bee.platform.user.authority.dto.AuthBackRoleTreeDTO">
+        SELECT
+            r.id AS roleId,
+            r.role_name AS roleName,
+            r.role_type AS roleType,
+            r.`level`,
+            r.sub_sys AS subSys,
+            0 AS pid
+        FROM
+            auth_role r
+        WHERE
+            1 = 1
+            AND r.deleted = 0
+            AND r.role_type = 'application'
+            AND r.sub_sys = 'bee_console'
+    </select>
+
+    <select id="getAllChildRole" resultType="com.bee.platform.user.authority.dto.AuthBackRoleTreeDTO">
+        SELECT
+            r.id AS roleId,
+            r.role_name AS roleName,
+            r.role_type AS roleType,
+            r.`level`,
+            r.sub_sys AS subSys,
+            fr.pid
+        FROM
+            auth_role r,
+            auth_function_role fr
+        WHERE
+            1 = 1
+            AND r.deleted = 0
+            AND fr.deleted = 0
+            AND fr.STATUS = 1
+            AND fr.role_id = r.id
+        <if test="list != null and list.size!=0">
+            AND r.sub_sys IN
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+</mapper>

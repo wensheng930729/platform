@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.EnterprisesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.Enterprises">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="head" property="head" />
+        <result column="admin" property="admin" />
+        <result column="contact" property="contact" />
+        <result column="industry" property="industry" />
+        <result column="linkman" property="linkman" />
+        <result column="street" property="street" />
+        <result column="regionid" property="regionid" />
+        <result column="address" property="address" />
+        <result column="status" property="status" />
+        <result column="type" property="type" />
+        <result column="licence" property="licence" />
+        <result column="enclosure" property="enclosure" />
+        <result column="create_at" property="createAt" />
+        <result column="update_at" property="updateAt" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, head, admin, contact, industry, linkman, street, regionid, address, status, type, licence, enclosure, create_at, update_at
+    </sql>
+
+</mapper>

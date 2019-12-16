@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpStockMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpStock">
+        <id column="id" property="id" />
+        <result column="org_id" property="orgId" />
+        <result column="product_id" property="productId" />
+        <result column="product_name" property="productName" />
+        <result column="product_category" property="productCategory" />
+        <result column="unit" property="unit" />
+        <result column="repository_id" property="repositoryId" />
+        <result column="repository_name" property="repositoryName" />
+        <result column="init_num" property="initNum" />
+        <result column="in_stock_num" property="inStockNum" />
+        <result column="out_stock_num" property="outStockNum" />
+        <result column="d_num" property="dNum" />
+        <result column="stock_num" property="stockNum" />
+        <result column="company_name" property="companyName" />
+        <result column="test_report_id" property="testReportId" />
+        <result column="test_report_code" property="testReportCode" />
+        <result column="deleted" property="deleted" />
+        <result column="product_batch_id" property="productBatchId" />
+        <result column="product_category_id" property="productCategoryId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,product_batch_id,product_category_id, org_id,company_name,deleted ,test_report_id,test_report_code,  product_id, product_name, product_category, unit, repository_id, repository_name, init_num, in_stock_num, out_stock_num, d_num, stock_num
+    </sql>
+
+
+    <select id="searchStockByCondition" resultType="com.bee.platform.datadriver.dto.ErpStockSearchListDTO" parameterType="com.bee.platform.datadriver.rq.ErpStockSearchRQ">
+            SELECT
+            m.org_id AS companyId,
+            m.product_id AS productId,
+            m.product_batch_id AS productBatchId,
+            CONCAT( p.`name`, IFNULL( CONCAT( '-', pb.batch_name ), '' ) ) AS productAndBatch,
+            p.`name` AS productName,
+            p.unit,
+            c.id AS productCategoryId,
+            c.`name` AS productCategoryName,
+            SUM( m.init_num ) AS initNum,
+            SUM( m.in_stock_num ) AS inStockNum,
+            SUM( m.out_stock_num ) AS outStockNum,
+            SUM( m.d_num ) AS dNum,
+            SUM( m.stock_num ) AS stockNum
+            FROM
+            erp_stock m
+            LEFT JOIN erp_product p ON m.product_id = p.id
+            LEFT JOIN erp_product_batch pb ON m.product_batch_id = pb.id
+            LEFT JOIN erp_product_category c ON p.category = c.id
+            WHERE
+            1 = 1
+            AND m.deleted = 0
+            <if test="companyId != null">
+                AND m.org_id = #{companyId}
+            </if>
+            <if test="list != null and list.size > 0 and companyId == null " >
+                AND m.org_id IN
+                <foreach collection="list" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="productCategoryId != null">
+                AND p.category = #{productCategoryId}
+            </if>
+            <if test="productName != null and productName != ''">
+                AND p.`name` LIKE CONCAT('%',#{productName},'%')
+            </if>
+            GROUP BY
+            m.org_id,
+            m.product_id,
+            m.product_batch_id
+
+
+    </select>
+
+    <select id="getStockDetailByCondition" resultType="com.bee.platform.datadriver.dto.ErpStockDetailDTO" parameterType="com.bee.platform.datadriver.rq.ErpStockDetailListRQ">
+            SELECT
+                m.id,
+                m.org_id AS companyId,
+                m.product_id AS productId,
+                m.product_batch_id AS productBatchId,
+                CONCAT( p.`name`, IFNULL( CONCAT( '-', pb.batch_name ), '' ) ) AS productAndBatch ,
+                p.`name` AS productName,
+                p.unit ,
+                c.id AS productCategoryId,
+                c.`name` AS productCategoryName,
+                m.repository_id AS repositoryId,
+                r.`name` AS repositoryName,
+                m.init_num AS initNum,
+                m.in_stock_num AS inStockNum,
+                m.out_stock_num AS outStockNum,
+                m.d_num AS dNum,
+                m.stock_num AS stockNum
+            FROM
+                erp_stock m
+                LEFT JOIN erp_product p ON m.product_id = p.id
+                LEFT JOIN erp_product_batch pb ON m.product_batch_id = pb.id
+                LEFT JOIN erp_product_category c ON p.category = c.id
+                LEFT JOIN erp_repository r ON m.repository_id = r.id
+            WHERE
+                1 = 1
+                AND m.deleted = 0
+                <if test="companyId != null">
+                    AND m.org_id = #{companyId}
+                </if>
+                <if test="productId != null">
+                    AND m.product_id=#{productId}
+                </if>
+                <if test="productBatchId != null">
+                    AND m.product_batch_id=#{productBatchId}
+                </if>
+                <if test="productBatchId == null">
+                    AND m.product_batch_id IS NULL
+                </if>
+                <if test="repositoryName != null and repositoryName != ''">
+                    AND r.`name` LIKE CONCAT('%',#{repositoryName},'%')
+                </if>
+
+    </select>
+
+
+
+</mapper>

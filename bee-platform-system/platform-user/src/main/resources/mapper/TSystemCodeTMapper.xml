@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.authority.dao.mapper.TSystemCodeTMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.authority.entity.TSystemCodeT">
+        <id column="id" property="id" />
+        <result column="sys_group_id" property="sysGroupId" />
+        <result column="sys_code" property="sysCode" />
+        <result column="sys_code_val" property="sysCodeVal" />
+        <result column="sys_code_desc" property="sysCodeDesc" />
+        <result column="status" property="status" />
+        <result column="order_num" property="orderNum" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, sys_group_id, sys_code, sys_code_val, sys_code_desc, status, order_num, create_time, update_time
+    </sql>
+
+    <select id="selectSubSystemByCondition" resultMap="BaseResultMap" parameterType="map">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            t_system_code_t t
+        where t.sys_group_id = 'sub_system'
+          and t.status = 1
+        <if test="text != null and text != ''">
+            AND (t.sys_code like "%"#{text}"%" or t.sys_code_desc like "%"#{text}"%")
+        </if>
+        <if test="createStartTime != null and createStartTime != ''">
+            AND t.create_time <![CDATA[>= ]]> #{createStartTime}
+        </if>
+        <if test="createEndTime != null and createEndTime != ''">
+            AND t.create_time <![CDATA[<= ]]> #{createEndTime}
+        </if>
+    </select>
+
+</mapper>

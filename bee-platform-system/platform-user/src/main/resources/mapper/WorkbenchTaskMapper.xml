@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.WorkbenchTaskMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.WorkbenchTask">
+        <id column="id" property="id" />
+        <result column="task_id" property="taskId" />
+        <result column="task_type" property="taskType" />
+        <result column="backlog_content" property="backlogContent" />
+        <result column="task_statu" property="taskStatu" />
+        <result column="deal_url" property="dealUrl" />
+        <result column="status" property="status" />
+        <result column="create_id" property="createId" />
+        <result column="creator" property="creator" />
+        <result column="create_time" property="createTime" />
+        <result column="modify_id" property="modifyId" />
+        <result column="modifier" property="modifier" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, task_id, task_type, backlog_content, task_statu, deal_url, status, create_id, creator, create_time, modify_id, modifier, modify_time, remark
+    </sql>
+
+    <select id="listWorkbenchTask" resultMap="BaseResultMap" parameterType="map">
+        SELECT * FROM (
+            SELECT
+                <include refid="Base_Column_List"/>
+            FROM
+                workbench_task t
+            WHERE 1= 1
+                <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+                    AND t.create_time <![CDATA[<= ]]> #{endTime}
+                    AND t.create_time <![CDATA[>= ]]> #{startTime}
+                </if>
+                <if test="taskType != null">
+                    AND t.task_type = #{taskType}
+                </if>
+                <if test="taskStatu != null">
+                    AND t.task_statu = #{taskStatu}
+                </if>) result
+            ORDER BY result.task_statu, result.create_time desc
+    </select>
+</mapper>

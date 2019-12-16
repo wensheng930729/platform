@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpSaleStmtDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpSaleStmtDetail">
+        <id column="id" property="id" />
+        <result column="statement_id" property="statementId" />
+        <result column="product" property="product" />
+        <result column="plate_no" property="plateNo" />
+        <result column="src_num" property="srcNum" />
+        <result column="receive_num" property="receiveNum" />
+        <result column="real_num" property="realNum" />
+        <result column="src_grade" property="srcGrade" />
+        <result column="receive_grade" property="receiveGrade" />
+        <result column="real_grade" property="realGrade" />
+        <result column="grade_error" property="gradeError" />
+        <result column="src_amount" property="srcAmount" />
+        <result column="real_price" property="realPrice" />
+        <result column="real_amount" property="realAmount" />
+        <result column="balance" property="balance" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, statement_id, product, plate_no, src_num, receive_num, real_num, src_grade, receive_grade, real_grade, grade_error, src_amount, real_price, real_amount, balance, create_time
+    </sql>
+
+    <update id="batchDeleteStatementDetailByStmtIds" parameterType="list">
+        update erp_sale_stmt_detail set deleted = 1 where statement_id in
+        (<foreach collection="list" item="id"> #{id}</foreach>)
+    </update>
+
+    <select id="findSaleStatementOrderList" parameterType="com.bee.platform.datadriver.rq.ErpSaleStatementSelectRQ"
+            resultType="com.bee.platform.datadriver.dto.ErpSaleStatementDetailDTO">
+        select ess.id statementId,eso.company_name, eso.contract_no, ess.code, essd.record_time,
+        eso.customer_name, sum(essd.real_num)realNum, sum(essd.receive_num)receiveNum,
+        sum(essd.real_amount)realAmount, ep.name productName, ess.sale_order_id orderId,
+        essd.product_batch_id, epb.batch_name, ep.unit
+        from erp_sale_statement ess
+        left join erp_sale_stmt_detail essd on essd.statement_id = ess.id and essd.deleted = 0
+        left join erp_sale_order eso on eso.id = ess.sale_order_id and eso.deleted = 0
+        left join erp_product_batch epb on epb.id = essd.product_batch_id and epb.deleted = 0
+        left join erp_product ep on ep.id = essd.product and ep.deleted = 0
+        where ess.deleted = 0
+        <if test="companyId != null">
+          and ess.company_id = #{companyId}
+        </if>
+        <if test="saleOrder != null">
+            and ess.sale_order like CONCAT('%',#{saleOrder},'%')
+        </if>
+        <if test="customerName != null">
+            and eso.customer_name like CONCAT('%',#{customerName},'%')
+        </if>
+        <if test="productName != null">
+            and essd.product_name like CONCAT('%',#{productName},'%')
+        </if>
+        <if test="code != null">
+            and ess.code = #{code}
+        </if>
+        <if test="recordStartTime != null">
+            and essd.record_time <![CDATA[>=]]> #{recordStartTime}
+        </if>
+        <if test="recordEndTime != null">
+            and essd.record_time <![CDATA[<=]]> #{recordEndTime}
+        </if>
+        <if test="enterpriseIdList != null">
+            and ess.company_id  in (
+            <foreach collection="enterpriseIdList" item="id" separator=",">
+                #{id}
+            </foreach>
+            )
+        </if>
+        group by statementId
+        order by ess.create_time desc
+    </select>
+
+    <select id="listSaleStmtDetailByOrder" resultType="com.bee.platform.datadriver.entity.ErpSaleStmtDetail">
+        select essd.id, essd.statement_id, essd.product, essd.plate_no, essd.src_num, essd.receive_num, essd.real_num, essd.src_grade,
+         essd.receive_grade, essd.real_grade, essd.grade_error, essd.src_amount, essd.real_price, essd.real_amount, essd.balance, essd.create_time
+        from erp_sale_stmt_detail essd
+        left join erp_sale_statement ess on essd.statement_id = ess.id and ess.deleted = 0
+        where essd.deleted = 0 and ess.sale_order_id = #{id}
+    </select>
+
+    <select id="getSaleStatementInfo" resultType="com.bee.platform.datadriver.dto.ErpSaleStatementDetailDTO">
+        select essd.record_time,essd.src_num, essd.real_num, essd.receive_num, essd.src_grade,
+        essd.receive_grade, essd.real_grade, essd.grade_error, essd.src_amount,
+        essd.real_price, essd.real_amount, essd.balance, ess.state, ep.name productName,
+        ep.unit, essd.real_debit, essd.product_batch_id, epb.batch_name, ess.code
+        from erp_sale_stmt_detail essd
+        left join erp_sale_statement ess on ess.id = essd.statement_id and ess.deleted = 0
+        left join erp_product ep on ep.id = essd.product and ep.deleted = 0
+        left join erp_product_batch epb on epb.id = essd.product_batch_id and epb.deleted = 0
+        where essd.deleted = 0 and ess.sale_order_id = #{id}
+    </select>
+
+    <select id="getSaleStatementsByStatementId" resultType="com.bee.platform.datadriver.dto.ErpSaleStatementDetailDTO">
+        select essd.id, essd.record_time, essd.real_num, essd.receive_num, essd.real_price,
+        essd.real_amount, essd.real_debit,epb.batch_name, essd.product_batch_id
+        from erp_sale_stmt_detail essd
+        left join erp_product_batch epb on epb.id = essd.product_batch_id and epb.deleted = 0
+        where essd.deleted = 0 and essd.statement_id = #{statementId}
+    </select>
+
+</mapper>

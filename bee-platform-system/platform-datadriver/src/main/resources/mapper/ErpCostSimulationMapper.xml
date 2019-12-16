@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.costcontrol.dao.mapper.ErpCostSimulationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.costcontrol.entity.ErpCostSimulationCr">
+        <id column="id" property="id" />
+        <result column="company_id" property="companyId" />
+        <result column="name" property="name" />
+        <result column="supplier_id" property="supplierId" />
+        <result column="supplier" property="supplier" />
+        <result column="inquirer_id" property="inquirerId" />
+        <result column="inquirer" property="inquirer" />
+        <result column="cost_allocation_id" property="costAllocationId" />
+        <result column="cost_allocation" property="costAllocation" />
+        <result column="raw_material" property="rawMaterial" />
+        <result column="trade_port" property="tradePort" />
+        <result column="spot_unit_price" property="spotUnitPrice" />
+        <result column="futures_unit_price" property="futuresUnitPrice" />
+        <result column="freight" property="freight" />
+        <result column="port_service_fee" property="portServiceFee" />
+        <result column="status" property="status" />
+        <result column="deleted" property="deleted" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator" property="creator" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted_time" property="deletedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_id, name, supplier_id, supplier, inquirer_id AS inquirerId, inquirer AS inquirer, cost_allocation_id, cost_allocation, raw_material, trade_port, spot_unit_price, futures_unit_price, freight, port_service_fee, status, deleted, creator_id, creator, create_time, update_time, deleted_time
+    </sql>
+
+</mapper>

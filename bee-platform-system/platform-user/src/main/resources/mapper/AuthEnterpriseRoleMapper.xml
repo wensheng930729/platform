@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.authority.dao.mapper.AuthEnterpriseRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.authority.entity.AuthEnterpriseRole">
+        <id column="id" property="id"/>
+        <result column="enterprise_id" property="enterpriseId"/>
+        <result column="role_id" property="roleId"/>
+        <result column="pid" property="pid"/>
+        <result column="level" property="level"/>
+        <result column="role_type" property="roleType"/>
+        <result column="order_num" property="orderNum"/>
+        <result column="status" property="status"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="flag" property="flag"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,flag, enterprise_id, role_id,pid, level, role_type, order_num, status, deleted, create_user, create_time, update_time
+    </sql>
+
+    <select id="getEnterpriseRole" resultType="com.bee.platform.user.authority.dto.AuthEnterpriseRoleTreeDTO">
+      SELECT r.id ,r.id as 'key',r.role_name AS roleName ,r.role_name as title,r.role_type AS roleType ,r.`level`,r.sub_sys AS subSys ,e.pid
+      FROM auth_role r ,auth_enterprise_role e
+      WHERE r.id=e.role_id and e.enterprise_id=#{enterpriseId} and e.deleted=0 and r.deleted=0 and e.status = 1
+    </select>
+
+    <insert id="insertAll" parameterType="com.bee.platform.user.authority.entity.AuthEnterpriseRole">
+        insert into auth_enterprise_role (enterprise_id, role_id,pid, `level`, role_type, order_num, status, deleted,
+        create_user, create_time, update_time)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.enterpriseId,jdbcType=INTEGER},
+            #{item.roleId,jdbcType=INTEGER},
+            #{item.pid,jdbcType=INTEGER},
+            #{item.level,jdbcType=INTEGER},
+            #{item.roleType,jdbcType=VARCHAR},
+            #{item.orderNum,jdbcType=INTEGER},
+            #{item.status,jdbcType=TINYINT},
+            #{item.deleted,jdbcType=TINYINT},
+            #{item.createUser,jdbcType=INTEGER},
+            #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updateTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getEnterpriseBaseRole" resultType="com.bee.platform.user.authority.dto.AuthEnterpriseRoleTreeDTO">
+        SELECT r.id,r.id AS 'key', r.role_name AS roleName,r.role_name AS title,r.role_type AS roleType
+        ,r.`level`,r.sub_sys AS subSys,f.pid
+        FROM auth_role r,auth_function_role f
+        WHERE r.id=f.role_id
+        AND r.deleted=0
+        AND f.deleted=0
+        AND f.status = 1
+
+        <if test="list != null and list.size!=0">
+            and f.pid in
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+
+    </select>
+
+    <select id="getEnterpriseAppRole" resultType="com.bee.platform.user.authority.dto.AuthEnterpriseRoleTreeDTO">
+        SELECT r.id,r.id AS 'key', r.role_name AS roleName,r.role_name AS title,r.role_type AS roleType
+        ,r.`level`,r.sub_sys AS subSys,0 AS pid
+        FROM auth_role r
+        WHERE 1=1
+        AND r.deleted=0
+        <if test="list != null and list.size!=0">
+            and r.id in
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+
+
+    </select>
+
+
+    <select id="getEnterpriseInterfaceUri" resultType="com.bee.platform.user.authority.dto.EnterpriseUrlDTO">
+        SELECT
+        er.enterprise_id AS id,
+        i.url AS url,
+        i.type AS type
+        FROM
+        auth_enterprise_role er
+        LEFT JOIN auth_function_role fr ON er.role_id = fr.pid
+        AND er.role_type = 'function_two'
+        LEFT JOIN auth_role r ON fr.role_id = r.id
+        LEFT JOIN auth_role_interface ri ON fr.role_id = ri.role_id
+        LEFT JOIN auth_interface i ON ri.interface_id = i.id
+        WHERE 1 = 1
+        AND er.deleted=0
+        AND er.status = 1
+        AND fr.deleted=0
+        AND fr.status = 1
+        AND r.deleted=0
+        AND ri.deleted=0
+        AND ri.status = 1
+        AND i.deleted=0
+        AND i.status = 1
+        AND er.enterprise_id = #{enterpriseId}
+        <if test="subSys != null and subSys != ''">
+            AND r.sub_sys = #{subSys}
+        </if>
+    </select>
+
+    <select id="getEnterpriseFunsByEnterpriseId" parameterType="int"
+            resultType="com.bee.platform.user.authority.dto.AuthRoleUsedDTO">
+        SELECT
+	        aer.role_id id,
+	        aer.pid,
+	        ar.role_name,
+	        aer.role_type,
+	        aer.`level`,
+	        ar.sub_sys
+        FROM
+	        auth_enterprise_role aer
+	    LEFT JOIN auth_role ar ON aer.role_id = ar.id
+        WHERE
+	         aer.deleted = 0
+	    AND aer.flag = 1
+	    AND aer.enterprise_id = #{id}
+
+    </select>
+
+</mapper>

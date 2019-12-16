@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpStockCheckMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpStockCheck">
+        <id column="id" property="id" />
+        <result column="stock_check_name" property="stockCheckName" />
+        <result column="stock_check_time" property="stockCheckTime" />
+        <result column="company_id" property="companyId" />
+        <result column="company_name" property="companyName" />
+        <result column="remark" property="remark" />
+        <result column="state" property="state" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_enterprise_id" property="creatorEnterpriseId" />
+        <result column="create_time" property="createTime" />
+        <result column="deleted" property="deleted" />
+        <result column="file_name" property="fileName" />
+        <result column="file_url" property="fileUrl" />
+        <result column="modifier_id" property="modifierId" />
+        <result column="modify_time" property="modifyTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, stock_check_name, stock_check_time, company_id, company_name, remark, state, creator_id, creator_enterprise_id, create_time, deleted, file_name, file_url, modifier_id, modify_time
+    </sql>
+
+
+    <select id="searchStockCheckByCondition"  resultType="com.bee.platform.datadriver.dto.ErpStockCheckSearchListDTO" parameterType="com.bee.platform.datadriver.rq.ErpStockCheckSearchRQ">
+        SELECT
+        s.id,
+        s.state,
+        d.product_name AS productName,
+        d.storehouse,
+        d.unit,
+        d.test_code AS testCode,
+        d.expect_number AS expectNumber,
+        d.real_number AS realNumber
+        FROM
+        erp_stock_check_detail d
+        LEFT JOIN erp_stock_check s ON d.stock_check_id = s.id
+        WHERE
+        1 = 1
+        AND  d.deleted=0
+        AND  s.deleted=0
+
+        <if test="list != null and list.size > 0 and companyId == null">
+            AND s.company_id IN
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="stockCheckName != null and stockCheckName != ''">
+            AND s.stock_check_name LIKE CONCAT('%',#{stockCheckName},'%')
+        </if>
+        <if test="companyId != null">
+            AND s.company_id =#{companyId}
+        </if>
+        <if test="startTime != null and startTime != ''">
+            AND s.stock_check_time <![CDATA[ >= ]]>#{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND s.stock_check_time <![CDATA[ <= ]]>#{endTime}
+        </if>
+
+
+    </select>
+
+
+    <select id="searchStockCheck" resultType="com.bee.platform.datadriver.dto.ErpStockCheckSearchDTO" parameterType="com.bee.platform.datadriver.rq.ErpStockCheckSearchRQ">
+        SELECT
+            m.id,
+            m.company_id AS companyId ,
+            m.stock_check_name AS stockCheckName ,
+            m.stock_check_time AS stockCheckTime ,
+            m.state
+        FROM
+            erp_stock_check m
+            WHERE 1=1
+            AND m.deleted = 0
+            <if test="companyId != null">
+                AND m.company_id = #{companyId}
+            </if>
+            <if test="list != null and list.size > 0 and companyId == null">
+                AND m.company_id IN
+                <foreach collection="list" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="stockCheckName != null and stockCheckName != ''">
+                AND m.stock_check_name LIKE  CONCAT('%',#{stockCheckName},'%')
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND m.stock_check_time <![CDATA[ >= ]]>#{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND m.stock_check_time <![CDATA[ <= ]]>#{endTime}
+            </if>
+            ORDER BY m.stock_check_time DESC
+    </select>
+
+
+</mapper>

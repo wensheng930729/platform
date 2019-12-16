@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.MPlatformManagersMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.PlatformManagers">
+        <id column="manager_id" property="managerId" />
+        <result column="beesrv_id" property="beesrvId" />
+        <result column="username" property="username" />
+        <result column="phone" property="phone" />
+        <result column="sys_token" property="sysToken" />
+        <result column="expires_in" property="expiresIn" />
+        <result column="head" property="head" />
+        <result column="email" property="email" />
+        <result column="password" property="password" />
+        <result column="nickname" property="nickname" />
+        <result column="create_at" property="createAt" />
+        <result column="update_at" property="updateAt" />
+        <result column="notes" property="notes" />
+        <result column="status" property="status" />
+        <result column="creator_id" property="creatorId" />
+        <result column="update_id" property="updateId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        manager_id, beesrv_id,username, phone, sys_token, expires_in, head, email, password, nickname, create_at, update_at, notes, status, creator_id, update_id
+    </sql>
+
+    <select id="getManagerNameById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select manager_id,nickname from m_platform_managers where  1=1
+        <if test="set != null and set.size > 0">
+            and manager_id in
+            (
+            <foreach collection="set" item="item" separator=",">
+              #{item}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <select id="getUpdatorNickename" parameterType="Integer" resultType="String" >
+        select nickname from m_platform_managers where manager_id =#{updateId}
+    </select>
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpWarehousingOrderMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpWarehousingOrder">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="warehousing_time" property="warehousingTime" />
+        <result column="material_batch_id" property="materialBatchId" />
+        <result column="material_batch_name" property="materialBatchName" />
+        <result column="furnace_number" property="furnaceNumber" />
+        <result column="classes" property="classes" />
+        <result column="remark" property="remark" />
+        <result column="state" property="state" />
+        <result column="file_name" property="fileName" />
+        <result column="file_url" property="fileUrl" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_enterprise_id" property="creatorEnterpriseId" />
+        <result column="deleted" property="deleted" />
+        <result column="modifier_id" property="modifierId" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="product_name" property="productName" />
+        <result column="store_house_name" property="storeHouseName" />
+        <result column="unit" property="unit" />
+        <result column="amount" property="amount" />
+        <result column="company_id" property="companyId" />
+        <result column="company_name" property="companyName" />
+        <result column="create_time" property="createTime" />
+        <result column="product_id" property="productId" />
+        <result column="test_report_id" property="testReportId" />
+        <result column="test_report_code" property="testReportCode" />
+        <result column="repository_id" property="repositoryId" />
+        <result column="furnace_id" property="furnaceId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, code,repository_id,furnace_id, warehousing_time,test_report_id,test_report_code,  product_id, material_batch_id, material_batch_name, furnace_number, classes, remark, state, file_name, file_url, creator_id, creator_enterprise_id, deleted, modifier_id, modify_time, product_name, store_house_name, unit, amount, company_id, company_name,create_time
+    </sql>
+
+
+
+    <select id="getProductByMaterialBatchId" resultType="com.bee.platform.datadriver.dto.ErpProductBoxDTO" >
+             SELECT
+                m.product_id AS id,
+                p.`name`,
+                p.unit
+            FROM
+                erp_material_batch_order m
+                LEFT JOIN erp_product p ON m.product_id = p.id
+            WHERE
+                1 = 1
+                AND m.deleted=0
+                AND m.id = #{id}
+
+    </select>
+
+    <select id="searchWarehousingOrderByCondition" resultType="com.bee.platform.datadriver.dto.ErpWarehousingOrderSearchListDTO" parameterType="com.bee.platform.datadriver.rq.ErpWarehousingOrderSearchRQ">
+        SELECT
+            m.id ,
+            e.`name` AS companyName ,
+            m.`code` ,
+            b.material_batch_name AS materialBatchName ,
+            f.`name` AS furnaceNumber ,
+            m.warehousing_time AS warehousingTime ,
+            m.classes ,
+            m.amount ,
+            m.state
+        FROM
+            erp_warehousing_order m
+            LEFT JOIN auth_enterprise e ON m.company_id = e.id
+            LEFT JOIN erp_material_batch_order b ON m.material_batch_id = b.id
+            LEFT JOIN erp_furnace f ON m.furnace_id = f.id
+            WHERE 1=1
+            AND m.deleted =0
+            <if test="companyId != null">
+                AND m.company_id = #{companyId}
+            </if>
+            <if test="list != null and list.size > 0 and companyId == null">
+                AND m.company_id IN
+                <foreach collection="list" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="furnaceId != null">
+                AND m.furnace_id = #{furnaceId}
+            </if>
+            <if test="classes != null and classes != ''">
+                AND m.classes = #{classes}
+            </if>
+            <if test="materialBatchName != null and materialBatchName != ''">
+                AND b.material_batch_name LIKE CONCAT('%',#{materialBatchName},'%')
+            </if>
+            <if test="productId != null">
+                AND m.product_id = #{productId}
+            </if>
+            <if test="code != null and code != ''">
+                AND m.`code` LIKE CONCAT('%',#{code},'%')
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND m.warehousing_time <![CDATA[ >= ]]>#{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND m.warehousing_time <![CDATA[ <= ]]>#{endTime}
+            </if>
+            ORDER BY m.warehousing_time DESC
+
+    </select>
+
+</mapper>

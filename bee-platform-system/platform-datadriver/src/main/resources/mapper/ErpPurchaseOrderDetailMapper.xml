@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpPurchaseOrderDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.dto.ErpPurchaseOrderDetailDTO">
+        <id column="id" property="id" />
+        <result column="order_id" property="orderId" />
+        <result column="product_id" property="productId" />
+        <result column="name" property="productName" />
+        <result column="num" property="num" />
+        <result column="unit" property="unit" />
+        <result column="tax_price" property="taxPrice" />
+        <result column="tax_rate" property="taxRate" />
+        <result column="tax_free_amount" property="taxFreeAmount" />
+        <result column="tax_amount" property="taxAmount" />
+        <result column="amount" property="amount" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        epod.id, epod.order_id, epod.product_id, ep.name, epod.num, epod.unit, epod.tax_price, epod.tax_rate, epod.tax_free_amount,
+        epod.tax_amount, epod.amount
+    </sql>
+
+    <select id="selectPurchaseOrderDetail" resultMap="BaseResultMap" >
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            erp_purchase_order_detail epod
+        LEFT JOIN erp_product ep ON ep.id = epod.product_id
+        WHERE
+            epod.deleted = 0
+        AND epod.order_id = #{id}
+        ORDER BY
+            epod.create_time DESC
+    </select>
+
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpPurchaseStmtDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpPurchaseStmtDetail">
+        <id column="id" property="id" />
+        <result column="statement_id" property="statementId" />
+        <result column="real_wet_weight" property="realWetWeight" />
+        <result column="real_water" property="realWater" />
+        <result column="real_dry_weight" property="realDryWeight" />
+        <result column="real_debit" property="realDebit" />
+        <result column="real_price" property="realPrice" />
+        <result column="real_amount" property="realAmount" />
+        <result column="src_wet_weight" property="srcWetWeight" />
+        <result column="water_debit" property="waterDebit" />
+        <result column="src_dry_weight" property="srcDryWeight" />
+        <result column="dry_balance" property="dryBalance" />
+        <result column="cost" property="cost" />
+        <result column="invoice_count" property="invoiceCount" />
+        <result column="invoice_amount" property="invoiceAmount" />
+        <result column="statement_time" property="statementTime" />
+        <result column="create_time" property="createTime" />
+        <result column="grade" property="grade" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        epsd.id, epsd.statement_id, epsd.real_wet_weight, epsd.real_water, epsd.real_dry_weight, epsd.real_debit, epsd.real_price,
+        epsd.real_amount, epsd.src_wet_weight, epsd.water_debit, epsd.src_dry_weight, epsd.dry_balance, epsd.cost, epsd.invoice_count,
+        epsd.invoice_amount, eps.statement_time, epsd.create_time, epsd.grade, eps.code as statement_code, epsd.product_id,
+        ep.name as product_name, epsd.product_batch_id, epb.batch_name as product_batch_name
+    </sql>
+
+    <update id="batchDelete">
+        update erp_purchase_stmt_detail set deleted = 1 where statement_id in
+        (<foreach collection="list" item="id" separator=",">
+          #{id}
+        </foreach>)
+    </update>
+    <select id="listPurchaseStmtDetailByOrder" resultType="com.bee.platform.datadriver.dto.ErpPurchaseStmtDetailDTO">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            erp_purchase_stmt_detail epsd
+        left join erp_purchase_statement eps on epsd.statement_id = eps.id
+        left join erp_product ep on epsd.product_id = ep.id and ep.deleted = 0
+        left join erp_product_batch epb on epsd.product_batch_id = eps.id and epb.deleted = 0
+        where epsd.deleted = 0
+          and eps.order_id = #{id}
+        order by epsd.create_time asc
+    </select>
+
+    <select id="getPurchaseStatementsByStatementId" resultType="com.bee.platform.datadriver.dto.ErpPurchaseStatementDetailDTO">
+        select epsd.id, epsd.statement_time, epsd.real_dry_weight, epsd.real_price,
+        epsd.real_amount, epsd.real_debit,epb.batch_name, epsd.product_batch_id
+        from erp_purchase_stmt_detail epsd
+        left join erp_product_batch epb on epb.id = epsd.product_batch_id and epb.deleted = 0
+        where epsd.deleted = 0 and epsd.statement_id = #{statementId}
+    </select>
+
+</mapper>

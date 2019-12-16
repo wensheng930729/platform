@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.WorkOrdersMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.WorkOrders">
+        <id column="id" property="id" />
+        <result column="work_order_number" property="workOrderNumber" />
+        <result column="work_order_title" property="workOrderTitle" />
+        <result column="priority" property="priority" />
+        <result column="order_status" property="orderStatus" />
+        <result column="belong_app" property="belongApp" />
+        <result column="belong_app_name" property="belongAppName" />
+        <result column="belong_company" property="belongCompany" />
+        <result column="belong_company_name" property="belongCompanyName" />
+        <result column="role_name" property="roleName" />
+        <result column="problem_description" property="problemDescription" />
+        <result column="phone" property="phone" />
+        <result column="enclosure" property="enclosure" />
+        <result column="submit_time" property="submitTime" />
+        <result column="recent_accept_time" property="recentAcceptTime" />
+        <result column="accept_id" property="acceptId" />
+        <result column="acceptor" property="acceptor" />
+        <result column="status" property="status" />
+        <result column="create_id" property="createId" />
+        <result column="create_head" property="createHead" />
+        <result column="creator" property="creator" />
+        <result column="create_time" property="createTime" />
+        <result column="modify_id" property="modifyId" />
+        <result column="modifier" property="modifier" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, work_order_number, work_order_title, priority, order_status, belong_app, belong_app_name, belong_company,
+        belong_company_name, role_name, problem_description, phone, enclosure, submit_time, recent_accept_time,
+        accept_id, acceptor, status, create_id, create_head, creator, create_time, modify_id, modifier, modify_time, remark
+    </sql>
+
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpOpeningInventoryOrderMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.dto.ErpOpeningInventoryOrderSearchListDTO">
+        <id column="id" property="id" />
+        <result column="product_name" property="productName" />
+        <!--<result column="company_id" property="companyId" />-->
+        <result column="company_name" property="companyName" />
+        <result column="store_house_name" property="storeHouseName" />
+        <result column="unit_of_measurement" property="unitOfMeasurement" />
+        <result column="test_order" property="testOrder" />
+        <result column="quantity" property="quantity" />
+        <result column="state" property="state" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        eoio.id as id, ep.name as product_name,epiod.company_name as company_name,
+        epiod.store_house_name as store_house_name, epiod.unit_of_measurement as unit_of_measurement,
+        epiod.test_order as test_order, epiod.quantity as quantity, eoio.state as state
+    </sql>
+
+    <select id="selectInventoryOrderByCondition" resultType="com.bee.platform.datadriver.dto.ErpOpeningInventoryOrderSearchListDTO" parameterType="com.bee.platform.datadriver.rq.OpeningInventoryOrderQueryRQ">
+        SELECT
+        m.id,
+        e.`name` AS companyName,
+        p.`name` AS productName,
+        r.`name` AS storeHouseName,
+        p.unit AS unitOfMeasurement,
+        t.`code` AS testOrder,
+        d.quantity AS quantity,
+        m.state
+        FROM
+        erp_opening_inventory_order_detail d
+        LEFT JOIN erp_opening_inventory_order m ON d.opening_inventory_order_id = m.id
+        LEFT JOIN auth_enterprise e ON m.company_id = e.id
+        LEFT JOIN erp_product p ON d.product_id = p.id
+        LEFT JOIN erp_repository r ON d.repository_id = r.id
+        LEFT JOIN erp_test_report t ON d.test_report_id = t.id
+        WHERE
+        1 = 1
+        AND d.deleted =0
+        AND m.deleted =0
+        <if test="list != null and list.size > 0 and companyId == null ">
+            AND m.company_id IN
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="companyId != null">
+            AND m.company_id =#{companyId}
+        </if>
+        <if test="productName != null and productName != ''">
+            AND p.`name` LIKE CONCAT('%',#{productName},'%')
+        </if>
+        <if test="startTime != null and startTime != ''">
+            AND m.opening_inventory_time <![CDATA[>= ]]> #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND m.opening_inventory_time <![CDATA[<= ]]> #{endTime}
+        </if>
+
+    </select>
+
+</mapper>

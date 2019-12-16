@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.EnterprisesAppsLogMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.EnterprisesAppsLog">
+        <id column="id" property="id" />
+        <result column="enterprises_apps_id" property="enterprisesAppsId" />
+        <result column="org_id" property="orgId" />
+        <result column="org_name" property="orgName" />
+        <result column="app_id" property="appId" />
+        <result column="app_name" property="appName" />
+        <result column="app_roles_id" property="appRolesId" />
+        <result column="app_roles_name" property="appRolesName" />
+        <result column="operate_type" property="operateType" />
+        <result column="audit_result" property="auditResult" />
+        <result column="reject_reason" property="rejectReason" />
+        <result column="status" property="status" />
+        <result column="audit_time" property="auditTime" />
+        <result column="auditor_id" property="auditorId" />
+        <result column="auditor" property="auditor" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, enterprises_apps_id, org_id, org_name, app_id, app_name, app_roles_id, app_roles_name, operate_type, audit_result, reject_reason, status, audit_time, auditor_id, auditor
+    </sql>
+
+</mapper>

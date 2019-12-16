@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.authority.dao.mapper.AuthUserRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.authority.entity.AuthUserRole">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="role_id" property="roleId" />
+        <result column="enterprise_id" property="enterpriseId" />
+        <result column="pid" property="pid" />
+        <result column="status" property="status" />
+        <result column="level" property="level" />
+        <result column="role_type" property="roleType" />
+        <result column="order_num" property="orderNum" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+        <result column="flag" property="flag" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,flag, user_id, role_id, enterprise_id, pid, status, level, role_type, order_num, create_user, create_time, update_time, deleted
+    </sql>
+    <sql id="Base_Column_List_Sys">
+        aur.id, aur.user_id, aur.role_id, aur.enterprise_id, aur.pid, aur.status, aur.level, aur.role_type, aur.order_num, aur.create_user,
+        aur.create_time, aur.update_time, aur.deleted
+    </sql>
+
+    <select id="getUserRole" resultType="com.bee.platform.user.authority.dto.AuthUserRoleTreeDTO">
+        SELECT
+--             u.id,
+            u.user_id,
+            u.role_id,
+            r.role_name,
+            u.enterprise_id,
+            u.pid,
+            u.`level`,
+            u.role_type
+        FROM
+            auth_role r,
+            auth_user_role u
+        WHERE
+            1 = 1
+            AND r.deleted = 0
+            AND u.deleted = 0
+            AND u.status = 1
+            AND r.id = u.role_id
+            AND u.user_id = #{userId}
+
+    </select>
+
+    <insert id="insertAll" parameterType="com.bee.platform.user.authority.entity.AuthUserRole">
+        insert into auth_user_role (user_id,role_id,enterprise_id,pid,status,`level`,role_type,order_num,create_user,create_time,update_time,deleted)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.userId,jdbcType=INTEGER},
+            #{item.roleId,jdbcType=INTEGER},
+            #{item.enterpriseId,jdbcType=INTEGER},
+            #{item.pid,jdbcType=INTEGER},
+            #{item.status,jdbcType=INTEGER},
+            #{item.level,jdbcType=INTEGER},
+            #{item.roleType,jdbcType=VARCHAR},
+            #{item.orderNum,jdbcType=INTEGER},
+            #{item.createUser,jdbcType=INTEGER},
+            #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updateTime,jdbcType=TIMESTAMP},
+            #{item.deleted,jdbcType=INTEGER}
+            )
+        </foreach>
+    </insert>
+
+
+    <select id="getUserEnterpriseIds" resultType="integer">
+       SELECT
+       DISTINCT enterprise_id
+       FROM auth_user_role u
+       WHERE 1=1
+       AND u.deleted=0
+       AND u.status = 1
+       AND u.user_id=#{userId}
+    </select>
+
+
+    <select id="getRoleIds" resultType="integer">
+        SELECT DISTINCT role_id FROM auth_user_role WHERE user_id=#{userId} and enterprise_id=#{enterpriseId}
+    </select>
+
+    <select id="getUserInterfaceUri" resultType="com.bee.platform.user.authority.dto.UserInterfaceUriDTO">
+        SELECT
+            u.user_id AS userId,
+            u.role_type AS roleType,
+            i.url,
+            i.type,
+            i.sub_sys AS subSys
+        FROM
+            auth_user_role u,
+            auth_role_interface ri,
+            auth_interface i
+        WHERE 1=1
+            AND u.deleted=0
+            AND u.status = 1
+            AND ri.deleted=0
+            AND ri.status = 1
+            AND i.deleted=0
+            AND i.status = 1
+            AND u.user_id = #{userId}
+            AND u.role_id = ri.role_id
+            AND ri.interface_id = i.id
+            <if test="subSys != null and subSys != ''">
+              AND i.sub_sys = #{subSys}
+            </if>
+            
+    </select>
+
+    <select id="getChildRole" resultType="com.bee.platform.user.authority.dto.AuthRoleRoleTreeDTO">
+          SELECT
+            r.id,
+            r.role_name AS roleName,
+            r.role_type AS roleType,
+            r.`level`,
+            r.sub_sys AS subSys,
+            fr.pid
+          FROM
+                auth_role r,
+                auth_function_role fr
+          WHERE 1=1
+          AND r.deleted=0
+          AND fr.deleted=0
+          AND fr.status = 1
+          <if test="list != null and list.size!=0">
+              AND fr.pid IN
+              <foreach collection="list" item="item" separator="," open="(" close=")">
+                  #{item}
+              </foreach>
+          </if>
+          AND fr.role_id = r.id
+
+    </select>
+
+    <select id="selectAuthUserRole" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select
+            <include refid="Base_Column_List_Sys"/>
+        from
+            auth_user_role aur left join auth_role ar on aur.role_id = ar.id
+        where aur.deleted = 0
+          and ar.deleted = 0
+          and aur.user_id = #{id}
+        <if test="sysType !=null and sysType!=''">
+            and ar.sub_sys = #{sysType}
+        </if>
+        <if test="enterpriseId != null">
+            and aur.enterprise_id=#{enterpriseId}
+        </if>
+    </select>
+
+    <select id="getUserRoleIdBySubSys" resultMap="BaseResultMap">
+        select u.user_id, u.role_id, u.enterprise_id, u.pid, u.role_type  from  auth_user_role u inner  join auth_role r on u.role_id=r.id
+        where   u.deleted=0  and u.enterprise_id=#{orgId} and u.user_id=#{userId} and  r.sub_sys=#{subSys}
+    </select>
+
+</mapper>

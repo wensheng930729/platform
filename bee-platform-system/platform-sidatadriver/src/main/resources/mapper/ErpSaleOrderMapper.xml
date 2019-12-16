@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpSaleOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpSaleOrder">
+        <id column="id" property="id" />
+        <result column="contract_no" property="contractNo" />
+        <result column="company" property="company" />
+        <result column="contract_date" property="contractDate" />
+        <result column="customer" property="customer" />
+        <result column="product" property="product" />
+        <result column="remark" property="remark" />
+        <result column="sell_method" property="sellMethod" />
+        <result column="total_num" property="totalNum" />
+        <result column="amount" property="amount" />
+        <result column="invoce_state" property="invoceState" />
+        <result column="state" property="state" />
+        <result column="pay_state" property="payState" />
+        <result column="delivery_state" property="deliveryState" />
+        <result column="boiler_id" property="boilerId" />
+        <result column="shifts_id" property="shiftsId" />
+        <result column="deleted" property="deleted" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="company_name" property="companyName" />
+        <result column="customer_name" property="customerName" />
+        <result column="deleted" property="deleted" />
+        <result column="total_receipt_amount" property="totalReceiptAmount" />
+        <result column="Contract_quality_requirements" property="ContractQualityRequirements" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, contract_no, company, contract_date, customer, remark, product, sell_method, delivery_state, 
+        total_num, amount, invoce_state, state, pay_state, boiler_id, shifts_id, create_user, create_time,company_name,customer_name,deleted,total_receipt_amount,Contract_quality_requirements
+    </sql>
+
+	 <select id="query" parameterType="com.bee.platform.datadriver.rq.ErpSaleOrderQueryRQ" resultType="com.bee.platform.datadriver.dto.ErpSaleOrderQueryDTO">
+        select eso.id order_id, eso.company_name, eso.contract_no, eso.contract_date,
+         eso.customer_name, sum(esod.num) num, sum(esod.amount) amount,eso.state, ep.name productName,
+         eso.sale_user_id
+         from erp_sale_order eso
+         left join erp_sale_order_detail esod on eso.id = esod.order_id and esod.deleted = 0
+         left join erp_product ep on ep.id = esod.product_id and ep.deleted = 0
+         where eso.deleted = 0
+        <if test="customerName != null">
+            and eso.customer_name like CONCAT('%',#{customerName},'%')
+        </if>
+         <if test="contractNo != null">
+             and eso.contract_no like CONCAT('%',#{contractNo},'%')
+         </if>
+        <if test="company != null">
+            and eso.company = #{company}
+        </if>
+         <if test="productName != null">
+             and ep.name like CONCAT('%',#{productName},'%')
+         </if>
+        <if test="startTime != null">
+            and eso.contract_date <![CDATA[>=]]> #{startTime}
+        </if>
+        <if test="endTime != null">
+            and eso.contract_date <![CDATA[<=]]> #{endTime}
+        </if>
+         <if test="enterpriseIdList != null">
+             and eso.company in (
+             <foreach collection="enterpriseIdList" item="id" separator=",">
+                 #{id}
+             </foreach>
+             )
+         </if>
+         group by order_id
+         order by eso.create_time desc
+    </select>
+
+    <select id="findSaleOrders" resultType="com.bee.platform.datadriver.dto.ErpSaleOrderListDTO">
+        select eso.id order_id, eso.contract_no, eso.contract_date, eso.customer_name, sum(esod.num)num,
+        sum(esod.amount)amount, eso.delivery_state, eso.account_state, eso.invoce_state, eso.company_name,
+        ep.name productName, eso.sale_user_id, epb.batch_name, ep.unit
+        from erp_sale_order eso
+        left join erp_sale_order_detail esod on eso.id = esod.order_id and esod.deleted = 0
+        left join erp_product ep on ep.id = esod.product_id and ep.deleted = 0
+        left join erp_product_batch epb on epb.id = esod.product_batch_id and epb.deleted = 0
+        where eso.deleted = 0
+        <if test="customerName != null">
+            and eso.customer_name like CONCAT('%',#{customerName},'%')
+        </if>
+        <if test="contractNo != null">
+            and eso.contract_no like CONCAT('%',#{contractNo},'%')
+        </if>
+        <if test="company != null">
+            and eso.company = #{company}
+        </if>
+        <if test="productName != null">
+            and ep.name like CONCAT('%',#{productName},'%')
+        </if>
+        <if test="deliveryState != null">
+            and eso.delivery_state = #{deliveryState}
+        </if>
+        <if test="invoiceState != null">
+            and eso.invoce_state = #{invoiceState}
+        </if>
+        <if test="accountState != null">
+            and eso.account_state = #{accountState}
+        </if>
+
+        <if test="startTime != null">
+            and eso.contract_date <![CDATA[>=]]> #{startTime}
+        </if>
+        <if test="endTime != null">
+            and eso.contract_date <![CDATA[<=]]> #{endTime}
+        </if>
+        <if test="enterpriseIdList != null">
+            and eso.company in (
+            <foreach collection="enterpriseIdList" item="id" separator=",">
+                #{id}
+            </foreach>
+            )
+        </if>
+        group by order_id
+        order by eso.create_time desc
+    </select>
+</mapper>

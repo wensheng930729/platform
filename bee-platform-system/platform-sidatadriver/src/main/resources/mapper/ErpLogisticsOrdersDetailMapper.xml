@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpLogisticsOrdersDetailMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpLogisticsOrdersDetail">
+        <id column="id" property="id" />
+        <result column="order_id" property="orderId" />
+        <result column="product_id" property="productId" />
+        <result column="batch_name" property="`batchName" />
+        <result column="batch_id" property="batchId" />
+        <result column="product_name" property="productName" />
+        <result column="unit" property="unit" />
+        <result column="number" property="number" />
+        <result column="unit_price" property="unitPrice" />
+        <result column="tax_rate" property="taxRate" />
+        <result column="free_tax_amount" property="freeTaxAmount" />
+        <result column="tax" property="tax" />
+        <result column="tax_amount" property="taxAmount" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_id, product_id, batch_name, batch_id, product_name, unit, number, unit_price, tax_rate, free_tax_amount, tax, tax_amount, create_user, update_user, create_time, update_time, deleted
+    </sql>
+
+</mapper>

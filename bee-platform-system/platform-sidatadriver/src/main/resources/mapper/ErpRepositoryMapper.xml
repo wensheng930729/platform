@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpRepositoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpRepository">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="status" property="status"/>
+        <result column="org_id" property="orgId"/>
+        <result column="deleted" property="deleted"/>
+        <result column="type" property="type"/>
+        <result column="creater_id" property="createrId"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, status, org_id, deleted,`type`,creater_id,create_time
+    </sql>
+
+    <select id="query" parameterType="int" resultType="com.bee.platform.datadriver.dto.ErpRepositoryListDTO">
+        SELECT
+        er.id,
+        er.`name`,
+        er.org_id orgId,
+        er.`status`,
+        ec.`name` `type`
+        FROM
+        erp_repository er
+        LEFT JOIN erp_code ec ON er.type = ec.`value`
+        WHERE
+        er.deleted = 0
+        and er.org_id = #{orgId}
+        <if test="status != null">
+            and er.status = #{status}
+        </if>
+        ORDER BY er.create_time
+    </select>
+</mapper>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.DepartmentsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.Departments">
+        <id column="id" property="id" />
+        <result column="org_id" property="orgId" />
+        <result column="tree_id" property="treeId" />
+        <result column="level" property="level" />
+        <result column="name" property="name" />
+        <result column="description" property="description" />
+        <result column="create_at" property="createAt" />
+        <result column="update_at" property="updateAt" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, org_id, tree_id , level, name, description, create_at, update_at
+    </sql>
+
+    <sql id="Column_List">
+        d.id, d.org_id, d.tree_id, d.level, name, description, d.create_at, d.update_at
+    </sql>
+
+    <sql id="DEPARTMENT_INFO">
+        d.id as departmentId, d.org_id as orgId, d.name as departmentName, u.post_id as postId
+    </sql>
+
+    <select id="selectByUserIdAndOrgId"  resultType="com.bee.platform.common.entity.DepartmentInfo">
+        select  <include refid="DEPARTMENT_INFO"/> from departments d  inner  join  users_departments u  on d.id=u.department_id where 1=1
+        <if test="userId!=null" >
+          and u.user_id=#{userId}
+        </if>
+        <if test="orgId!=null" >
+          and d.org_id=#{orgId}
+        </if>
+    </select>
+
+    <select id="selectDepartmentsByUserId" resultMap="BaseResultMap">
+        SELECT
+            <include refid = "Base_Column_List" />
+        FROM
+            departments d,
+            users u,
+            users_departments ud
+        WHERE ud.department_id = d.id
+          AND u.id = ud.user_id
+          AND u.id = #{userId}
+    </select>
+
+    <resultMap id="COUNT_ENTERPRISES" type="com.bee.platform.user.dto.EnterprisesCountDTO">
+        <result column="org_id" property="orgId" />
+        <result column="count" property="count" />
+    </resultMap>
+
+    <select id="countDepartment" parameterType="java.lang.Integer" resultMap="COUNT_ENTERPRISES">
+        select org_id,count(id) as `count` from departments  where org_id in
+         (
+        <foreach collection="list" item="item" separator=",">
+          #{item}
+        </foreach>
+         )
+        group by org_id
+    </select>
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="USER_MANAGER_SEARCH" type="com.bee.platform.user.dto.UserDepartmentDTO">
+        <id column="user_id" property="userId" />
+        <result column="id" property="departmentId" />
+        <result column="name" property="department" />
+    </resultMap>
+
+    <sql id="COLUMN_MANAGER_SEARCH">
+        u.user_id as user_id,d.id as id ,d.name
+    </sql>
+
+    <select id="ManagerSearchUser" resultMap="USER_MANAGER_SEARCH" >
+        select <include refid="COLUMN_MANAGER_SEARCH"/> from departments d  inner  join users_departments u on d.id=u.department_id where d.org_id=#{orgId}
+        <if test="list!=null and list.size>0">
+           and  u.user_id in
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <update id="updateLevelByIds" parameterType="com.bee.platform.user.entity.Departments" >
+        update departments
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="level =case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                    <if test="i.level!=null">
+                        when id=#{i.id} then #{i.level}
+                    </if>
+                </foreach>
+            </trim>
+        </trim>
+        where
+        <foreach collection="list" separator="or" item="i" index="i" >
+            id=#{i.id}
+        </foreach>
+    </update>
+</mapper>

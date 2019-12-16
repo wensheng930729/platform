@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpSaleInvoiceOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpSaleInvoiceOrder">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="sale_order" property="saleOrder" />
+        <result column="sale_order_no" property="saleOrderNo" />
+        <result column="company" property="company" />
+        <result column="company_name" property="companyName" />
+        <result column="invoice_date" property="invoiceDate" />
+        <result column="customer" property="customer" />
+        <result column="customer_name" property="customerName" />
+        <result column="deleted" property="deleted" />
+        <result column="remark" property="remark" />
+        <result column="state" property="state" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMapInvoice" type="com.bee.platform.datadriver.dto.ErpSaleInvoiceOrderInfoDTO">
+        <id column="id" property="id" />
+        <result column="sub_id" property="subId" />
+        <result column="sale_order" property="saleOrder" />
+        <result column="sale_order_no" property="saleOrderNo" />
+        <result column="company_name" property="companyName" />
+        <result column="invoice_date" property="invoiceDate" />
+        <result column="customer_name" property="customerName" />
+        <result column="state" property="state" />
+        <result column="amount" property="amount" />
+        <result column="num" property="num" />
+        <result column="unit" property="unit" />
+        <result column="name" property="productName" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, code, sale_order, sale_order_no, company, company_name, invoice_date, customer, customer_name, deleted, remark, state, create_user, update_user, create_time, update_time
+    </sql>
+    <sql id="Base_Column_List_Invoice">
+        epio.id, epiod.id as sub_id, epio.company_name, epio.customer_name, epio.sale_order, epio.sale_order_no, epio.invoice_date,
+        sum(epiod.amount) as amount, epio.state, sum(epiod.num) as num, epiod.unit, ep.name
+    </sql>
+
+    <select id="selectInvoiceOrderByCondition" resultMap="BaseResultMapInvoice">
+        SELECT
+            <include refid="Base_Column_List_Invoice"/>
+        FROM
+        erp_sale_invoice_order epio
+        LEFT JOIN erp_sale_invoice_order_detail epiod ON epio.id = epiod.order_id AND epiod.deleted = 0
+        LEFT JOIN erp_product ep ON epiod.product_id = ep.id and ep.deleted = 0
+        where 1=1
+        and epio.deleted = 0
+        <choose>
+            <when test="company != null and company != ''">
+                AND epio.company = #{company}
+            </when>
+            <otherwise>
+                AND epio.company in
+                <foreach collection="list" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </otherwise>
+        </choose>
+        <if test="orderId != null and orderId != ''">
+            AND epio.sale_order_no like "%"#{orderId}"%"
+        </if>
+        <if test="scCompany != null and scCompany != ''">
+            AND epio.customer_name like "%"#{scCompany}"%"
+        </if>
+        <if test="product != null and product != ''">
+            AND ep.name like "%"#{product}"%"
+        </if>
+        <if test="state != null and state != ''">
+            AND epio.state = #{state}
+        </if>
+        <if test="createStartTime != null and createStartTime != ''">
+            AND epio.invoice_date <![CDATA[>= ]]> #{createStartTime}
+        </if>
+        <if test="createEndTime != null and createEndTime != ''">
+            AND epio.invoice_date <![CDATA[<= ]]> #{createEndTime}
+        </if>
+        GROUP BY epio.id
+        order by epio.invoice_date desc
+    </select>
+
+</mapper>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpRepoReceiptDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpRepoReceiptDetail">
+        <id column="id" property="id" />
+        <result column="receipt_id" property="receiptId" />
+        <result column="product_id" property="productId" />
+        <result column="voucher_no" property="voucherNo" />
+        <result column="wet_weight" property="wetWeight" />
+        <result column="unit" property="unit" />
+        <result column="repository_id" property="repositoryId" />
+        <result column="test_id" property="testId" />
+        <result column="batch_id" property="batchId" />
+        <result column="water_rate" property="waterRate" />
+        <result column="num" property="num" />
+        <result column="purchase_batch" property="purchaseBatch" />
+        <result column="plate_no" property="plateNo" />
+        <result column="rough_weight" property="roughWeight" />
+        <result column="weight" property="weight" />
+        <result column="grade" property="grade" />
+        <result column="create_user" property="createUser" />
+        <result column="record_time" property="recordTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, receipt_id, product_id, voucher_no, wet_weight, unit, repository_id, test_id, batch_id, water_rate, num, purchase_batch, plate_no, rough_weight, weight, grade, create_user, record_time
+    </sql>
+
+    <sql id="column_List">
+        errd.id, errd.receipt_id, errd.product_id, ep.name productName, errd.voucher_no, errd.wet_weight, errd.unit, errd.repository_id, errd.test_id, etr.code as testCode, errd.batch_id, errd.water_rate, errd.num, errd.purchase_batch, errd.plate_no, errd.rough_weight, errd.weight, errd.grade, errd.create_user, errd.record_time,
+        er.name repositoryName
+    </sql>
+
+    <sql id="Base_Column_List_Order">
+        errd.id, errd.receipt_id, errd.product_id, errd.voucher_no, errd.wet_weight, errd.unit, errd.repository_id, errd.test_id,
+        errd.batch_id, errd.water_rate, errd.num, errd.purchase_batch, errd.plate_no, errd.rough_weight, errd.weight, errd.grade,
+        errd.create_user, errd.record_time
+    </sql>
+
+    <update id="batchDeleteReceiptDetailByReceiptIds" parameterType="list">
+        update erp_repo_receipt_detail set deleted = 1 where receipt_id in
+        (<foreach collection="ids" item="id"> #{id}</foreach>)
+    </update>
+
+    <select id="findReoReceiptDetailInfo" resultType="com.bee.platform.datadriver.dto.RepoReceiptDetailDTO">
+        select <include refid="column_List"/> from erp_repo_receipt_detail errd
+        left join erp_product ep on errd.product_id = ep.id and ep.deleted = 0
+        where errd.deleted = 0 and errd.receipt_id = #{receiptId}
+    </select>
+
+    <select id="findStatementDeliveryOrderInfo" resultType="com.bee.platform.datadriver.dto.RepoReceiptDetailDTO">
+        select <include refid="column_List"/>, etr.code testCode, etr.id testId from erp_repo_receipt_detail errd
+        left join erp_product ep on errd.product_id = ep.id and ep.deleted = 0
+        left join erp_test_report etr on etr.product = ep.id and etr.deleted = 0
+        left join erp_repository_receipt err on err.id = errd.receipt_id and err.related_order = etr.order_no
+        where errd.deleted = 0 and errd.receipt_id = #{receiptId}
+    </select>
+
+    <select id="selectByOrderId" resultType="com.bee.platform.datadriver.dto.RepoReceiptDetailDTO">
+        select <include refid="column_List"/>
+            from erp_repo_receipt_detail errd
+        left join erp_repository_receipt err on err.id = errd.receipt_id and err.deleted = 0
+        left join erp_product ep on errd.product_id = ep.id and ep.deleted = 0
+        left join erp_test_report etr on etr.id = errd.test_id and etr.deleted = 0
+        left join erp_repository er on er.id = errd.repository_id and er.deleted = 0
+        where err.related_order_id = #{orderId}
+          and err.type = #{businessType}
+    </select>
+
+    <select id="findSaleStatementOrderInfo" resultType="com.bee.platform.datadriver.dto.ErpSaleStatementOrderDetailDTO">
+        select errd.id, ep.id product, ep.name productName, errd.plate_no, errd.num srcNum, errd.grade srcGrade
+        from erp_repo_receipt_detail errd
+        left join erp_repository_receipt err on err.id = errd.receipt_id and err.deleted = 0
+        left join erp_product ep on ep.deleted = 0 and ep.id = errd.product_id
+        where errd.deleted = 0
+        and err.type = 'product_delivery'
+        and err.related_order_id = #{id}
+    </select>
+
+    <select id="getRepoReceiptDetailRawInList" resultType="com.bee.platform.datadriver.dto.ErpRepoReceiptDetailRawInDTO" >
+        SELECT
+            d.id,
+            d.receipt_id AS receiptId,
+            d.product_id AS productId,
+            p.`name` AS productName,
+            d.voucher_no AS voucherNo,
+            d.wet_weight AS wetWeight,
+            d.unit,
+            d.repository_id AS repositoryId,
+            r.`name` AS repositoryName,
+            d.test_id AS testId,
+            t.`code` AS testCode,
+            d.water_rate AS waterRate,
+            d.num,
+            d.record_time AS recordTime
+        FROM
+            erp_repo_receipt_detail d
+            LEFT JOIN erp_product p ON d.product_id = p.id
+            LEFT JOIN erp_repository r ON d.repository_id = r.id
+            LEFT JOIN erp_test_report t ON d.test_id = t.id
+        WHERE 1=1
+            AND d.receipt_id =#{receiptId}
+            AND d.deleted=0
+
+
+    </select>
+
+
+    <select id="getRepoReceiptDetailProductOutList" resultType="com.bee.platform.datadriver.dto.ErpRepoReceiptDetailProductOutDTO">
+        SELECT
+            d.id,
+            d.receipt_id AS receiptId,
+            d.product_id AS productId,
+            p.`name` AS productName,
+            d.record_time AS recordTime,
+            d.plate_no AS plateNo,
+            d.rough_weight AS roughWeight,
+            d.weight,
+            d.unit,
+            d.repository_id AS repositoryId,
+            r.`name` AS repositoryName,
+            d.test_id AS testId,
+            t.`code` AS testCode,
+            d.grade,
+            d.num
+        FROM
+            erp_repo_receipt_detail d
+            LEFT JOIN erp_product p ON d.product_id = p.id
+            LEFT JOIN erp_repository r ON d.repository_id = r.id
+            LEFT JOIN erp_test_report t ON d.test_id = t.id
+        WHERE 1=1
+            AND d.receipt_id =#{receiptId}
+            AND d.deleted=0
+
+    </select>
+
+    <!-- 通过订单id查询入库明细-->
+    <select id="listByOrderId" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List_Order"/>
+        from
+            erp_repo_receipt_detail errd inner join erp_repository_receipt err on errd.receipt_id = err.id
+        where errd.deleted = 0 and err.type = #{type}
+          and err.deleted = 0
+          and err.related_order_id = #{id}
+    </select>
+
+    <select id="getSaleDeliveryInfo" resultType="com.bee.platform.datadriver.dto.RepoReceiptDetailDTO">
+        select ep.name productName, errd.record_time, errd.plate_no, errd.rough_weight, errd.weight, errd.unit,
+        etr.code testCode, errd.grade, errd.num, er.name repositoryName
+        from erp_repo_receipt_detail errd
+        left join erp_repository_receipt err on errd.receipt_id = err.id and err.deleted = 0
+        left join erp_product ep on ep.id = errd.product_id and ep.deleted = 0
+        left join erp_test_report etr on etr.id = errd.test_id and etr.deleted = 0
+        left join erp_repository er on er.id = errd.repository_id and er.deleted = 0
+        where errd.deleted = 0 and err.type = 'product_delivery' and err.related_order_id = #{id}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpLogisticsSettlementMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpLogisticsSettlement">
+        <id column="id" property="id" />
+        <result column="order_id" property="orderId" />
+        <result column="statement_no" property="statementNo" />
+        <result column="statement_time" property="statementTime" />
+        <result column="contract_weight" property="contractWeight" />
+        <result column="received_weight" property="receivedWeight" />
+        <result column="settlement_weight" property="settlementWeight" />
+        <result column="contract_price" property="contractPrice" />
+        <result column="settlement_price" property="settlementPrice" />
+        <result column="settlement_deductions" property="settlementDeductions" />
+        <result column="settlement_amount" property="settlementAmount" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_id, statement_no, statement_time, contract_weight, received_weight, settlement_weight, contract_price, settlement_price, settlement_deductions, settlement_amount, create_time, update_time, create_user, update_user
+    </sql>
+
+</mapper>

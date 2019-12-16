@@ -1,0 +1,25 @@
+{
+  "scripts": {
+    "dev": "cross-env PORT=9090 umi dev",
+    "dev:test": "cross-env PORT=9090 WATCH_FILES=none BROWSER=none CLEAR_CONSOLE=none COMPILE_ON_DEMAND=none COVERAGE=true umi dev",
+    "serve": "npm run dev:test &",
+    "build:pro": "cross-env BUILD_ENV=pro umi build",
+    "build:qa": "cross-env BUILD_ENV=qa umi build",
+    "build:qa1": "cross-env BUILD_ENV=qa1 umi build",
+    "build:test": "cross-env BUILD_ENV=test umi build",
+    "build": "cross-env BUILD_ENV=dev umi build"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.3.4",
+    "ant-design-pro": "^1.3.0",
+    "braft-editor": "^2.1.35",
+    "cross-env": "^5.1.4",
+    "lodash": "^4.17.10",
+    "lodash-decorators": "^5.0.0",
+    "moment": "^2.22.1",
+    "path-to-regexp": "^1.7.0",
+    "rc-drawer-menu": "^0.5.7",
+    "umi": "^2.1.1",
+    "umi-plugin-react": "^1.0.0-beta.17"
+  }
+}

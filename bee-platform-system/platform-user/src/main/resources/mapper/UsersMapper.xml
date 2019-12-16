@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.UserMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.User">
+        <id column="id" property="id" />
+        <result column="UUID" property="uuid" />
+        <result column="is_active" property="isActive" />
+        <result column="sig" property="sig" />
+        <result column="identifier" property="identifier" />
+        <result column="head" property="head" />
+        <result column="password" property="password" />
+        <result column="phone" property="phone" />
+        <result column="email" property="email" />
+        <result column="nickname" property="nickname" />
+        <result column="nickname_pinyin" property="nicknamePinyin" />
+        <result column="username" property="username" />
+        <result column="create_at" property="createAt" />
+        <result column="update_at" property="updateAt" />
+        <result column="update_id" property="updateId" />
+        <result column="qq" property="qq" />
+        <result column="regionid" property="regionid" />
+        <result column="address" property="address" />
+        <result column="fixtel" property="fixtel" />
+    </resultMap>
+    
+    
+    <resultMap id="BaseResultMap2" type="com.bee.platform.user.dto.EnterprisesUserDTO">
+        <id column="id" property="userid" />
+        <result column="nickname" property="nickname" />
+        <result column="phone" property="phone" />
+    </resultMap>
+    
+    
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, UUID, is_active, sig, identifier, head, password, phone, email, nickname, nickname_pinyin, username, create_at, update_at,update_id, qq, regionid, address, fixtel
+    </sql>
+
+    <!--根据企业id查询用户-->
+    <select id="selectUsersByEnterpriseId" parameterType="Integer" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            users u,
+            enterprises_users eu
+        WHERE
+            u.id = eu.user_id
+        AND eu.enterprise_id = #{orgId}
+    </select>
+    
+    <!--根据企业id查询企业管理员-->
+    <select id="getAdminByOrgId" parameterType="Integer" resultMap="BaseResultMap2">
+        SELECT
+            u.id as id, u.nickname as nickname, u.phone as phone
+        FROM
+            users u,
+            enterprises_users eu
+        WHERE
+            u.id = eu.user_id
+        AND eu.enterprise_id = #{orgId}
+        AND eu.is_active = 1
+        AND eu.role_id = 1
+    </select>
+    
+    
+    <!--根据企业id查询企业普通用户-->
+    <select id="getUserByOrgId" parameterType="Integer" resultMap="BaseResultMap2">
+        SELECT
+            u.id as id, u.nickname as nickname, u.phone as phone
+        FROM
+            users u,
+            enterprises_users eu
+        WHERE
+            u.id = eu.user_id
+        AND eu.enterprise_id = #{orgId}
+        AND eu.is_active = 1
+        AND eu.role_id = 3
+    </select>
+    
+</mapper>

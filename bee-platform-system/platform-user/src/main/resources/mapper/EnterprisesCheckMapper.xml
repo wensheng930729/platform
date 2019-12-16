@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.EnterprisesCheckMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.EnterprisesCheck">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="contact" property="contact" />
+        <result column="licence" property="licence" />
+        <result column="enclosure" property="enclosure" />
+        <result column="address" property="address" />
+        <result column="admin" property="admin" />
+        <result column="type" property="type" />
+        <result column="check_id" property="checkId" />
+        <result column="create_id" property="createId" />
+        <result column="creator" property="creator" />
+        <result column="create_at" property="createAt" />
+        <result column="modify_id" property="modifyId" />
+        <result column="modifier" property="modifier" />
+        <result column="update_at" property="updateAt" />
+        <result column="real_id" property="realId" />
+        <result column="regionid" property="regionid" />
+        <result column="linkman" property="linkman" />
+        <result column="street" property="street" />
+        <result column="permit" property="permit" />
+        <result column="certificate" property="certificate" />
+        <result column="enterprises_type" property="enterprisesType" />
+        <result column="industry" property="industry" />
+        <result column="failure_reason" property="failureReason" />
+        <result column="status" property="status" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, contact, licence, enclosure, address, admin, type, check_id, create_id, creator, create_at, modify_id, modifier, update_at, real_id, regionid, linkman, street, permit, certificate, enterprises_type, industry, failure_reason, status
+    </sql>
+
+    <!--查询用户申请认证还未通过的企业信息-->
+    <select id="findByTypes" parameterType="java.util.List" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+        enterprises_check ec
+        where
+        ec.type in
+        (
+        <foreach collection="list" item="item" separator=",">#{item}
+        </foreach>
+        )
+        and admin = #{phone}
+    </select>
+
+    <select id="getAllEnterpriseCheckByPage" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from
+            enterprises_check
+    </select>
+
+    <select id="getCounts" parameterType="java.util.List" resultType="java.lang.Long">
+        select
+            count(1)
+        from
+            enterprises_check ec
+        where
+            ec.type in
+        <foreach collection="list" item="type" index="index"
+                 open="(" close=")" separator=",">
+            #{type}
+        </foreach>
+    </select>
+
+</mapper>

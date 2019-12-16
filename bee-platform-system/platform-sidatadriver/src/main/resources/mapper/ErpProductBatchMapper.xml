@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpProductBatchMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpProductBatch">
+        <id column="id" property="id" />
+        <result column="product_id" property="productId" />
+        <result column="batch_name" property="batchName" />
+        <result column="creator_id" property="creatorId" />
+        <result column="create_time" property="createTime" />
+        <result column="status" property="status" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, product_id, batch_name, creator_id, create_time,status, deleted
+    </sql>
+
+    <!-- 根据采购订单id查询批次 -->
+    <select id="getPurchaseBatchsByOrderId" parameterType="java.lang.Integer" resultType="com.bee.platform.datadriver.dto.ErpProductBatchListDTO">
+        select
+            distinct epb.id as product_batch_id, epb.batch_name, epb.product_id
+        from
+            erp_product_batch epb left join erp_purchase_order_detail epod on epb.id = epod.batch_id
+        where epb.deleted = 0
+          and epb.status = 1
+          and epod.deleted = 0
+          and epod.order_id = #{orderId}
+    </select>
+
+    <!-- 根据销售订单id查询批次 -->
+    <select id="getSaleBatchByOrderId" parameterType="java.lang.Integer" resultType="com.bee.platform.datadriver.dto.ErpProductBatchListDTO">
+        select
+            distinct epb.id as product_batch_id, epb.batch_name, epb.product_id
+        from
+            erp_product_batch epb left join erp_sale_order_detail epod on epb.id = epod.product_batch_id
+        where epb.deleted = 0
+          and epb.status = 1
+          and epod.deleted = 0
+          and epod.order_id = #{orderId}
+    </select>
+
+</mapper>

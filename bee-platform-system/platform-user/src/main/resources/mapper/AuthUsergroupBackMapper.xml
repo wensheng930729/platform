@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.authority.dao.mapper.AuthUsergroupBackMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.authority.entity.AuthUsergroupBack">
+        <id column="id" property="id"/>
+        <result column="enterprise_id" property="enterpriseId"/>
+        <result column="group_name" property="groupName"/>
+        <result column="description" property="description"/>
+        <result column="default_value" property="defaultValue"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, enterprise_id, group_name, description, default_value, create_user, create_time, update_time, deleted
+    </sql>
+
+
+    <select id="getGroupUsers" parameterType="com.bee.platform.user.authority.rq.AuthUsergroupUsersListRQ"
+            resultType="com.bee.platform.user.authority.dto.AuthUsergroupUsersDTO">
+        SELECT
+        apu.id,
+        apu.`name` username,
+        ae.`name` enterprise,
+        d.`id` departmentId,
+        d.`name` department,
+        zp.`name` post
+        FROM
+        auth_platform_user apu
+        LEFT JOIN auth_platform_user_enterprise apue ON apue.user_id = apu.id
+        LEFT JOIN auth_enterprise ae ON ae.id = apue.enterprise_id and apue.status= 1 and apue.deleted=0
+        LEFT JOIN departments d ON d.id = apue.departments_id
+        LEFT JOIN z_post zp ON zp.id = apue.post_id
+        WHERE 1=1
+        and ae.id =#{enterpriseId}
+        and apu.id IN ( SELECT auub.user_id FROM auth_usergroup_user_back auub WHERE auub.usergroup_id = #{groupId} and auub.deleted=0 )
+        <if test="username!=null  ">
+            AND apu.NAME LIKE CONCAT('%', #{username}, '%')
+        </if>
+        <if test="deparmentId!=null  ">
+            AND d.id = #{deparmentId}
+        </if>
+    </select>
+
+</mapper>

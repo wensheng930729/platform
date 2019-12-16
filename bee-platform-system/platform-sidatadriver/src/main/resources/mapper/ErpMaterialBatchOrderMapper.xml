@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpMaterialBatchOrderMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpMaterialBatchOrder">
+        <id column="id" property="id" />
+        <result column="material_batch_name" property="materialBatchName" />
+        <result column="product_id" property="productId" />
+        <result column="product_name" property="productName" />
+        <result column="product_batch_id" property="productBatchId" />
+        <result column="company_id" property="companyId" />
+        <result column="company_name" property="companyName" />
+        <result column="number" property="number" />
+        <result column="create_time" property="createTime" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_enterprise_id" property="creatorEnterpriseId" />
+        <result column="modifier_id" property="modifierId" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="deleted" property="deleted" />
+        <result column="file_name" property="fileName" />
+        <result column="file_url" property="fileUrl" />
+        <result column="state" property="state" />
+        <result column="grade" property="grade" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, material_batch_name,grade, product_id, product_name,product_batch_id, company_id, company_name, number, create_time, creator_id, creator_enterprise_id, modifier_id, modify_time, deleted, file_name, file_url, state
+    </sql>
+
+    <select id="getMaterialBatchList" resultType="com.bee.platform.datadriver.dto.ErpMaterialBatchListDTO" >
+        SELECT
+        m.id,
+        m.material_batch_name AS materialBatchName,
+        m.company_id AS companyId,
+        m.product_id AS productId,
+        m.product_batch_id AS productBatchId,
+        CONCAT( p.`name`, IFNULL( CONCAT( '-', b.batch_name ), '' ) ) AS productAndBatch,
+        p.`name` AS productName,
+        p.unit
+        FROM
+        erp_material_batch_order m
+        LEFT JOIN erp_product p ON m.product_id = p.id
+        LEFT JOIN erp_product_batch b ON m.product_batch_id = b.id
+        WHERE
+        1 = 1
+        AND m.deleted = 0
+        AND m.state=1
+        <if test="list != null and list.size > 0">
+            AND m.company_id IN
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+
+
+    <select id="getMaterialBatchDetailProductList" resultType="com.bee.platform.datadriver.dto.ErpProductAndBatchListDTO">
+
+            SELECT
+                m.product_id AS productId,
+                m.product_batch_id AS productBatchId,
+                CONCAT( p.`name`, IFNULL( CONCAT( '-', b.batch_name ), '' ) ) AS productAndBatch,
+                p.`name` AS productName,
+                p.unit
+            FROM
+                erp_material_batch_order_detail m
+                LEFT JOIN erp_product p ON m.product_id = p.id
+                LEFT JOIN erp_product_batch b ON m.product_batch_id = b.id
+            WHERE
+                1 = 1
+                AND m.deleted = 0
+                AND m.material_batch_order_id = #{id}
+
+    </select>
+
+
+    <select id="searchMaterialBatchByCondition" resultType="com.bee.platform.datadriver.dto.ErpMaterialBatchSearchListDTO" parameterType="com.bee.platform.datadriver.rq.ErpMaterialBatchSearchRQ">
+            SELECT
+            m.id,
+            m.product_id AS productId,
+            m.product_batch_id AS productBatchId,
+            m.company_id AS companyId,
+            CONCAT( p.`name`, IFNULL( CONCAT( '-', b.batch_name ), '' ) ) AS productAndBatch,
+            p.`name` AS productName,
+            p.unit,
+            m.material_batch_name AS materialBatchName,
+            m.state
+            FROM
+            erp_material_batch_order m
+            LEFT JOIN erp_product p ON m.product_id = p.id
+            LEFT JOIN erp_product_batch b ON m.product_batch_id=b.id
+            WHERE
+            1 = 1
+            AND m.deleted = 0
+            <if test="companyId != null">
+                AND m.company_id = #{companyId}
+            </if>
+            <if test="list != null and list.size > 0 and companyId == null ">
+                AND m.company_id IN
+                <foreach collection="list" item="item" separator="," open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="state != null">
+                AND m.state = #{state}
+            </if>
+            <if test="materialBatchName != null and materialBatchName != ''">
+                AND m.material_batch_name LIKE CONCAT('%',#{materialBatchName},'%')
+            </if>
+            <if test="productName != null and productName != ''">
+                AND p.`name` LIKE CONCAT('%',#{productName},'%')
+            </if>
+            ORDER BY m.create_time DESC
+
+    </select>
+
+</mapper>

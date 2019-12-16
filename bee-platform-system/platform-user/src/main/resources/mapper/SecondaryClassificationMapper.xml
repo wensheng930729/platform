@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.SecondaryClassificationMapper">
+    <select id="queryHelperSecondClassify" resultType="com.bee.platform.user.entity.SecondaryClassification" >
+        SELECT c.* FROM m_secondary_classification c
+          INNER JOIN m_primary_classification m ON c.p_id = m.id
+           WHERE m.classify_type = 2 AND c.`status`=0 AND m.`status` = 0
+    </select>
+
+</mapper>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.dinas.datadriver.dao.mapper.DinasPurchaseAdjustDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.dinas.datadriver.entity.DinasPurchaseAdjustDetail">
+        <id column="id" property="id" />
+        <result column="adjust_id" property="adjustId" />
+        <result column="product_id" property="productId" />
+        <result column="product_spec_id" property="productSpecId" />
+        <result column="price_before" property="priceBefore" />
+        <result column="tax_price_before" property="taxPriceBefore" />
+        <result column="price_after" property="priceAfter" />
+        <result column="tax_price_after" property="taxPriceAfter" />
+        <result column="deleted" property="deleted" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="version" property="version" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        dpad.id, dpad.adjust_id, dpad.product_id, dp.product_name , dpad.product_spec_id, dps.spec_name as product_spec_name,
+        dpad.price_before, dpad.tax_price_before, dpad.price_after, dpad.tax_price_after
+    </sql>
+
+    <select id="listPurchaseAdjustDetail" resultType="com.bee.platform.dinas.datadriver.dto.DinasPurchaseAdjustDetailDTO">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            dinas_purchase_adjust_detail dpad
+        LEFT JOIN dinas_product dp ON dpad.product_id = dp.id
+        LEFT JOIN dinas_product_spec dps ON dpad.product_spec_id = dps.id
+        WHERE dpad.adjust_id = #{id}
+        AND dpad.deleted = 0
+    </select>
+
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpOutOfStockOrderMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpOutOfStockOrder">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="company_id" property="companyId" />
+        <result column="company_name" property="companyName" />
+        <result column="out_of_stock_time" property="outOfStockTime" />
+        <result column="material_batch_id" property="materialBatchId" />
+        <result column="material_batch_name" property="materialBatchName" />
+        <result column="furnace_number" property="furnaceNumber" />
+        <result column="furnace_number_id" property="furnaceNumberId" />
+        <result column="classes" property="classes" />
+        <result column="remark" property="remark" />
+        <result column="machine_production_time" property="machineProductionTime" />
+        <result column="electric_furnace_production_time" property="electricFurnaceProductionTime" />
+        <result column="active_electricity" property="activeElectricity" />
+        <result column="kvarh" property="kvarh" />
+        <result column="state" property="state" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_enterprise_id" property="creatorEnterpriseId" />
+        <result column="deleted" property="deleted" />
+        <result column="modifier_id" property="modifierId" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="create_time" property="createTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, code, company_id, company_name, out_of_stock_time, material_batch_id, material_batch_name, furnace_number, furnace_number_id, classes, remark, machine_production_time, electric_furnace_production_time, active_electricity, kvarh, state, creator_id, creator_enterprise_id, deleted, modifier_id, modify_time,create_time
+    </sql>
+
+
+    <select id="searchOutOfStockOrderByCondition" resultType="com.bee.platform.datadriver.dto.ErpOutOfStockOrderSearchListDTO" parameterType="com.bee.platform.datadriver.rq.ErpOutOfStockSearchRQ">
+            SELECT
+                m.id ,
+                m.`code` ,
+                m.company_id AS companyId,
+                b.material_batch_name AS materialBatchName ,
+                m.out_of_stock_time AS outOfStockTime ,
+                f.`name` AS furnaceNumber ,
+                m.classes ,
+                m.state
+            FROM
+                erp_out_of_stock_order m
+                LEFT JOIN erp_material_batch_order b ON m.material_batch_id = b.id
+                LEFT JOIN erp_furnace f  ON m.furnace_number_id = f.id
+                WHERE 1=1
+                AND m.deleted = 0
+                <if test="companyId != null">
+                    AND m.company_id = #{companyId}
+                </if>
+                <if test="list != null and list.size > 0 and companyId == null ">
+                    AND m.company_id IN
+                    <foreach collection="list" item="item" separator="," open="(" close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="furnaceId != null">
+                    AND m.furnace_number_id = #{furnaceId}
+                </if>
+                <if test="classes != null and classes != ''">
+                    AND m.classes = #{classes}
+                </if>
+                <if test="materialBatchName != null and materialBatchName != ''">
+                    AND b.material_batch_name LIKE CONCAT('%',#{materialBatchName},'%')
+                </if>
+                <if test="code != null and code != ''">
+                    AND m.`code` LIKE CONCAT('%',#{code},'%')
+                </if>
+                <if test="startTime != null and startTime != ''">
+                    AND m.out_of_stock_time <![CDATA[>= ]]> #{startTime}
+                </if>
+                <if test="endTime != null and endTime != ''">
+                    AND m.out_of_stock_time <![CDATA[<= ]]> #{endTime}
+                </if>
+                ORDER BY m.out_of_stock_time DESC
+
+
+    </select>
+</mapper>

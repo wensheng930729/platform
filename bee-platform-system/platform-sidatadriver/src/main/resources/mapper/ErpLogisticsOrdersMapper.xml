@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpLogisticsOrdersMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpLogisticsOrders">
+        <id column="id" property="id"/>
+        <result column="order_number" property="orderNumber"/>
+        <result column="company_id" property="companyId"/>
+        <result column="type" property="type"/>
+        <result column="source_order_id" property="sourceOrderId"/>
+        <result column="source_order" property="sourceOrder"/>
+        <result column="signing_time" property="signingTime"/>
+        <result column="carrier_id" property="carrierId"/>
+        <result column="carrier_name" property="carrierName"/>
+        <result column="origin" property="origin"/>
+        <result column="destination" property="destination"/>
+        <result column="remarks" property="remarks"/>
+        <result column="create_user" property="createUser"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="status" property="status"/>
+        <result column="estimated_arrival_time" property="estimatedArrivalTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="delivery_time" property="deliveryTime"/>
+        <result column="company_name" property="companyName"/>
+        <result column="pay_status" property="payStatus" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_number, company_id, type, source_order_id, source_order, signing_time, carrier_id, carrier_name, origin, destination, remarks, create_user, update_user, status, 
+        estimated_arrival_time, create_time, update_time, delivery_time, company_name,pay_status
+    </sql>
+
+    <select id="query" parameterType="com.bee.platform.datadriver.rq.ErpLogisticsOrdersQueryRQ"
+            resultType="com.bee.platform.datadriver.dto.ErpLogisticsOrdersDTO">
+        select elo.id, order_number, elo.company_id, elo.signing_time, elo.carrier_name, elo.carrier_id,
+        elo.estimated_arrival_time,
+        elo.status, elo.company_name,elod.product_name, sum(elod.number) number, sum(elod.tax_amount)taxAmount,
+        elod.batch_name,elod.unit,elod.batch_id,elp.status payStatus,elo.company_name `name`,elo.pay_status
+        from erp_logistics_orders elo
+        left join erp_logistics_orders_detail elod on elo.id = elod.order_id and elod.deleted = 0
+        left join erp_logistics_payment elp on elp.order_id = elo.id
+        where 1=1
+        <if test="orderNumber != null">
+            and elo.order_number like CONCAT('%',#{orderNumber},'%')
+        </if>
+        <if test="carrierName != null">
+            and elo.carrier_name like CONCAT('%',#{carrierName},'%')
+        </if>
+        <if test="productName != null">
+            and elod.product_name like CONCAT('%',#{productName},'%')
+        </if>
+        <if test="status != null">
+            and elo.status = #{status}
+        </if>
+        <if test="payStatus != null">
+            and elo.pay_status = #{payStatus}
+        </if>
+        <if test="startTime != null">
+            and elo.signing_time <![CDATA[>=]]> #{startTime}
+        </if>
+        <if test="endTime != null">
+            and elo.signing_time <![CDATA[<=]]> #{endTime}
+        </if>
+         <if test="enterpriseIdList != null">
+             and elo.company_id in (
+             <foreach collection="enterpriseIdList" item="id" separator=",">
+                 #{id}
+             </foreach>
+             )
+         </if>
+         group by elo.id
+         order by elo.create_time desc
+    </select>
+
+    <select id="queryStatus" parameterType="com.bee.platform.datadriver.rq.ErpLogisticsLogisticsTrackingRQ" resultType="com.bee.platform.datadriver.dto.ErpLogisticsLogisticsTrackingDTO">
+        select elo.id, order_number, elo.company_id, elo.company_name, elo.signing_time, elo.carrier_id,
+        elo.carrier_name, elo.origin, elo.destination, elo.estimated_arrival_time, elo.status,
+        CONCAT( elod.product_name, IFNULL( CONCAT( '-', elsd.batch_name ), '')) as productName,
+        elod.product_id, elod.unit
+        from erp_logistics_orders elo
+        left join erp_logistics_orders_detail elod on elo.id = elod.order_id and elod.deleted = 0
+        LEFT JOIN erp_logistics_status_detail elsd ON elo.id = elsd.order_id AND elsd.deleted = 0
+        where 1=1
+        <if test="enterpriseIdList != null">
+          and elo.company_id in
+            <foreach collection="enterpriseIdList" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="orderNumber != null">
+            and elo.order_number like CONCAT('%',#{orderNumber},'%')
+        </if>
+        <if test="carrierName != null">
+            and elo.carrier_name like CONCAT('%',#{carrierName},'%')
+        </if>
+        <if test="status != null">
+            and elo.status = #{status}
+        </if>
+        and elo.status != 0
+        GROUP BY elo.id
+        order by elo.create_time desc
+    </select>
+</mapper>

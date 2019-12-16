@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.AppRolesMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.AppRoles">
+        <id column="id" property="id" />
+        <result column="app_id" property="appId" />
+        <result column="role_name" property="roleName" />
+        <result column="url" property="url" />
+        <result column="status" property="status" />
+        <result column="remark" property="remark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, app_id, role_name, url, status, remark
+    </sql>
+
+    <select id="selectNotOpenedRoles" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            app_roles ar
+        WHERE
+            ar.app_id = #{appId}
+        AND NOT EXISTS (
+            SELECT ea.app_roles_id
+            FROM
+                enterprises_apps ea
+            WHERE ea.org_id = #{orgId}
+            AND ea.status = 1
+            AND ea.app_id = #{appId}
+            AND ea.aduit_state = 1
+            AND ea.app_roles_id = ar.id
+        )
+    </select>
+    <select id="selectOpenedRoles" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        app_roles ar
+        WHERE
+        ar.app_id = #{appId}
+        AND EXISTS (
+        SELECT ea.app_roles_id
+        FROM
+        enterprises_apps ea
+        WHERE ea.org_id = #{orgId}
+        AND ea.status = 1
+        AND ea.app_id = #{appId}
+        AND ea.aduit_state = 1
+        AND ea.app_roles_id = ar.id
+        )
+    </select>
+
+</mapper>

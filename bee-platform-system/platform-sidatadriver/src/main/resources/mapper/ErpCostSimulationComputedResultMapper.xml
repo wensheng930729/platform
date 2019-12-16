@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.costcontrol.dao.mapper.ErpCostSimulationComputedResultMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.costcontrol.entity.ErpCostSimulationComputedResultCr">
+        <id column="id" property="id" />
+        <result column="cost_simulation_id" property="costSimulationId" />
+        <result column="end_product_taste" property="endProductTaste" />
+        <result column="carbon_consumption" property="carbonConsumption" />
+        <result column="ore_consumption" property="oreConsumption" />
+        <result column="fifty_ore_consumption" property="fiftyOreConsumption" />
+        <result column="mining_cost" property="miningCost" />
+        <result column="carbon_cost" property="carbonCost" />
+        <result column="electricity_cost" property="electricityCost" />
+        <result column="accessories_cost" property="accessoriesCost" />
+        <result column="three_charges" property="threeCharges" />
+        <result column="manufacturing_cost" property="manufacturingCost" />
+        <result column="fifty_full_cost" property="fiftyFullCost" />
+        <result column="full_cost" property="fullCost" />
+        <result column="type" property="type" />
+        <result column="status" property="status" />
+        <result column="deleted" property="deleted" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator" property="creator" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted_time" property="deletedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, cost_simulation_id, end_product_taste, carbon_consumption, ore_consumption, fifty_ore_consumption, mining_cost, carbon_cost, electricity_cost, accessories_cost, three_charges, manufacturing_cost, fifty_full_cost, full_cost,
+        type,status,deleted,creator_id,creator,create_time,update_time,deleted_time
+
+    </sql>
+
+</mapper>

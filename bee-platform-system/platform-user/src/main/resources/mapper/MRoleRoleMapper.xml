@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.bee.platform.user.dao.mapper.MRoleRoleMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap"
+		type="com.bee.platform.user.entity.MRoleRole">
+		<id column="id" property="id" />
+		<result column="parent_role_id" property="parentRoleId" />
+		<result column="child_role_id" property="childRoleId" />
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id, parent_role_id, child_role_id
+	</sql>
+
+	<select id="getParentIdByChildId"
+		parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select r.parent_role_id from m_role_role r inner join m_roles m on
+		r.parent_role_id=m.role_id WHERE m.role_type=#{roleType}
+		<if test="list!=null and list.size>0">
+			and r.child_role_id in (
+			<foreach collection="list" item="item" separator=",">
+				#{item}
+			</foreach>
+			)
+		</if>
+	</select>
+
+	<insert id="insertAll"
+		parameterType="com.bee.platform.user.entity.MRoleRole">
+		insert into `m_role_role` (parent_role_id,child_role_id) values
+		<foreach collection="list" separator="," item="item">
+			(
+			#{item.parentRoleId,jdbcType=INTEGER},
+			#{item.childRoleId,jdbcType=INTEGER}
+			)
+		</foreach>
+	</insert>
+
+	<select id="getManagerIdsByChildId"
+		parameterType="java.lang.Integer" resultType="java.lang.Integer">
+		select manager_id from m_role_role mrr
+		JOIN m_managers_roles mmr
+		ON mrr.parent_role_id = mmr.role_id
+		where mrr.child_role_id = #{ChildId}
+	</select>
+</mapper>

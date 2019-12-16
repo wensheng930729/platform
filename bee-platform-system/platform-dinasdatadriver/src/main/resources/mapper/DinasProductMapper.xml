@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.dinas.datadriver.dao.mapper.DinasProductMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.dinas.datadriver.entity.DinasProduct">
+        <id column="id" property="id"/>
+        <result column="company_id" property="companyId"/>
+        <result column="product_name" property="productName"/>
+        <result column="unit" property="unit"/>
+        <result column="status" property="status"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_user" property="createUser"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_user" property="updateUser"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_id, product_name, unit, status, deleted, create_user, create_time, update_user, update_time
+    </sql>
+
+    <select id="getRelateProductAll" parameterType="int"
+            resultType="com.bee.platform.dinas.datadriver.dto.DinasProductSpecAllocateDTO">
+SELECT
+	dp.id productId,
+	dp.product_name productName,
+	dps.id specId,
+	dps.spec_name specName
+FROM
+	dinas_product dp
+	LEFT JOIN dinas_product_spec dps ON dps.product_id = dp.id AND dps.deleted = 0
+WHERE
+	dp.company_id = #{orgId}
+	AND dp.deleted = 0
+
+    </select>
+
+    <select id="getRelateProductCustomer" parameterType="list"
+            resultType="com.bee.platform.dinas.datadriver.dto.DinasProductSpecAllocateDTO">
+SELECT
+    dcp.customer_id customerId,
+    dp.id productId,
+	dp.product_name productName,
+	dps.id specId,
+	dps.spec_name specName
+FROM
+	dinas_customer_product dcp
+	LEFT JOIN dinas_product dp ON dcp.product_id = dp.id and dp.deleted = 0
+	LEFT JOIN dinas_product_spec dps ON dcp.product_spec_id = dps.id and dps.deleted = 0
+WHERE 1=1
+	AND dcp.deleted = 0
+	AND dcp.customer_id in
+	  <foreach collection="ids" item="item" open="(" separator="," close=")">
+          #{item}
+      </foreach>
+
+    </select>
+
+    <select id="getCustomerProduct" parameterType="int" resultType="com.bee.platform.dinas.datadriver.dto.DinasProductBoxDTO">
+SELECT
+	dp.id,
+	dp.product_name productName,
+	dp.unit
+FROM
+	dinas_customer_product dcp
+	LEFT JOIN dinas_product dp ON dcp.product_id = dp.id AND dp.deleted = 0
+WHERE
+	1 = 1
+	AND dcp.deleted = 0
+	AND dcp.customer_id = #{customerId}
+GROUP BY dp.id
+    </select>
+
+    <select id="getCustomerProductSpec" parameterType="map" resultType="com.bee.platform.dinas.datadriver.dto.DinasProductSpecBoxDTO">
+SELECT
+	dps.id,
+	dps.spec_name specName
+FROM
+	dinas_customer_product dcp
+	LEFT JOIN dinas_product_spec dps ON dcp.product_spec_id = dps.id AND dps.deleted = 0
+WHERE
+	1 = 1
+	AND dcp.deleted = 0
+	AND dcp.product_id = #{productId}
+	AND dcp.customer_id = #{customerId}
+	GROUP BY dps.id
+    </select>
+
+</mapper>

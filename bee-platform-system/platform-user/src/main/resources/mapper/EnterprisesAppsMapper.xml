@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.bee.platform.user.dao.mapper.EnterprisesAppsMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap"
+		type="com.bee.platform.user.entity.EnterprisesApps">
+		<id column="id" property="id" />
+		<result column="org_id" property="orgId" />
+		<result column="org_name" property="orgName" />
+		<result column="app_id" property="appId" />
+		<result column="app_roles_id" property="appRolesId" />
+		<result column="aduit_state" property="aduitState" />
+		<result column="reject_reason" property="rejectReason" />
+		<result column="url" property="url" />
+		<result column="status" property="status" />
+		<result column="create_id" property="createId" />
+		<result column="create_time" property="createTime" />
+		<result column="creator" property="creator" />
+		<result column="modify_id" property="modifyId" />
+		<result column="modify_time" property="modifyTime" />
+		<result column="modifier" property="modifier" />
+	</resultMap>
+
+	<resultMap id="appOpenMap"
+		type="com.bee.platform.user.dto.AppListDTO">
+		<id column="id" property="id" />
+		<result column="app_id" property="appId" />
+		<result column="name" property="name" />
+		<result column="abbreviation" property="abbreviation" />
+	</resultMap>
+
+	<resultMap id="appAndRoleOpenMap"
+		type="com.bee.platform.user.dto.EnterprisesAppsOpenedDTO">
+		<result column="app_name" property="appName" />
+		<result column="role_name" property="appRolesName" />
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id, org_id, org_name, app_id, app_roles_id, aduit_state,
+		reject_reason,
+		url, status, create_id, create_time, creator, modify_id,
+		modify_time,
+		modifier
+	</sql>
+	<!--查询已开通产品 -->
+	<select id="listOpenedApp" parameterType="java.lang.Integer" resultMap="appOpenMap">
+		SELECT
+			DISTINCT (app_id) as id,
+			a.`name`,
+			a.`abbreviation`
+		FROM
+			enterprises_apps ea
+		LEFT JOIN app a ON a.id = ea.app_id
+		WHERE ea.org_id = #{orgId}
+		  AND ea.status = 1
+		  AND ea.aduit_state = 1
+	</select>
+	<!--查询未开通产品 -->
+	<select id="listNotOpenedApp" parameterType="java.lang.Integer" resultMap="appOpenMap">
+		SELECT
+			a.id,
+			a.name,
+			a.abbreviation
+		FROM
+			app a
+		WHERE NOT EXISTS (
+			SELECT
+				ea.app_id
+			FROM
+				enterprises_apps ea
+			WHERE ea.aduit_state = 1
+			  AND ea.status = 1
+			  AND ea.app_id = a.id
+			  AND ea.org_id = #{orgId}
+		)
+
+	</select>
+
+	<!--查询已开通产品及角色 -->
+	<select id="queryOpendAppRoles" parameterType="java.lang.Integer" resultMap="appAndRoleOpenMap">
+		SELECT
+			a.name as app_name,
+			ar.role_name as role_name
+		from enterprises_apps ea
+		JOIN app a ON a.id = ea.app_id
+		LEFT JOIN app_roles ar ON ar.id =
+			ea.app_roles_id
+		WHERE ea.org_id = #{orgId}
+		  AND ea.status = 1
+		  AND ea.aduit_state = 1
+	</select>
+
+	<!--产品名称查询所有 -->
+	<select id="getAllByAppName"
+		resultType="com.bee.platform.user.dto.EnterprisesAppsDTO">
+		SELECT
+		a.id as id,
+		a.org_name as orgName,
+		b.name as appName,
+		c.role_name
+		as
+		appRolesName,
+		a.aduit_state as aduitState,
+		a.reject_reason as
+		rejectReason,
+		a.create_time as createTime,
+		a.creator as createTime
+		from
+		enterprises_apps a
+		JOIN app b ON b.id = a.app_id
+		LEFT JOIN app_roles c
+		ON c.id = a.app_roles_id
+		WHERE
+		a.status = 1
+		<if test="content != null ">
+			and b.name like CONCAT('%', #{content}, '%')
+		</if>
+		order by a.create_time desc
+	</select>
+
+	<!--审核状态及产品名称查询 -->
+	<select id="queryAppsByAppName"
+		resultType="com.bee.platform.user.dto.EnterprisesAppsDTO">
+		SELECT
+		a.id as id,
+		a.org_name as orgName,
+		b.name as appName,
+		c.role_name
+		as
+		appRolesName,
+		a.aduit_state as aduitState,
+		a.reject_reason as
+		rejectReason,
+		a.create_time as createTime,
+		a.creator as createTime
+		from
+		enterprises_apps a
+		JOIN app b ON b.id = a.app_id
+		LEFT JOIN app_roles c
+		ON c.id = a.app_roles_id
+		WHERE
+		a.status = 1
+		<if test="content != null ">
+			and b.name like CONCAT('%', #{content}, '%')
+		</if>
+		<if test="auditState!=null ">
+			AND a.aduit_state = #{auditState}
+		</if>
+		order by a.create_time desc
+	</select>
+
+	<!--产品名称查询所有 -->
+	<select id="getAllByOrgName"
+		resultType="com.bee.platform.user.dto.EnterprisesAppsDTO">
+		SELECT
+		a.id as id,
+		a.org_name as orgName,
+		b.name as appName,
+		c.role_name
+		as
+		appRolesName,
+		a.aduit_state as aduitState,
+		a.reject_reason as
+		rejectReason,
+		a.create_time as createTime,
+		a.creator as createTime
+		from
+		enterprises_apps a
+		JOIN app b ON b.id = a.app_id
+		LEFT JOIN app_roles c
+		ON c.id = a.app_roles_id
+		WHERE
+		a.status = 1
+		<if test="content != null ">
+			and a.org_name like CONCAT('%', #{content}, '%')
+		</if>
+		order by a.create_time desc
+	</select>
+
+	<!--审核状态及产品名称查询 -->
+	<select id="queryAppsByOrgName"
+		resultType="com.bee.platform.user.dto.EnterprisesAppsDTO">
+		SELECT
+		a.id as id,
+		a.org_name as orgName,
+		b.name as appName,
+		c.role_name
+		as
+		appRolesName,
+		a.aduit_state as aduitState,
+		a.reject_reason as
+		rejectReason,
+		a.create_time as createTime,
+		a.creator as createTime
+		from
+		enterprises_apps a
+		JOIN app b ON b.id = a.app_id
+		LEFT JOIN app_roles c
+		ON c.id = a.app_roles_id
+		WHERE
+		a.status = 1
+		<if test="content != null">
+			and a.org_name like CONCAT('%', #{content}, '%')
+		</if>
+		<if test="auditState!=null ">
+			AND a.aduit_state = #{auditState}
+		</if>
+		order by a.create_time desc
+	</select>
+
+
+
+</mapper>

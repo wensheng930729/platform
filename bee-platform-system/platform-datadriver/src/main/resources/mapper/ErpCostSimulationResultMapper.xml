@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.costcontrol.dao.mapper.ErpCostSimulationResultMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.costcontrol.entity.ErpCostSimulationResult">
+        <id column="id" property="id" />
+        <result column="simulation_id" property="simulationId" />
+        <result column="material_detail" property="materialDetail" />
+        <result column="grade" property="grade" />
+        <result column="material_mine_cost" property="materialMineCost" />
+        <result column="fifty__mine_cost" property="fiftyMineCost" />
+        <result column="carbon_cost" property="carbonCost" />
+        <result column="fifty_full_cost" property="fiftyFullCost" />
+        <result column="full_cost" property="fullCost" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, simulation_id, material_detail, grade, material_mine_cost, fifty__mine_cost, carbon_cost, fifty_full_cost, full_cost, create_time, update_time, deleted
+    </sql>
+
+</mapper>

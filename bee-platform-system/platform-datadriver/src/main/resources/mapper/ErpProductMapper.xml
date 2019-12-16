@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpProductMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpProduct">
+        <id column="id" property="id" />
+        <id column="enterprise_id" property="enterpriseId" />
+        <result column="code" property="code" />
+        <result column="logo" property="logo" />
+        <result column="name" property="name" />
+        <result column="check_items" property="checkItems" />
+        <result column="unit" property="unit" />
+        <result column="category" property="category" />
+        <result column="enable_batch" property="enableBatch" />
+        <result column="status" property="status" />
+        <result column="deleted" property="deleted" />
+        <result column="operate_id" property="operateId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted_time" property="deletedTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, enterprise_id,code,logo, name,check_items, unit, category, enable_batch, status,deleted,operate_id,create_time,update_time,deleted_time
+    </sql>
+
+    <select id="getProductCategory" resultType="com.bee.platform.datadriver.dto.ErpProductCategoryNameDTO">
+        SELECT
+            ep.id AS productId,
+            ep.`name` AS productName,
+            epc.`name` AS categoryName
+        FROM
+            erp_product ep,
+            erp_product_category epc
+        WHERE
+            ep.category = epc.id
+            AND ep.id = #{productId}
+
+    </select>
+</mapper>

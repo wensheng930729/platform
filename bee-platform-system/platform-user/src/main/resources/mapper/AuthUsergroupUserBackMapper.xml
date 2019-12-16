@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.authority.dao.mapper.AuthUsergroupUserBackMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.authority.entity.AuthUsergroupUserBack">
+        <result column="usergroup_id" property="usergroupId" />
+        <result column="user_id" property="userId" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        usergroup_id, user_id,deleted
+    </sql>
+
+
+    <select id="getUsergroupUserList" resultType="com.bee.platform.user.authority.dto.AuthUsergroupUserListDTO">
+        SELECT
+            m.user_id AS userId,
+            u.`name`
+        FROM
+            auth_usergroup_user_back m
+            LEFT JOIN auth_platform_user u ON m.user_id = u.id
+            WHERE  1=1
+            AND m.usergroup_id = #{usergroupId}
+            AND m.deleted=0
+    </select>
+</mapper>

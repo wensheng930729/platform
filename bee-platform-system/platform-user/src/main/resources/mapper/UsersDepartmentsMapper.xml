@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.UsersDepartmentsMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.UsersDepartments">
+        <id column="id" property="id" />
+        <result column="user_id" property="userId" />
+        <result column="department_id" property="departmentId" />
+        <result column="post_id" property="postId" />
+        <result column="post" property="post" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, department_id,post_id, post
+    </sql>
+
+    <delete id="deleteUserInDepart" >
+        delete  from users_departments where  user_id=#{userId} and  department_id in
+       (
+        <foreach collection="list" item="item" separator="," >
+          item
+        </foreach>
+       )
+    </delete>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id">
+        insert into users_departments (user_id,department_id,post_id,post) values
+        <foreach collection="list" item="d" separator=",">
+            (#{d.userId},#{d.departmentId},#{d.postId},
+            <choose><when test="d.post != null">#{d.post}</when><otherwise>''</otherwise></choose>)
+        </foreach>
+    </insert>
+</mapper>

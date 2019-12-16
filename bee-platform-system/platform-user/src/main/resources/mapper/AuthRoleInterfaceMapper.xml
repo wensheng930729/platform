@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.authority.dao.mapper.AuthRoleInterfaceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.authority.entity.AuthRoleInterface">
+        <id column="id" property="id" />
+        <result column="role_id" property="roleId" />
+        <result column="interface_id" property="interfaceId" />
+        <result column="status" property="status" />
+        <result column="order_num_id" property="orderNumId" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, role_id, interface_id, status, order_num_id, create_user, create_time, update_time, deleted
+    </sql>
+
+    <insert id="batchInsert" useGeneratedKeys="true" keyProperty="id">
+        insert into auth_role_interface (role_id,interface_id,status,order_num_id,create_user,create_time) values
+        <foreach collection="authRoleInterfaces" item="item" separator=",">
+            (#{item.roleId},#{item.interfaceId},
+            <choose><when test="item.status != null">#{item.status}</when><otherwise>0</otherwise></choose>,
+            <choose><when test="item.orderNumId != null">#{item.orderNumId}</when><otherwise>0</otherwise></choose>,
+            #{item.createUser}, #{item.createTime})
+        </foreach>
+    </insert>
+
+</mapper>

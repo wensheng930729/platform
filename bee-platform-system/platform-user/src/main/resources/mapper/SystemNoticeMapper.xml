@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.SystemNoticeMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.SystemNotice">
+        <id column="notice_id" property="noticeId" />
+        <result column="notifier_id" property="notifierId" />
+        <result column="notice_title" property="noticeTitle" />
+        <result column="notice_content" property="noticeContent" />
+        <result column="read" property="read" />
+        <result column="status" property="status" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        notice_id, notifier_id, notice_title, notice_content, `read`, status, create_time, update_time
+    </sql>
+
+    <insert id="insertAll" parameterType="com.bee.platform.user.entity.SystemNotice">
+        insert into m_system_notice (notifier_id,notice_title,notice_content,`read`,status,create_time,update_time) values
+        <foreach collection="list" item="item"  separator=",">
+            (
+            #{item.notifierId,jdbcType=INTEGER},
+            #{item.noticeTitle,jdbcType=VARCHAR},
+            #{item.noticeContent,jdbcType=VARCHAR},
+            #{item.read,jdbcType=INTEGER},
+            #{item.status,jdbcType=INTEGER},
+            #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updateTime,jdbcType=TIMESTAMP}
+            )
+        </foreach>
+
+    </insert>
+
+    <select id="selectNoticeByNotifierId" resultType="java.lang.Integer" >
+        select notice_id from m_system_notice where  notifier_id=#{notifierId} and status =1 and `read` =0
+        <if test="list!=null and list.size>0">
+            and notice_id in
+            (
+            <foreach collection="list" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+    </select>
+</mapper>

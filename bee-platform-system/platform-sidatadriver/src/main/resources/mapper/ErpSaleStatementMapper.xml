@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpSaleStatementMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpSaleStatement">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="src_num" property="srcNum" />
+        <result column="real_num" property="realNum" />
+        <result column="src_grade" property="srcGrade" />
+        <result column="receive_grade" property="receiveGrade" />
+        <result column="real_grade" property="realGrade" />
+        <result column="src_amount" property="srcAmount" />
+        <result column="real_amount" property="realAmount" />
+        <result column="create_time" property="createTime" />
+        <result column="sale_order" property="saleOrder" />
+        <result column="sale_order_id" property="saleOrderId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, code, src_num, real_num, src_grade, receive_grade, real_grade, src_amount, real_amount, create_time, sale_order, sale_order_id
+    </sql>
+
+
+</mapper>

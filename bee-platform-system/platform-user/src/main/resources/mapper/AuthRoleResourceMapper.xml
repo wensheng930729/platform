@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.authority.dao.mapper.AuthRoleResourceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.authority.entity.AuthRoleResource">
+        <id column="id" property="id" />
+        <result column="role_id" property="roleId" />
+        <result column="resource_id" property="resourceId" />
+        <result column="order_num" property="orderNum" />
+        <result column="deleted" property="deleted" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        arr.id, arr.role_id, arr.resource_id, arr.order_num, arr.deleted, arr.create_user, arr.create_time, arr.update_time
+    </sql>
+    <!--<select id="selectResourcesByOrg" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            auth_role_resource arr
+        LEFT JOIN auth_enterprise_role aer
+        ON arr.role_id = aer.role_id
+        WHERE aer.enterprise_id = #{orgId}
+    </select>
+    <select id="selectResourcesByUser" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List" />
+        FROM
+            auth_role_resource arr
+        LEFT JOIN auth_user_role aur
+        ON arr.role_id = aur.role_id
+        WHERE aur.user_id = #{id}
+    </select>-->
+
+</mapper>

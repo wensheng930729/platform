@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpSaleOrderDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpSaleOrderDetail">
+        <id column="id" property="id" />
+        <result column="order_id" property="orderId" />
+        <result column="product_id" property="productId" />
+        <result column="num" property="num" />
+        <result column="unit" property="unit" />
+        <result column="tax_price" property="taxPrice" />
+        <result column="tax_rate" property="taxRate" />
+        <result column="tax_amount" property="taxAmount" />
+        <result column="amount" property="amount" />
+        <result column="deleted" property="deleted" />
+     
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_id, product_id, num, unit, tax_price, tax_rate, tax_amount, amount,deleted
+    </sql>
+    
+    <select id="selectErpSaleOrderDetail" resultType="com.bee.platform.customer.dto.ErpSaleOrderDetailDTO" >
+        select esod.id, esod.order_id, esod.product_id, esod.num, esod.unit, esod.tax_price,
+         esod.tax_rate, esod.tax_amount, esod.amount, ep.name productName
+        from erp_sale_order_detail esod
+        left join erp_product ep on ep.id = esod.product_id and ep.deleted = 0
+        where esod.deleted = 0 and esod.order_id = #{orderId}
+        order by esod.create_time desc
+    </select>
+
+    <select id="findSaleOrderInfo" resultType="com.bee.platform.datadriver.dto.ErpSaleOrderQueryDTO">
+        select esod.id, eso.company, eso.company_name, eso.contract_no, eso.customer, eso.customer_name,
+         eso.sell_method, eso.contract_date, esod.unit, eso.id order_id,
+         esod.num,eso.contract_quality_requirements, esod.tax_price, ep.id productId, ep.name productName
+        from erp_sale_order eso
+        left join erp_sale_order_detail esod on eso.id = esod.order_id and esod.deleted = 0
+        left join erp_product ep on ep.id = esod.product_id and ep.deleted = 0
+        where eso.deleted = 0 and eso.id = #{orderId}
+    </select>
+
+</mapper>

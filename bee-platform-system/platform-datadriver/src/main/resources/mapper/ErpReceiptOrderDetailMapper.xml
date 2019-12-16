@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpReceiptOrderDetailMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpReceiptOrderDetail">
+        <id column="id" property="id" />
+        <result column="receipt_order_id" property="receiptOrderId" />
+        <result column="sale_code" property="saleCode" />
+        <result column="sale_order_id" property="saleOrderId" />
+        <result column="sale_order_amount" property="saleOrderAmount" />
+        <result column="receipt_amount" property="receiptAmount" />
+        <result column="total_receipt_amount" property="totalReceiptAmount" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_enterprise_id" property="creatorEnterpriseId" />
+        <result column="create_time" property="createTime" />
+        <result column="deleted" property="deleted" />
+        <result column="modifier_id" property="modifierId" />
+        <result column="modify_time" property="modifyTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, receipt_order_id, sale_order_id,sale_code, sale_order_amount, receipt_amount, total_receipt_amount, creator_id, creator_enterprise_id, create_time, deleted, modifier_id, modify_time
+    </sql>
+
+    <select id="getDetailList" resultType="com.bee.platform.datadriver.dto.ErpReceiptOrderDetailDTO" >
+        SELECT
+            d.id,
+            d.receipt_order_id AS receiptOrderId,
+            d.sale_order_id AS saleOrderId,
+            d.sale_code AS saleCode,
+            d.sale_order_amount AS saleOrderAmount,
+            d.receipt_amount AS receiptAmount,
+            s.total_receipt_amount AS totalReceiptAmount
+        FROM
+            erp_receipt_order_detail d,
+            erp_sale_order s
+        WHERE 1=1
+        AND	d.sale_order_id = s.id
+        AND d.receipt_order_id = #{receiptOrderId}
+        AND d.deleted = 0
+        AND s.deleted = 0
+
+    </select>
+
+    <select id="findOrderIdsByOrderId" resultType="int">
+        select distinct sale_order_id from
+        erp_receipt_order_detail where deleted = 0 and sale_order_id in
+            (<foreach collection="ids" item="id" separator=",">
+              #{id}
+            </foreach>)
+    </select>
+
+    <select id="getReceiptOrderDetailByOrderId" resultType="com.bee.platform.datadriver.dto.ErpReceiptOrderDetailDTO">
+        select ero.code receiptCode, ero.receipt_time, erod.receipt_amount, ec.name payMethod
+        from erp_receipt_order_detail erod
+        left join erp_receipt_order ero on ero.id = erod.receipt_order_id and ero.deleted = 0
+        left join erp_code ec on ec.value = ero.pay_method
+        where erod.deleted = 0 and erod.sale_order_id = #{id}
+    </select>
+
+</mapper>

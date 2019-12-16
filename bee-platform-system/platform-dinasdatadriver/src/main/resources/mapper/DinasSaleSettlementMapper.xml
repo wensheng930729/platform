@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.dinas.datadriver.dao.mapper.DinasSaleSettlementMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.dinas.datadriver.entity.DinasSaleSettlement">
+        <id column="id" property="id" />
+        <result column="company_id" property="companyId" />
+        <result column="sale_order_id" property="saleOrderId" />
+        <result column="inspection_order_id" property="inspectionOrderId" />
+        <result column="settlement_unit_price" property="settlementUnitPrice" />
+        <result column="settlement_sum_price" property="settlementSumPrice" />
+        <result column="status" property="status" />
+        <result column="settlement_date" property="settlementDate" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_user" property="updateUser" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_id, sale_order_id, inspection_order_id, settlement_unit_price, settlement_sum_price, status, settlement_date, create_user, create_time, update_user, update_time, deleted
+    </sql>
+
+    <select id="searchSaleSettlementByCondition" resultType="com.bee.platform.dinas.datadriver.dto.DinasSaleSettlementSearchDTO" parameterType="com.bee.platform.dinas.datadriver.rq.DinasSaleSettlementSearchRQ">
+        SELECT
+            m.id,
+            m.inspection_order_id AS inspectionOrderId,
+            m.company_id AS companyId,
+            m.sale_order_id AS saleOrderId,
+            so.`code` AS saleOrderCode,
+            so.customer_id AS buyerId,
+            c.customer_name AS buyerName,
+            ig.product_id AS productId,
+            p.product_name AS productName,
+            ig.product_spec_id AS productSpecId,
+            ps.spec_name AS productSpecName,
+            sod.price,
+            sod.tax_price AS taxPrice,
+            m.settlement_unit_price AS settlementUnitPrice,
+            ig.num,
+            sod.price * ig.num AS sumPrice,
+            sod.tax_price * ig.num AS sumTaxPrice,
+            m.settlement_sum_price AS settlementSumPrice,
+            ig.inspection_date AS inspectionDate,
+            m.`status`,
+            m.settlement_date AS settlementDate
+        FROM
+            dinas_sale_settlement m
+            LEFT JOIN dinas_inspection_goods ig ON m.inspection_order_id = ig.id
+            LEFT JOIN dinas_sale_order so ON m.sale_order_id = so.id
+            LEFT JOIN dinas_customer c ON so.customer_id = c.id
+            LEFT JOIN dinas_sale_order_detail sod ON m.sale_order_id = sod.order_id
+            AND sod.deleted = 0
+            AND ig.product_id = sod.product_id
+            AND ig.product_spec_id = sod.product_spec_id
+            LEFT JOIN dinas_product p ON ig.product_id = p.id
+            LEFT JOIN dinas_product_spec ps ON ig.product_spec_id = ps.id
+        WHERE
+            1 = 1
+            AND m.deleted = 0
+        <if test="companyId != null">
+            AND m.company_id = #{companyId}
+        </if>
+        <if test="saleOrderCode != null and saleOrderCode != ''">
+            AND so.`code` LIKE CONCAT('%',#{saleOrderCode},'%')
+        </if>
+        <if test="buyerName != null and buyerName != ''">
+            AND c.customer_name LIKE CONCAT('%',#{buyerName},'%')
+        </if>
+        <if test="productName != null and productName != ''">
+            AND p.product_name LIKE CONCAT('%',#{productName},'%')
+        </if>
+        <if test="productSpecName != null and productSpecName != ''">
+            AND ps.spec_name  LIKE CONCAT('%',#{productSpecName},'%')
+        </if>
+        <if test="status != null">
+            AND m.`status` = #{status}
+        </if>
+        <if test="inspectionStartTime != null and inspectionStartTime != ''">
+            AND ig.inspection_date <![CDATA[>= ]]> #{inspectionStartTime}
+        </if>
+        <if test="inspectionEndTime != null and inspectionEndTime != ''">
+            AND ig.inspection_date <![CDATA[<= ]]> #{inspectionEndTime}
+        </if>
+        <if test="settlementStartTime != null and settlementStartTime != ''">
+            AND m.settlement_date <![CDATA[>= ]]> #{settlementStartTime}
+        </if>
+        <if test="settlementEndTime != null and settlementEndTime != ''" >
+            AND m.settlement_date <![CDATA[<= ]]> #{settlementEndTime}
+        </if>
+        GROUP BY m.id
+        ORDER BY m.create_time DESC
+    </select>
+
+</mapper>

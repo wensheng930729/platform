@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.AuthCustomerMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.customer.entity.AuthCustomer">
+        <id column="id" property="id" />
+        <result column="enterprise_id" property="enterpriseId" />
+        <result column="cus_no" property="cusNo" />
+        <result column="cus_name" property="cusName" />
+        <result column="simple_name" property="simpleName" />
+        <result column="cus_first_type" property="cusFirstType" />
+        <result column="cus_second_type" property="cusSecondType" />
+        <result column="status" property="status" />
+        <result column="deleted" property="deleted" />
+        <result column="operate_id" property="operateId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted_time" property="deletedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, enterprise_id, cus_no, cus_name,simple_name,cus_first_type, cus_second_type, status, deleted,operate_id, create_time, update_time,deleted_time
+    </sql>
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.IndexInitMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.IndexInit">
+        <result column="register_enterprise" property="registerEnterprise" />
+        <result column="public_requirement" property="publicRequirement" />
+        <result column="supply_money" property="supplyMoney" />
+        <result column="chain_enterprise_cnt" property="chainEnterpriseCnt" />
+        <result column="chain_service_cnt" property="chainServiceCnt" />
+        <result column="logistical_enterprise_cnt" property="logisticalEnterpriseCnt" />
+        <result column="logistical_service_cnt" property="logisticalServiceCnt" />
+        <result column="finished_order_cnt" property="orderFulfill" />
+        <result column="transport_volume" property="number9" />
+        <result column="number10" property="number10" />
+        <result column="count_company" property="countCompany" />
+        <result column="count_vaild_inquiry" property="countVaildInquiry" />
+        <result column="count_vaild_quoted" property="countVaildQuoted" />
+        <result column="count_money" property="countMoney" />
+    </resultMap>
+
+<!--     通用查询结果列
+    <sql id="Base_Column_List">
+        register_enterprise, public_requirement, supply_money, chain_enterprise_cnt, chain_service_cnt, Logistical_enterprise_cnt AS logisticalEnterpriseCnt, logistical_service_cnt, number8 as orderFulfill, number9, number10
+    </sql> -->
+        <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        register_enterprise, public_requirement, supply_money, chain_enterprise_cnt, chain_service_cnt, logistical_enterprise_cnt, logistical_service_cnt, finished_order_cnt, transport_volume, number10,count_company,
+        count_vaild_inquiry, count_vaild_quoted, count_money
+    </sql>
+
+</mapper>

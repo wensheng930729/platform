@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.EnterprisesUsersMapper">
+
+    <!-- 通用查询映射结果 -->
+  <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.EnterprisesUsers">
+        <id column="id" property="id" />
+        <result column="enterprise_id" property="enterpriseId" />
+        <result column="user_id" property="userId" />
+        <result column="post" property="post" />
+        <result column="is_invite" property="isInvite" />
+        <result column="is_active" property="isActive" />
+        <result column="nickname" property="nickname" />
+        <result column="nickname_pinyin" property="nicknamePinyin" />
+        <result column="app_ids" property="appIds" />
+        <result column="phone" property="phone" />
+        <result column="departmentsid" property="departmentsid" />
+        <result column="email" property="email" />
+        <result column="fixtel" property="fixtel" />
+        <result column="regionid" property="regionid" />
+        <result column="address" property="address" />
+        <!--<result column="head" property="head" />-->
+        <result column="zpostid" property="zpostid" />
+        <result column="role_id" property="roleId" />
+        
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, enterprise_id, user_id, post, is_invite, is_active, nickname, nickname_pinyin, app_ids,
+         phone, departmentsid, email, fixtel, regionid, address/*, head*/, zpostid,role_id
+    </sql>
+
+    <select id="listOrgIdsByUserId" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select enterprise_id from  enterprises_users where  user_id=#{userId}
+    </select>
+
+
+    <resultMap id="COUNT_ENTERPRISES" type="com.bee.platform.user.dto.EnterprisesCountDTO">
+        <result column="enterprise_id" property="orgId" />
+        <result column="count" property="count" />
+    </resultMap>
+    <select id="countUserByOrgIds" parameterType="java.lang.Integer" resultMap="COUNT_ENTERPRISES" >
+        select enterprise_id,count(id) as `count` from enterprises_users  where enterprise_id in
+        (
+        <foreach collection="list" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+        group by enterprise_id
+    </select>
+
+    <resultMap id="USER_MANAGER_SEARCH" type="com.bee.platform.user.dto.UserManagementDTO">
+        <id column="user_id" property="userId" />
+        <result column="username" property="username" />
+        <result column="nickname" property="nickname" />
+        <result column="post" property="position" />
+    </resultMap>
+
+    <sql id="COLUMN_MANAGER_SEARCH">
+        u.id as user_id, u.username as username,e.post, e.nickname
+    </sql>
+
+    <select id="selectUserIdsByOrgId" resultType="com.bee.platform.user.dto.ManagerSearchParamDTO" resultMap="USER_MANAGER_SEARCH">
+        select <include refid="COLUMN_MANAGER_SEARCH"/> from enterprises_users e  inner join users u on e.user_id=u.id
+        where  e.enterprise_id=#{orgId}
+        <if test="username!=null and username!=''">
+            and u.username=#{username}
+        </if>
+        <if test="nickname!=null and nickname!=''">
+            and e.nickname like CONCAT('%',#{nickname},'%')
+        </if>
+    </select>
+
+    <update id="updateInvite"  >
+        update  enterprises_users set is_invite=0 where  id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="selectEnterprisesUsers"  parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM enterprises_users 
+    <where>
+    <if test="nameOrPhone !=null">
+    phone like CONCAT('%', #{nameOrPhone}, '%') or nickname like CONCAT('%', #{nameOrPhone}, '%')
+    </if>
+    <if test="zpostid !=null">
+  	 and zpostid = #{zpostid}
+    </if>
+    <if test="departmentsid !=null">
+   	and departmentsid = #{departmentsid}
+    </if>
+    <if test="enterpriseId !=null">
+    and enterprise_id = #{enterpriseId}
+    </if>
+    </where>
+
+    </select>
+    
+    <select id="selectByEnterpriseId"  parameterType="int" resultMap="BaseResultMap">
+		select * from enterprises_users where enterprise_id = #{enterpriseId}
+    </select>
+</mapper>

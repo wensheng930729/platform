@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpAuxiliaryMaterialConsumptionMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpAuxiliaryMaterialConsumption">
+        <id column="id" property="id" />
+        <result column="company_id" property="companyId" />
+        <result column="company_name" property="companyName" />
+        <result column="create_time" property="createTime" />
+        <result column="furnace_id" property="furnaceId" />
+        <result column="furnace_number" property="furnaceNumber" />
+        <result column="output" property="output" />
+        <result column="production_money" property="productionMoney" />
+        <result column="environmental_money" property="environmentalMoney" />
+        <result column="security_money" property="securityMoney" />
+        <result column="overhaul_money" property="overhaulMoney" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_enterprise_id" property="creatorEnterpriseId" />
+        <result column="deleted" property="deleted" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="modifier_id" property="modifierId" />
+        <result column="consumption_date" property="consumptionDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_id, company_name, create_time, furnace_id ,furnace_number, output, production_money, environmental_money, security_money, overhaul_money, creator_id, creator_enterprise_id, deleted,modify_time, modifier_id,consumption_date
+    </sql>
+
+
+    <select id="searchAuxiliaryMaterialConsumptionByCondition" resultType="com.bee.platform.datadriver.dto.ErpAuxiliaryMaterialConsumptionDTO" parameterType="com.bee.platform.datadriver.rq.ErpAuxiliaryMaterialConsumptionSearchRQ">
+            SELECT
+                m.id ,
+                m.company_id AS companyId ,
+                m.consumption_date AS consumptionDate ,
+                m.furnace_id AS furnaceId ,
+                f.`name` AS furnaceNumber ,
+                m.production_money AS productionMoney ,
+                m.environmental_money AS environmentalMoney ,
+                m.security_money AS securityMoney ,
+                m.overhaul_money AS overhaulMoney
+
+            FROM
+                erp_auxiliary_material_consumption m
+                LEFT JOIN erp_furnace f ON m.furnace_id = f.id
+                WHERE 1=1
+                AND m.deleted = 0
+                <if test="companyId != null">
+                    AND m.company_id = #{companyId}
+                </if>
+                <if test="list != null and list.size > 0 and companyId == null ">
+                    AND m.company_id IN
+                    <foreach collection="list" item="item" separator="," open="(" close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="furnaceId != null">
+                    AND m.furnace_id = #{furnaceId}
+                </if>
+                <if test="startTime != null and startTime != ''">
+                    AND m.consumption_date <![CDATA[>= ]]> #{startTime}
+                </if>
+                <if test="endTime != null and endTime != ''">
+                    AND m.consumption_date <![CDATA[<= ]]> #{endTime}
+                </if>
+                ORDER BY m.consumption_date DESC
+
+
+    </select>
+
+</mapper>

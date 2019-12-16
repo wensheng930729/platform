@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.MResourceMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.entity.MResource">
+        <id column="id" property="id" />
+        <result column="resource_id" property="resourceId" />
+        <result column="name" property="name" />
+        <result column="parent_id" property="parentId" />
+        <result column="resource_type" property="resourceType" />
+        <result column="resource_lev" property="resourceLev" />
+        <result column="icon" property="icon" />
+        <result column="path" property="path" />
+        <result column="hide_children_in_menu" property="hideChildrenInMenu" />
+        <result column="explain" property="explain" />
+        <result column="intercept" property="intercept" />
+        <result column="status" property="status" />
+        <result column="create_id" property="createId" />
+        <result column="creator" property="creator" />
+        <result column="create_time" property="createTime" />
+        <result column="modify_id" property="modifyId" />
+        <result column="modifier" property="modifier" />
+        <result column="modify_time" property="modifyTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, resource_id, `name`, parent_id, resource_type, resource_lev, icon, path, hide_children_in_menu, `explain`, intercept, `status`, create_id, creator, create_time, modify_id, modifier, modify_time
+    </sql>
+
+
+    <select id="getResourceByType" parameterType="Integer" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>  from m_resource  where  status=1
+        <if test="resourceType!=null">
+           and resource_type=#{resourceType}
+        </if>
+    </select>
+
+
+    <select id="getParentIdByType" parameterType="int" resultType="integer">
+        select parent_id from m_resource where  status=1 and resource_type=#{resourceType}
+    </select>
+
+</mapper>

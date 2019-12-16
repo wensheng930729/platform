@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpStockCheckDetailMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpStockCheckDetail">
+        <id column="id" property="id" />
+        <result column="stock_check_id" property="stockCheckId" />
+        <result column="product_id" property="productId" />
+        <result column="product_batch_id" property="productBatchId" />
+        <result column="product_name" property="productName" />
+        <result column="storehouse" property="storehouse" />
+        <result column="unit" property="unit" />
+        <result column="test_code" property="testCode" />
+        <result column="expect_number" property="expectNumber" />
+        <result column="real_number" property="realNumber" />
+        <result column="state" property="state" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_enterprise_id" property="creatorEnterpriseId" />
+        <result column="deleted" property="deleted" />
+        <result column="modifier_id" property="modifierId" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="create_time" property="createTime" />
+        <result column="test_report_id" property="testReportId" />
+        <result column="company_id" property="companyId" />
+        <result column="company_name" property="companyName" />
+        <result column="repository_id" property="repositoryId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, stock_check_id,company_id,company_name,repository_id,  test_report_id, product_id,product_batch_id, product_name, storehouse, unit, test_code, expect_number, real_number, state, creator_id, creator_enterprise_id, deleted, modifier_id, modify_time,create_time
+    </sql>
+
+</mapper>

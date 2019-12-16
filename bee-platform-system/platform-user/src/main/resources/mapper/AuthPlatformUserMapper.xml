@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.authority.dao.mapper.AuthPlatformUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.user.authority.entity.AuthPlatformUser">
+        <id column="id" property="id" />
+        <result column="phone" property="phone" />
+        <result column="name" property="name" />
+        <result column="username" property="username" />
+        <result column="nickname" property="nickname" />
+        <result column="password" property="password" />
+        <result column="head" property="head" />
+        <result column="email" property="email" />
+        <result column="qq" property="qq" />
+        <result column="region_id" property="regionId" />
+        <result column="address" property="address" />
+        <result column="fixtel" property="fixtel" />
+        <result column="sys_token" property="sysToken" />
+        <result column="expires_in" property="expiresIn" />
+        <result column="current_enterprise_id" property="currentEnterpriseId" />
+        <result column="status" property="status" />
+        <result column="active_type" property="activeType" />
+        <result column="user_type" property="userType" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_user" property="updateUser" />
+        <result column="deleted" property="deleted" />
+        <result column="account_description" property="accountDescription" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, phone, `name`,  username, nickname, password, head, email, qq,
+        region_id, address, fixtel,sys_token,expires_in,current_enterprise_id, status, active_type,user_type,create_time, update_time, update_user, deleted,account_description
+    </sql>
+
+
+    <select id="findList" parameterType="com.bee.platform.user.authority.rq.AuthPlatformUserSelectRQ" resultType="com.bee.platform.user.authority.dto.AuthPlatformUserDto">
+        select apu.id, apu.phone, apu.name,
+        apu.username, apu.nickname, apu.head, apu.email, apu.region_id, apue.status,
+        apu.address, apu.fixtel, apu.create_time, apu.update_time, ae.id enterpriseId,ae.name enterpriseName,
+        ae.simple_name enterpriseSimpleName, d.name departmentName, p.name postName,
+        p.id postId, d.id departmentId
+        from auth_platform_user apu
+        left join auth_platform_user_enterprise apue on apue.user_id = apu.id and apue.deleted = 0
+        left join auth_enterprise ae on apue.enterprise_id = ae.id and ae.deleted = 0 and ae.status = 1
+        left join departments d on d.id = apue.departments_id
+        left join z_post p on p.id = apue.post_id and p.status = 1
+        where apu.deleted = 0 and apu.user_type in (0,3)
+        <if test="username != null">
+            and (
+            apu.nickname like CONCAT('%',#{username},'%')
+            or
+            apu.name like CONCAT('%',#{username},'%')
+            or
+            apu.username = #{username}
+            )
+        </if>
+        <if test="enterpriseIds != null">
+            and ae.id in (
+            <foreach collection="enterpriseIds" item="id" separator=",">
+                #{id}
+            </foreach>
+            )
+
+        </if>
+        <if test="enterpriseName != null">
+            and ae.name like  CONCAT('%',#{enterpriseName},'%')
+        </if>
+        <if test="deptName != null">
+            and d.name like  CONCAT('%',#{deptName},'%')
+        </if>
+        order by apu.create_time desc
+    </select>
+
+    <insert id="insertAllUser" parameterType="com.bee.platform.user.authority.entity.AuthPlatformUser">
+        insert  into  auth_platform_user (id, phone, `name`,  username, nickname, password, head, email, qq,
+        region_id, address, fixtel,sys_token,expires_in,current_enterprise_id, status, active_type,user_type,create_time, update_time, update_user, deleted,account_description) values
+        <foreach collection="list" separator="," item="item">
+            (
+            #{item.id,jdbcType=INTEGER},
+            #{item.phone,jdbcType=VARCHAR},
+            #{item.name,jdbcType=VARCHAR},
+            #{item.username,jdbcType=VARCHAR},
+            #{item.nickname,jdbcType=VARCHAR},
+            #{item.password,jdbcType=VARCHAR},
+            #{item.head,jdbcType=VARCHAR},
+            #{item.email,jdbcType=VARCHAR},
+            #{item.qq,jdbcType=VARCHAR},
+            #{item.regionId,jdbcType=VARCHAR},
+            #{item.address,jdbcType=VARCHAR},
+            #{item.fixtel,jdbcType=VARCHAR},
+            #{item.sysToken,jdbcType=VARCHAR},
+            #{item.expiresIn,jdbcType=TIMESTAMP},
+            #{item.currentEnterpriseId,jdbcType=INTEGER},
+            #{item.status,jdbcType=INTEGER},
+            #{item.activeType,jdbcType=INTEGER},
+            #{item.userType,jdbcType=INTEGER},
+            #{item.createTime,jdbcType=TIMESTAMP},
+            #{item.updateTime,jdbcType=TIMESTAMP},
+            #{item.updateUser,jdbcType=INTEGER},
+            #{item.deleted,jdbcType=TINYINT},
+            #{item.accountDescription,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+    
+    <select id="selectByMap"  parameterType="map" resultType="com.bee.platform.user.authority.dto.AuthPlatformUserModifyDto">
+        select distinct apu.id, apu.name, apu.username, apu.nickname, apu.phone, apu.email, apu.create_time, apu.status
+
+        from auth_platform_user apu
+
+        where apu.deleted = 0  and apu.user_type in(1,3)
+        <if test="usernameOrPhoneOrEmail !=null">
+            and (
+            apu.phone like CONCAT('%', #{usernameOrPhoneOrEmail}, '%')
+            or apu.username like CONCAT('%', #{usernameOrPhoneOrEmail}, '%')
+            or apu.email like CONCAT('%', #{usernameOrPhoneOrEmail}, '%')
+            )
+        </if>
+        <if test="status !=null">
+            and apu.status = #{status}
+        </if>
+        <if test="startTime != null">
+            and  apu.create_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+            and  apu.create_time &lt;= #{endTime}
+        </if>
+        order by apu.create_time desc
+    </select>
+
+    <select id="selectMap"  resultType="com.bee.platform.user.authority.dto.AuthPlatformUserModifyDto">
+        select distinct apu.id, apu.name, apu.username, apu.nickname, apu.phone, apu.email,
+        apu.create_time, apu.status
+        from auth_platform_user apu
+        where apu.deleted = 0 and apu.user_type in(1,3)
+        order by apu.create_time desc
+    </select>
+
+    <select id="queryIn" parameterType="com.bee.platform.user.authority.dto.AuthPlatformUserModifyInDto"
+            resultType="com.bee.platform.user.authority.dto.AuthPlatformUserModifyInDto">
+        select distinct apu.id,apu.name,apu.username,apu.nickname, apue.status,
+         ae.id enterpriseId,ae.name enterpriseName,apu.create_time,
+        ae.simple_name enterpriseSimpleName, d.name departmentName, p.name postName,
+        p.id postId, d.id departmentId
+        from auth_platform_user apu
+        left join auth_platform_user_enterprise apue on apue.user_id = apu.id and apue.deleted = 0
+        left join auth_enterprise ae on apue.enterprise_id = ae.id and ae.deleted = 0 and ae.status = 1
+        left join departments d on d.id = apue.departments_id
+        left join z_post p on p.id = apue.post_id and p.status = 1
+        where apu.deleted = 0 and apu.user_type  in(0,3)
+        <if test="username != null">
+            and (apu.username = #{username}
+            or apu.name like CONCAT('%',#{username},'%')
+            )
+        </if>
+        <if test="enterpriseId != null">
+            and ae.id = #{enterpriseId}
+        </if>
+        <if test="enterpriseName != null">
+            and ae.name Like   CONCAT('%',#{enterpriseName},'%')
+        </if>
+        <if test="status != null">
+            and apue.status = #{status}
+        </if>
+        <if test="startTime != null">
+           and apu.create_time &gt;= #{startTime}
+        </if>
+        <if test="endTime != null">
+           and  apu.create_time &lt;= #{endTime}
+        </if>
+        order by apu.create_time desc
+    </select>
+    
+    <select id="queryInOne" parameterType="com.bee.platform.user.authority.rq.AuthPlatformUserOneInRQ" resultType="com.bee.platform.user.authority.dto.AuthPlatformUserOneInDTO">
+        select distinct apu.id,apu.name,apu.head,apu.email,apu.address,apu.fixtel,apu.phone,
+         ae.name enterpriseName,apu.create_time,
+         d.name departmentName, p.name postName
+        from auth_platform_user apu
+        left join auth_platform_user_enterprise apue on apue.user_id = apu.id and apue.deleted = 0
+        left join auth_enterprise ae on ae.id = apue.enterprise_id and ae.deleted = 0 and ae.status = 1
+        left join departments d on d.id = apue.departments_id
+        left join z_post p on p.id = apue.post_id and p.status = 1
+        where apu.deleted = 0 and apu.user_type in(0,3)
+        <if test="enterpriseId != null">
+            and ae.id = #{enterpriseId}
+        </if>
+        <if test="postId != null">
+            and p.id = #{postId}
+        </if>
+        <if test="departmentId != null">
+            and d.id = #{departmentId}
+        </if>
+        <if test="id != null">
+            and apu.id = #{id}
+        </if>
+        order by apu.create_time desc
+    </select>
+
+    <select id="selectUserByKeyword" resultMap="BaseResultMap">
+        select  u.id, u.phone, u.`name`,  u.username, u.nickname, u.head, u.email, u.qq
+        from auth_platform_user u inner  join auth_platform_user_enterprise e
+        on u.id=e.user_id  where  e.enterprise_id=#{enterpriseId}  and  e.status=1 and e.deleted=0
+        <if test="keyword!=null and keyword!=''">
+            and u.username=#{keyword}
+        </if>
+    </select>
+
+    <select id="listByenterpriseId" resultType="com.bee.platform.user.authority.dto.AuthPlatformUserDto">
+        select apu.id, apu.phone, apu.name,
+        apu.username, apu.nickname, apu.head, apu.email, apu.region_id, apue.status,
+        apu.address, apu.fixtel, apu.create_time, apu.update_time, ae.id enterpriseId,ae.name enterpriseName,
+        ae.simple_name enterpriseSimpleName, d.name departmentName, p.name postName,
+        p.id postId, d.id departmentId
+        from auth_platform_user apu
+        left join auth_platform_user_enterprise apue on apue.user_id = apu.id and apue.deleted = 0
+        left join auth_enterprise ae on apue.enterprise_id = ae.id and ae.deleted = 0 and ae.status = 1
+        left join departments d on d.id = apue.departments_id
+        left join z_post p on p.id = apue.post_id and p.status = 1
+        where apu.deleted = 0 and apu.user_type in (0,3)
+        <if test="username != null">
+            and (
+            apu.nickname like CONCAT('%',#{username},'%')
+            or
+            apu.name like CONCAT('%',#{username},'%')
+            or
+            apu.username = #{username}
+            )
+        </if>
+        and ae.id = #{enterpriseId}
+        order by apu.create_time desc
+    </select>
+
+    <select id="findEnterpriseUsers" resultType="com.bee.platform.user.authority.dto.AuthPlatformUserDto">
+        select distinct apu.id,apu.name,apu.username, apu.nickname
+        from auth_platform_user apu
+        left join auth_platform_user_enterprise apue on apue.user_id = apu.id and apue.deleted = 0
+        left join auth_enterprise ae on apue.enterprise_id = ae.id and ae.deleted = 0 and ae.status = 1
+        where apu.deleted = 0 and ae.id in
+        (
+          <foreach collection="ids" item="id" separator=",">
+              #{id}
+          </foreach>
+        )
+    </select>
+    <select id="getAllCompanyUserById" resultType="com.bee.platform.user.authority.dto.AuthPlatformUserPullDownDto">
+        select
+            distinct apu.id, apu.name
+        from auth_platform_user apu left join auth_platform_user_enterprise apue
+            on apu.id = apue.user_id and apue.deleted = 0
+        where apue.enterprise_id = #{orgId}
+          and apu.deleted = 0
+    </select>
+</mapper>

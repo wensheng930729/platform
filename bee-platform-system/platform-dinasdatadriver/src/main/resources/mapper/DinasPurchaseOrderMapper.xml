@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.dinas.datadriver.dao.mapper.DinasPurchaseOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.dinas.datadriver.entity.DinasPurchaseOrder">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="company_id" property="companyId" />
+        <result column="company_name" property="companyName" />
+        <result column="contract_date" property="contractDate" />
+        <result column="customer_id" property="customerId" />
+        <result column="url" property="url" />
+        <result column="payment" property="payment" />
+        <result column="available_amount" property="availableAmount" />
+        <result column="deleted" property="deleted" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_user" property="updateUser" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        dpo.id, dpo.code, dpo.contract_date, group_concat(DISTINCT dp.product_name SEPARATOR ',') product_name, dpo.customer_id,
+        dc.customer_name, dpo.payment, dpo.available_amount
+    </sql>
+
+    <select id="listPurchaseOrderByCondition" resultType="com.bee.platform.dinas.datadriver.dto.DinasPurchaseOrderListDTO" parameterType="com.bee.platform.dinas.datadriver.rq.DinasOrderQueryRQ">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM
+            dinas_purchase_order dpo
+            LEFT JOIN dinas_purchase_order_detail dpod ON dpo.id = dpod.order_id and dpod.deleted = 0
+            LEFT JOIN dinas_product dp ON dpod.product_id = dp.id
+            LEFT JOIN dinas_customer dc ON dpo.customer_id = dc.id and dc.deleted = 0
+        WHERE dpo.deleted = 0
+          AND dpo.company_id = #{companyId}
+        <if test="code != null and code != ''">
+            AND dpo.code LIKE "%"#{code}"%"
+        </if>
+        <if test="customerName != null and customerName != ''">
+            AND dc.customer_name LIKE "%"#{customerName}"%"
+        </if>
+        <if test="createStartTime != null and createStartTime != ''">
+            AND dpo.create_time <![CDATA[>= ]]> #{createStartTime}
+        </if>
+        <if test="createEndTime != null and createEndTime != ''">
+            AND dpo.create_time <![CDATA[<= ]]> #{createEndTime}
+        </if>
+        GROUP BY dpo.id
+        ORDER BY dpo.create_time DESC
+    </select>
+
+    <select id="getPurchaseOrderDetail" resultType="com.bee.platform.dinas.datadriver.dto.DinasPurchaseOrderInfoDTO">
+        SELECT
+            dpo.id, dpo.code, dpo.contract_date, dpo.customer_id, dc.customer_name, dpo.url
+        FROM
+            dinas_purchase_order dpo LEFT JOIN dinas_customer dc ON dpo.customer_id = dc.id and dc.deleted = 0
+        WHERE dpo.deleted = 0
+          AND dpo.id = #{id}
+    </select>
+
+    <select id="getOrderProduct" resultType="com.bee.platform.dinas.datadriver.dto.DinasProductListDTO">
+        SELECT
+            DISTINCT dp.id AS product_id, dp.product_name
+        FROM
+            dinas_purchase_order_detail dpod LEFT JOIN dinas_product dp ON dpod.product_id = dp.id
+        WHERE dpod.deleted = 0
+          AND dpod.order_id = #{id}
+    </select>
+
+    <select id="getOrderProductSpec" resultType="com.bee.platform.dinas.datadriver.dto.DinasProductSpecListDTO">
+        SELECT
+            DISTINCT dps.id AS product_spec_id, dps.spec_name as product_spec_name
+        FROM
+            dinas_purchase_order_detail dpod
+            LEFT JOIN dinas_product dp ON dpod.product_id = dp.id
+            LEFT JOIN dinas_product_spec dps ON dpod.product_spec_id = dps.id
+        WHERE dpod.deleted = 0
+          AND dpod.order_id = #{orderId}
+          AND dp.id = #{productId}
+    </select>
+
+    <select id="getOrderPullList" resultType="com.bee.platform.dinas.datadriver.dto.DinasPurchaseOrderPullListDTO">
+        SELECT
+            dpo.id, dpo.code, dpo.contract_date, dpo.customer_id, dc.customer_name, dpo.url
+        FROM
+            dinas_purchase_order dpo LEFT JOIN dinas_customer dc ON dpo.customer_id = dc.id and dc.deleted = 0
+        WHERE dpo.deleted = 0
+          AND dpo.company_id = #{orgId}
+    </select>
+
+</mapper>

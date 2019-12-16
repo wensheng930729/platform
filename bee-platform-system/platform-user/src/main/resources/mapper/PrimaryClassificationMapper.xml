@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.PrimaryClassificationMapper">
+
+    <select id="queryPrimaryClassifyList" parameterType="int" resultType="com.bee.platform.user.dto.PrimaryClassifyListDTO">
+        SELECT p.id,p.`name`,p.weights,COUNT(s.id) secondClassifyNum
+         FROM m_primary_classification p
+        LEFT JOIN(
+          SELECT id,p_id FROM m_secondary_classification WHERE `status` = 0
+        ) s ON p.id = s.p_id
+        WHERE p.classify_type = #{classifyType} AND p.`status` = 0
+        GROUP BY p.id ORDER BY p.create_time DESC
+    </select>
+
+    <select id="queryHelperSecondClassifyInfo" parameterType="int" resultType="com.bee.platform.user.dto.HelperContentDTO">
+        SELECT ref.id ref_id,ref.weights helper_weights,s.name s_name,s.id s_id,c.id c_id,c.name c_name
+          FROM m_helper_relation ref
+            INNER JOIN
+            m_secondary_classification s ON ref.s_id=s.id
+            INNER JOIN
+            m_content_classification c ON ref.c_id=c.id
+            WHERE s.`status` = 0 AND c.`status`= 0 AND ref.p_id=#{id}
+    </select>
+
+    <select id="queryEditClassifyInfo" resultType="com.bee.platform.user.dto.EditSecondClassifyDTO" parameterType="int">
+        SELECT s.id s_id,s.name s_name,s.weights s_weights,COUNT(c.id) content_num FROM m_secondary_classification s
+        LEFT JOIN (SELECT * FROM m_content_classification WHERE `status`=0) c ON s.id = c.p_id
+        WHERE s.`status`=0 AND s.p_id=#{id}
+        GROUP BY s.id
+    </select>
+
+    <select id="queryHelperPrimaryClassifyList" resultType="com.bee.platform.user.dto.PrimaryClassifyListDTO">
+        SELECT m.id,m.name,m.weights,m.classify_type,COUNT(ref.id) second_classify_num FROM m_primary_classification m
+        LEFT JOIN m_helper_relation ref ON m.id = ref.p_id
+        WHERE m.status = 0 AND m.classify_type = 0
+        GROUP BY m.id
+    </select>
+
+    <select id="queryCustomerServiceInfo" resultType="com.bee.platform.user.dto.CustomerServiceDTO">
+        SELECT customer_service_hotline as customerServiceHotLine,e_mail as eMail FROM m_baseinfo
+    </select>
+
+</mapper>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpCrmCommercialOpportunityMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpCrmCommercialOpportunity">
+        <id column="id" property="id" />
+        <result column="company_id" property="companyId" />
+        <result column="company_name" property="companyName" />
+        <result column="customer_id" property="customerId" />
+        <result column="customer_name" property="customerName" />
+        <result column="customer_type" property="customerType" />
+        <result column="industry" property="industry" />
+        <result column="customer_obtain_method" property="customerObtainMethod" />
+        <result column="contact_id" property="contactId" />
+        <result column="contact_name" property="contactName" />
+        <result column="contact_phone" property="contactPhone" />
+        <result column="degree" property="degree" />
+        <result column="turnover_ratio" property="turnoverRatio" />
+        <result column="phase" property="phase" />
+        <result column="sale_user_id" property="saleUserId" />
+        <result column="sale_user_name" property="saleUserName" />
+        <result column="customer_value" property="customerValue" />
+        <result column="fund_requirement" property="fundRequirement" />
+        <result column="manage_requirement" property="manageRequirement" />
+        <result column="business_development" property="businessDevelopment" />
+        <result column="industry_development" property="industryDevelopment" />
+        <result column="resources_integration" property="resourcesIntegration" />
+        <result column="risk_preferences" property="riskPreferences" />
+        <result column="street" property="street"/>
+        <result column="regionid" property="regionid"/>
+        <result column="address" property="address"/>
+        <result column="deleted" property="deleted" />
+        <result column="create_user" property="createUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_user" property="updateUser" />
+        <result column="update_time" property="updateTime" />
+        <result column="remark" property="remark" />
+        <result column="product_remark" property="productRemark" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_id, company_name, customer_id, customer_name, customer_type, industry, customer_obtain_method,contact_id, contact_name,
+        contact_phone, degree, turnover_ratio, phase, sale_user_id, sale_user_name, customer_value, fund_requirement,
+        manage_requirement, business_development, industry_development, resources_integration, risk_preferences, street, regionid, address,
+        deleted, create_user, create_time, update_user, update_time, remark, product_remark
+    </sql>
+
+
+    <select id="getSalesRank" resultType="com.bee.platform.datadriver.dto.ErpCrmSalesRankDTO" >
+        SELECT
+            c.sale_user_id AS saleUserId,
+            c.sale_user_name AS saleUserName,
+            count( IF ( c.phase = 'reserve_customers' ,1,NULL) ) AS reserveCustomersNum,
+            count( IF ( c.phase = 'visiting_customers' ,1,NULL) ) AS visitingCustomersNum,
+            count( IF ( c.phase = 'promoting_customers' ,1,NULL) ) AS promotingCustomersNum,
+            count( IF ( c.phase = 'transaction_clients' ,1,NULL) ) AS transactionClientsNum
+        FROM
+            erp_crm_commercial_opportunity c
+        WHERE
+            1 = 1
+            AND c.deleted = 0
+            AND c.company_id=#{orgId}
+        GROUP BY
+            c.sale_user_id
+        ORDER BY
+	        transactionClientsNum DESC
+    </select>
+
+    <select id="getExcelSalesRank" resultType="com.bee.platform.datadriver.dto.ErpCrmSalesRankDTO">
+        SELECT
+            c.sale_user_id AS saleUserId,
+            c.sale_user_name AS saleUserName,
+            count( IF ( c.phase = 'reserve_customers' ,1,NULL) ) AS reserveCustomersNum,
+            count( IF ( c.phase = 'visiting_customers' ,1,NULL) ) AS visitingCustomersNum,
+            count( IF ( c.phase = 'promoting_customers' ,1,NULL) ) AS promotingCustomersNum,
+            count( IF ( c.phase = 'transaction_clients' ,1,NULL) ) AS transactionClientsNum
+        FROM
+            erp_crm_commercial_opportunity c
+        WHERE
+            1 = 1
+            AND c.deleted = 0
+            AND c.company_id=#{orgId}
+        GROUP BY
+            c.sale_user_id
+        ORDER BY
+	        transactionClientsNum DESC
+    </select>
+
+
+
+    <select id="selectByList" parameterType="java.util.Map" resultType="com.bee.platform.datadriver.entity.ErpCrmCommercialOpportunity">
+        select
+        id,company_id, company_name, customer_id, customer_name, customer_type, industry, customer_obtain_method, contact_name,
+        contact_phone, degree, turnover_ratio, phase, sale_user_id, sale_user_name, customer_value, fund_requirement,
+        manage_requirement, business_development, industry_development, resources_integration, risk_preferences, deleted,
+        create_user, create_time, update_user, update_time, remark, product_remark
+        from
+          erp_crm_commercial_opportunity
+          <where>
+              1=1  and deleted = 0
+        <if test="customerName !=null">
+            and customer_name
+             like CONCAT('%', #{customerName}, '%')
+        </if>
+        <if test="saleUserName !=null">
+            and sale_user_name like CONCAT('%', #{saleUserName}, '%')
+
+        </if>
+        <if test="customerType !=null">
+            and customer_type = #{customerType}
+        </if>
+        <if test="phase != null">
+            and  phase = #{phase}
+        </if>
+        <if test="companyId != null">
+            and  company_id = #{companyId}
+        </if>
+       <if test="userIdList !=null">
+           and sale_user_id in
+           <foreach collection="userIdList" item="item"  open="(" close=")" separator=",">
+              #{item}
+           </foreach>
+       </if>
+          </where>
+        order by create_time desc
+    </select>
+
+
+    <select id="getexportBOC"  resultType="com.bee.platform.datadriver.dto.ErpCrmCommercialBOCDTO">
+        select
+        sale_user_id, sale_user_name,customer_name, customer_type, phase,degree,turnover_ratio, industry, customer_obtain_method,
+        address, contact_name, contact_phone
+        from
+        erp_crm_commercial_opportunity
+        <where>
+            1=1 and deleted = 0
+            <if test="customerName !=null">
+                and customer_name
+                like CONCAT('%', #{customerName}, '%')
+            </if>
+            <if test="saleUserName !=null">
+                and sale_user_name like CONCAT('%', #{saleUserName}, '%')
+
+            </if>
+            <if test="customerType !=null">
+                and customer_type = #{customerType}
+            </if>
+            <if test="phase != null">
+                and  phase = #{phase}
+            </if>
+            <if test="companyId != null">
+                and  company_id = #{companyId}
+            </if>
+
+            <if test="userIdList !=null">
+                and sale_user_id in
+                <foreach collection="userIdList" item="item"  open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
+            </if>
+
+
+        </where>
+        order by create_time desc
+    </select>
+</mapper>

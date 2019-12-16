@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpRepositoryReceiptMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpRepositoryReceipt">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="type" property="type" />
+        <result column="receipt_date" property="receiptDate" />
+        <result column="related_order" property="relatedOrder" />
+        <result column="related_order_id" property="relatedOrderId" />
+        <result column="batch_id" property="batchId" />
+        <result column="total_num" property="totalNum" />
+        <result column="furnace_id" property="furnaceId" />
+        <result column="work_shift" property="workShift" />
+        <result column="remark" property="remark" />
+        <result column="state" property="state" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, code, type, receipt_date, related_order, related_order_id, batch_id, total_num, furnace_id, work_shift, remark, state, create_user, update_user, create_time, update_time
+    </sql>
+
+    <select id="findPurchaseGoodsOrderList" parameterType="com.bee.platform.datadriver.rq.ErpPurchaseGoodsOrderSelectRQ" resultType="com.bee.platform.datadriver.dto.ErpPurchaseGoodsDetailDTO">
+        select errd.id, err.code, err.state, err.related_order, errd.record_time, errd.num,
+        epo.company_name, epo.supply_name, ep.name productName
+        from erp_repo_receipt_detail errd
+        left join erp_repository_receipt err on err.id = errd.receipt_id and err.deleted = 0
+        left join erp_purchase_order epo on epo.id = err.related_order_id and epo.deleted = 0
+        left join erp_product ep on ep.id = errd.product_id and ep.deleted = 0
+        where errd.deleted = 0 and err.type = 'material_stock'
+        <if test="companyId != null">
+            and err.org_id = #{companyId}
+        </if>
+        <if test="relatedOrder != null">
+            and err.related_order like CONCAT('%',#{relatedOrder},'%')
+        </if>
+        <if test="supplyName != null">
+            and epo.supply_name like CONCAT('%',#{supplyName},'%')
+        </if>
+        <if test="productName != null">
+            and ep.name like CONCAT('%',#{productName},'%')
+        </if>
+        <if test="receiptStartDate != null">
+            and errd.record_time <![CDATA[>=]]> #{receiptStartDate}
+        </if>
+        <if test="receiptEndDate != null">
+            and errd.record_time <![CDATA[<=]]> #{receiptEndDate}
+        </if>
+        <if test="state != null">
+            and err.state = #{state}
+        </if>
+        <if test="code != null">
+            and err.code = #{code}
+        </if>
+        <if test="enterpriseIdList != null">
+            and err.org_id in (
+             <foreach collection="enterpriseIdList" item="id" separator=",">
+                 #{id}
+             </foreach>
+            )
+        </if>
+        order by errd.record_time desc
+    </select>
+
+    <select id="findStatementDeliveryOrderList" parameterType="com.bee.platform.datadriver.rq.ErpStatementDeliveryOrderSelectRQ"
+            resultType="com.bee.platform.datadriver.dto.ErpPurchaseGoodsDetailDTO">
+        select errd.id, err.code, err.state, err.related_order, errd.record_time, errd.num,
+        eso.company_name, ep.name productName, ac.cus_name customName
+        from erp_repo_receipt_detail errd
+        left join  erp_repository_receipt err on err.id = errd.receipt_id and err.deleted = 0
+        left join erp_sale_order eso on eso.id = err.related_order_id and eso.deleted = 0
+        left join erp_product ep on ep.id = errd.product_id and ep.deleted = 0
+        left join auth_customer ac on ac.id = eso.customer and ac.deleted = 0
+        where errd.deleted = 0 and err.type = 'product_delivery'
+        <if test="companyId != null">
+            and err.org_id = #{companyId}
+        </if>
+        <if test="relatedOrder != null">
+            and err.related_order like CONCAT('%',#{relatedOrder},'%')
+        </if>
+        <if test="productName != null">
+            and ep.name like CONCAT('%',#{productName},'%')
+        </if>
+        <if test="receiptStartDate != null">
+            and errd.record_time <![CDATA[>=]]> #{receiptStartDate}
+        </if>
+        <if test="receiptEndDate != null">
+            and errd.record_time <![CDATA[<=]]> #{receiptEndDate}
+        </if>
+        <if test="state != null">
+            and err.state = #{state}
+        </if>
+        <if test="code != null">
+            and err.code = #{code}
+        </if>
+        <if test="enterpriseIdList != null">
+            and err.org_id in (
+            <foreach collection="enterpriseIdList" item="id" separator=",">
+                #{id}
+            </foreach>
+            )
+        </if>
+        order by errd.record_time desc
+    </select>
+
+
+    <select id="searchInventoryFlowByCondition" resultType="com.bee.platform.datadriver.dto.ErpInventoryFlowDTO" parameterType="com.bee.platform.datadriver.rq.ErpInventoryFlowSearchRQ">
+        <choose>
+            <when test="type == 0">
+                SELECT
+                c.`name` AS productName,
+                d.num AS receiptNum,
+                r.`name` AS storeHouseName,
+                m.state,
+                p.supply_name AS supplyName,
+                m.receipt_date AS receiptDate,
+                m.`code` AS warehousingOder,
+                p.contract_no AS purchasingOder,
+                e.`name` AS companyName
+                FROM
+                erp_repo_receipt_detail d
+                LEFT JOIN erp_repository_receipt m ON d.receipt_id = m.id
+                LEFT JOIN erp_purchase_order p ON m.related_order_id = p.id
+                LEFT JOIN auth_enterprise e ON p.company = e.id
+                LEFT JOIN erp_repository r ON d.repository_id = r.id
+                LEFT JOIN erp_product c ON d.product_id = c.id
+                WHERE 1 = 1
+                AND d.deleted=0
+                AND m.deleted=0
+                AND m.type = 'material_stock'
+                <if test="list != null and list.size > 0 and companyId == null " >
+                    AND p.company IN
+                    <foreach collection="list" item="item" separator="," open="(" close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="companyId != null">
+                    AND p.company =#{companyId}
+                </if>
+                <if test="storeHouseName != null and storeHouseName != ''">
+                    AND r.`name` LIKE CONCAT('%',#{storeHouseName} ,'%')
+                </if>
+                <if test="productName != null and productName != ''">
+                    AND c.`name` LIKE CONCAT('%',#{productName},'%')
+                </if>
+                <if test="sourceOrder != null and sourceOrder != ''">
+                    AND m.related_order LIKE CONCAT('%',#{sourceOrder},'%')
+                </if>
+                <if test="startTime != null">
+                    AND m.receipt_date <![CDATA[>= ]]> #{startTime}
+                </if>
+                <if test="endTime != null">
+                    AND m.receipt_date <![CDATA[<= ]]> #{endTime}
+                </if>
+                ORDER BY m.receipt_date DESC
+
+            </when>
+            <when test="type == 1">
+                SELECT
+                e.`name` AS companyName,
+                b.material_batch_name AS materialBatchName,
+                m.CODE AS outOfStockOrder,
+                p.`name` AS productName,
+                m.out_of_stock_time AS outOfStockDate,
+                f.`name` AS furnaceNumber,
+                m.classes AS workShift,
+                r.`name` AS storeHouseName,
+                d.number AS outOfStockNum
+                FROM
+                erp_out_of_stock_order_detail d
+                LEFT JOIN erp_out_of_stock_order m ON d.out_of_stock_order_id = m.id
+                LEFT JOIN erp_product p ON d.product_id = p.id
+                LEFT JOIN erp_furnace f ON m.furnace_number_id = f.id
+                LEFT JOIN auth_enterprise e ON m.company_id = e.id
+                LEFT JOIN erp_material_batch_order b ON m.material_batch_id = b.id
+                LEFT JOIN erp_repository r ON d.repository_id = r.id
+                WHERE
+                1 = 1
+                AND d.deleted =0
+                AND m.deleted =0
+                <if test="list != null and list.size > 0 and companyId == null">
+                    AND m.company_id IN
+                    <foreach collection="list" item="item" separator="," open="(" close=")">
+                        #{item}
+                    </foreach>
+                </if>
+
+                <if test="companyId != null">
+                    AND m.company_id =#{companyId}
+                </if>
+                <if test="storeHouseName != null and storeHouseName != ''">
+                    AND r.`name` LIKE CONCAT('%',#{storeHouseName} ,'%')
+                </if>
+                <if test="productName != null and productName != ''">
+                    AND p.`name` LIKE CONCAT('%',#{productName},'%')
+                </if>
+                <if test="sourceOrder != null and sourceOrder != ''">
+                    AND b.material_batch_name LIKE CONCAT('%',#{sourceOrder},'%')
+                </if>
+                <if test="startTime != null">
+                    AND m.out_of_stock_time <![CDATA[>= ]]> #{startTime}
+                </if>
+                <if test="endTime != null">
+                    AND m.out_of_stock_time <![CDATA[<= ]]> #{endTime}
+                </if>
+                ORDER BY m.out_of_stock_time DESC
+
+            </when>
+
+            <when test="type == 2">
+                SELECT
+                e.`name` AS companyName,
+                b.material_batch_name AS materialBatchName,
+                w.`code` AS warehousingOder,
+                w.warehousing_time AS receiptDate,
+                r.`name` AS storeHouseName,
+                f.`name` AS furnaceNumber,
+                w.classes AS workShift,
+                w.amount AS warehousingNum
+
+                FROM
+                erp_warehousing_order w
+                LEFT JOIN auth_enterprise e ON w.company_id = e.id
+                LEFT JOIN erp_material_batch_order b ON w.material_batch_id = b.id
+                LEFT JOIN erp_repository r ON w.repository_id = r.id
+                LEFT JOIN erp_furnace f ON w.furnace_id = f.id
+                WHERE
+                1 = 1
+                AND w.deleted =0
+                <if test="list != null and list.size > 0 and companyId == null ">
+                    AND w.company_id IN
+                    <foreach collection="list" item="item" separator="," open="(" close=")">
+                        #{item}
+                    </foreach>
+                </if>
+
+                <if test="companyId != null">
+                    AND w.company_id =#{companyId}
+                </if>
+                <if test="storeHouseName != null and storeHouseName != ''">
+                    AND r.`name` LIKE CONCAT('%',#{storeHouseName} ,'%')
+                </if>
+
+                <if test="sourceOrder != null and sourceOrder != ''">
+                    AND b.material_batch_name LIKE CONCAT('%',#{sourceOrder},'%')
+                </if>
+                <if test="startTime != null">
+                    AND w.warehousing_time  <![CDATA[>= ]]> #{startTime}
+                </if>
+                <if test="endTime != null">
+                    AND w.warehousing_time <![CDATA[<= ]]> #{endTime}
+                </if>
+                ORDER BY w.warehousing_time DESC
+
+            </when>
+
+            <when test="type == 3">
+                SELECT
+                c.`name` AS productName,
+                r.`name` AS storeHouseName,
+                m.state,
+                e.`name` AS companyName,
+                a.cus_name AS customerName ,
+                d.num AS sendNum ,
+                m.code AS outOfStockOrder ,
+                m.receipt_date AS outOfStockDate ,
+                s.contract_no AS saleOrder
+                FROM
+                erp_repo_receipt_detail d
+                LEFT JOIN erp_repository_receipt m ON d.receipt_id = m.id
+                LEFT JOIN erp_sale_order s ON m.related_order_id = s.id
+                LEFT JOIN auth_enterprise e ON s.company = e.id
+                LEFT JOIN erp_repository r ON d.repository_id = r.id
+                LEFT JOIN erp_product c ON d.product_id = c.id
+                LEFT JOIN auth_customer a ON s.customer = a.id
+                WHERE 1 = 1
+                AND d.deleted=0
+                AND m.deleted=0
+                AND m.type = 'product_delivery'
+                <if test="list != null and list.size > 0 and companyId == null ">
+                    AND s.company IN
+                    <foreach collection="list" item="item" separator="," open="(" close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="companyId != null">
+                    AND s.company =#{companyId}
+                </if>
+                <if test="storeHouseName != null and storeHouseName != ''">
+                    AND r.`name` LIKE CONCAT('%',#{storeHouseName} ,'%')
+                </if>
+                <if test="productName != null and productName != ''">
+                    AND c.`name` LIKE CONCAT('%',#{productName},'%')
+                </if>
+                <if test="sourceOrder != null and sourceOrder != ''">
+                    AND m.related_order LIKE CONCAT('%',#{sourceOrder},'%')
+                </if>
+                <if test="startTime != null">
+                    AND m.receipt_date  <![CDATA[>= ]]> #{startTime}
+                </if>
+                <if test="endTime != null">
+                    AND m.receipt_date <![CDATA[<= ]]> #{endTime}
+                </if>
+                ORDER BY m.receipt_date DESC
+
+            </when>
+
+
+        </choose>
+
+
+    </select>
+
+
+
+    <select id="searchRepositoryReceiptRawInByCondition" resultType="com.bee.platform.datadriver.dto.ErpRepositoryReceiptRawInSearchDTO" parameterType="com.bee.platform.datadriver.rq.ErpRepositoryReceiptRawInSearchRQ">
+        SELECT
+        m.id,
+        e.`name` AS companyName,
+        p.contract_no AS purchaseCode,
+        m.`code` AS inCode,
+        m.receipt_date AS receiptDate,
+        c.cus_name AS supplier,
+        pd.`name` AS productName,
+        sum( d.num ) AS num,
+        m.state
+        FROM
+        erp_repository_receipt m
+        LEFT JOIN auth_enterprise e ON m.org_id = e.id
+        LEFT JOIN erp_purchase_order p ON m.related_order_id = p.id
+        LEFT JOIN auth_customer c ON p.supplier = c.id
+        LEFT JOIN erp_repo_receipt_detail d ON d.receipt_id = m.id
+        LEFT JOIN erp_product pd ON d.product_id = pd.id
+        WHERE
+        1 = 1
+        AND m.deleted = 0
+        AND ( e.deleted = 0 OR e.id IS NULL )
+        AND ( e.status = 1 OR e.id IS NULL )
+        AND ( p.deleted = 0 OR p.id IS NULL )
+        AND ( d.deleted = 0 OR d.id IS NULL )
+        AND ( pd.deleted = 0 OR pd.id IS NULL )
+        AND ( pd.status = 1 OR pd.id IS NULL )
+        AND m.type = 'material_stock'
+        <if test="list != null and list.size > 0 and companyId == null ">
+            AND m.org_id IN
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="companyId != null">
+            AND m.org_id =#{companyId}
+        </if>
+        <if test="purchaseCode != null and purchaseCode != ''">
+            AND p.contract_no LIKE CONCAT('%',#{purchaseCode},'%')
+        </if>
+        <if test="supplier != null and supplier != ''">
+            AND p.supply_name LIKE CONCAT('%',#{supplier},'%')
+        </if>
+        <if test="productName != null and productName != ''">
+            AND pd.`name` LIKE CONCAT('%',#{productName},'%')
+        </if>
+        <if test="inCode != null and inCode != ''">
+            AND m.`code` LIKE CONCAT('%',#{inCode},'%')
+        </if>
+        <if test="startTime != null and startTime != ''">
+            AND m.receipt_date <![CDATA[>= ]]> #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''" >
+            AND m.receipt_date <![CDATA[<= ]]> #{endTime}
+        </if>
+        GROUP BY
+        m.id ,
+        d.product_id
+        ORDER BY
+        m.state ASC,
+        m.receipt_date DESC
+
+
+    </select>
+
+
+
+    <select id="searchRepositoryReceiptProductOutByCondition"  resultType="com.bee.platform.datadriver.dto.ErpRepositoryReceiptProductOutSearchDTO"  parameterType="com.bee.platform.datadriver.rq.ErpRepositoryReceiptProductOutSearchRQ">
+        SELECT
+        m.id,
+        e.`name` AS companyName,
+        s.contract_no AS saleCode,
+        m.`code` AS outCode,
+        m.receipt_date AS receiptDate,
+        c.cus_name AS customer,
+        p.`name` AS productName,
+        sum( d.num ) AS num,
+        m.state
+        FROM
+        erp_repository_receipt m
+        LEFT JOIN auth_enterprise e ON m.org_id = e.id
+        LEFT JOIN erp_sale_order s ON m.related_order_id = s.id
+        LEFT JOIN auth_customer c ON s.customer = c.id
+        LEFT JOIN erp_repo_receipt_detail d ON d.receipt_id = m.id
+        LEFT JOIN erp_product p ON d.product_id = p.id
+        WHERE
+        1 = 1
+        AND m.deleted = 0
+        AND ( e.deleted = 0 OR e.id IS NULL )
+        AND ( e.status = 1 OR e.id IS NULL )
+        AND ( s.deleted = 0 OR s.id IS NULL )
+        AND ( d.deleted = 0 OR d.id IS NULL )
+        AND ( p.deleted = 0 OR p.id IS NULL )
+        AND ( p.status = 1 OR p.id IS NULL )
+        AND m.type = 'product_delivery'
+        <if test="list != null and list.size > 0 and companyId == null ">
+            AND m.org_id IN
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="companyId != null">
+            AND m.org_id =#{companyId}
+        </if>
+        <if test="saleCode != null and saleCode != ''">
+            AND s.contract_no LIKE CONCAT('%',#{saleCode},'%')
+        </if>
+        <if test="customer != null and customer != ''">
+            AND s.customer_name LIKE CONCAT('%',#{customer},'%')
+        </if>
+        <if test="productId != null">
+            AND d.product_id =#{productId}
+        </if>
+        <if test="outCode != null and outCode != ''">
+            AND m.`code` LIKE CONCAT('%',#{outCode},'%')
+        </if>
+        <if test="startTime != null and startTime != ''" >
+            AND m.receipt_date <![CDATA[>= ]]> #{startTime}
+        </if>
+        <if test="endTime != null and endTime != ''">
+            AND m.receipt_date <![CDATA[<= ]]> #{endTime}
+        </if>
+        GROUP BY
+        m.id ,
+        d.product_id
+        ORDER BY
+        m.state ASC,
+        m.receipt_date DESC
+
+    </select>
+
+
+</mapper>

@@ -1,0 +1,150 @@
+# 配置mybatis-plus
+mybatis-plus:
+  # 配置扫描xml
+  mapper-locations:
+    - classpath*:mapper/*.xml
+  type-handlers-package: com.bee.platform.datadriver.config.handler.mybatis
+  # 实体扫描，多个package用逗号或者分号分隔
+  type-aliases-package: com.bee.platform.datadriver.entity
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    idType: 0
+    # 逻辑删除配置
+    logic-delete-value: 0
+    logic-not-delete-value: 1
+    sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+
+spring:
+    profiles: prod    #环境标识
+    main:
+      allow-bean-definition-overriding: true
+    application: 
+        name: platform-sidatadriver
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        platform: mysql
+        url: jdbc:mysql://192.168.1.119:3306/si_datadriver?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=GMT%2b8&useSSL=true&verifyServerCertificate=false
+        username: develop
+        password: Rhty@007
+        initialSize: 5
+        minIdle: 5
+        maxActive: 200
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        filters: 
+            stat:
+                enabled: true
+                logSlowSql: true
+                slow-sql-millis: 1000
+                merge-sql: true
+    redis:  
+        host: 192.168.1.119
+        port: 6379
+        password:
+        timeout: 10000 
+        jedis:
+          pool:
+            max-active: 200
+            max-wait: -1
+            max-idle: 8
+            min-idle: 0
+        
+    servlet:
+        multipart:
+            max-file-size: 100MB #最大支持文件大小
+            max-request-size: 100MB # 最大支持请求大小
+
+    jackson:
+        date-format: yyyy-MM-dd HH:mm:ss
+        time-zone: GMT+8
+        default-property-inclusion: non_null
+        deserialization:
+            adjust_dates_to_context_time_zone: true
+    
+#druid数据源的监控用户名和密码
+druid:
+  monitor:
+    loginUsername: admin
+    loginPassword: 123456
+    
+#日志
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    com.bee.platform.datadriver.dao.mapper: info     # 打印sql
+
+###注意：springcloud feign 请求超时处理：高版本的springcloud-openfeign请求分为两层，先ribbon控制，后hystrix控制，hystrix默认处于关闭状态###
+#ribbon的超时时间配置
+ribbon:
+  ConnectTimeout: 8000    #ribbon的请求连接的超时时间
+  ReadTimeout: 60000    #ribbon的请求处理的超时时间 
+
+#打开feign-hystrix
+feign:
+  hystrix:
+    enabled: true
+  client: 
+    config:
+      default:
+        connectTimeout: 8000    #feign的请求连接的超时时间，修改配置为8s
+        readTimeout: 10000    #feign的请求处理的超时时间，修改配置为10s
+
+#hystrix 超时时间配置
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true    #如果enabled设置为false，则请求超时交给ribbon控制
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10000    #熔断器hystrix默认的超时时间是1s，所有是远远不够的，修改配置为10s
+
+#网关地址
+api-gateway:
+  remote-addr: http://api.beesrv.com
+  
+#模块地址
+platform-business:
+  remote-addr: ${api-gateway.remote-addr}
+
+platform-user:
+  remote-addr: ${api-gateway.remote-addr}
+  
+platform-sidatadriver:
+  remote-addr: ${api-gateway.remote-addr}
+
+#腾讯云文件服务器相关配置
+qcloud:
+  cos:
+    appId: 1252637635
+    secretId: AKIDiDTTEjhzjEUYO2seYDckccOvBBuN2YFk
+    secretKey: NVO1NTIsCG3arrb5KJ2UheaGhsmQowKS
+    bucketName: beesrv
+    
+bee:
+  common:
+    auth:
+      switch-on: false
+      address: http://api.beesrv.com
+      
+#springboot内嵌tomcat参数优化：也就是说并发的请求数量超过(accept-count + max-threads)后拒绝处理
+server:
+   tomcat:
+     accept-count: 1000    #等待队列的长度,默认是100,4C/8G的服务器设置为1000
+     max-connections: 10000    #最大连接数，默认是10000
+     max-threads: 800    #最大工作线程数，默认是200,4C/8G的服务器配置设置为800
+     min-spare-threads: 100    #最小工作线程数,默认是10,4C/8G的服务器配置设置为100
+     keepAliveTimeout: 30000    #长连接属性：定制化keepalivetimeout,设置30秒内没有请求则服务端自动断开keepalive链接
+     maxKeepAliveRequests: 10000    #长连接属性：当客户端发送超过10000个请求则自动断开keepalive链接
+     accesslog:
+       enabled: true    #Tomcat访问日志开关
+       pattern: '%h %l %u %t %r %s %b %D'    #Tomcat访问日志格式
+       directory: /data/application/springcloud_servers/${spring.application.name}

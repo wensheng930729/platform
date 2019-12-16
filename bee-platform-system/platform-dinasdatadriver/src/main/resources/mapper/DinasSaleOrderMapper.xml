@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.dinas.datadriver.dao.mapper.DinasSaleOrderMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.dinas.datadriver.entity.DinasSaleOrder">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="company_id" property="companyId" />
+        <result column="company_name" property="companyName" />
+        <result column="contract_date" property="contractDate" />
+        <result column="customer_id" property="customerId" />
+        <result column="url" property="url" />
+        <result column="deleted" property="deleted" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, code, company_id, company_name, contract_date, customer_id, url, deleted, create_user, update_user, create_time, update_time
+    </sql>
+
+    <select id="findInfo" resultType="com.bee.platform.dinas.datadriver.dto.SaleOrderDTO">
+        select dso.id, dso.code, dso.company_id, dso.company_name, dso.contract_date, dso.customer_id,
+        dso.url, dc.customer_name
+        from dinas_sale_order dso
+        left join dinas_customer dc on dc.id = customer_id and dc.deleted = 0 and dc.type = 1
+        where dso.deleted = 0 and dso.id = #{id}
+    </select>
+
+    <select id="findSaleOrders" resultType="com.bee.platform.dinas.datadriver.dto.SaleOrderListDTO">
+        select dso.id, dso.code, dc.customer_name, dso.customer_id, dso.contract_date,
+        group_concat(distinct dp.product_name)productName, dso.payment, dso.available_amount
+        from dinas_sale_order dso
+        left join dinas_sale_order_detail dsod on dsod.order_id = dso.id and dsod.deleted = 0
+        left join dinas_customer dc on dc.id = dso.customer_id and dc.deleted = 0
+        left join dinas_product dp on dp.id = dsod.product_id
+        where dso.deleted = 0
+        <if test="companyId != null">
+            and dso.company_id = #{companyId}
+        </if>
+        <if test="code != null">
+            and dso.code like CONCAT('%',#{code},'%')
+        </if>
+        <if test="customerId != null">
+            and dso.customer_id = #{customerId}
+        </if>
+        <if test="customerName != null">
+            and dc.customer_name like CONCAT('%',#{customerName},'%')
+        </if>
+        <if test="contractDateStart != null">
+            and dso.contract_date <![CDATA[>=]]> #{contractDateStart}
+        </if>
+        <if test="contractDateEnd != null">
+            and dso.contract_date <![CDATA[<=]]> #{contractDateEnd}
+        </if>
+        group by dsod.order_id
+        order by dso.create_time desc
+    </select>
+
+    <select id="findOrdersByCompanyId" resultType="com.bee.platform.dinas.datadriver.dto.SaleOrderDTO">
+        select dso.id, dso.code, dso.customer_id, dc.customer_name
+        from dinas_sale_order dso
+        left join dinas_customer dc on dc.id = dso.customer_id and dc.deleted = 0
+        where dso.deleted = 0 and dso.company_id = #{companyId}
+    </select>
+
+    <select id="findProductsById" resultType="com.bee.platform.dinas.datadriver.dto.SaleOrderDetailDTO">
+        select distinct dsod.product_id, dp.product_name
+        from dinas_sale_order dso
+        left join dinas_sale_order_detail dsod on dsod.order_id = dso.id and dsod.deleted = 0
+        left join dinas_product dp on dp.id = dsod.product_id
+        where dso.deleted = 0 and dso.id = #{id}
+    </select>
+    <select id="findSpecsByProductId" resultType="com.bee.platform.dinas.datadriver.dto.SaleOrderDetailDTO">
+        select distinct dsod.product_spec_id, dps.spec_name
+        from dinas_sale_order dso
+        left join dinas_sale_order_detail dsod on dsod.order_id = dso.id and dsod.deleted = 0
+        left join dinas_product_spec dps on dps.id = dsod.product_spec_id
+        where dso.deleted = 0
+        and dso.id = #{orderId}
+        and dsod.product_id = #{productId}
+    </select>
+</mapper>

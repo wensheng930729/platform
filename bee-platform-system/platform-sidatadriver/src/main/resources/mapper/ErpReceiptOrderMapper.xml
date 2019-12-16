@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.datadriver.dao.mapper.ErpReceiptOrderMapper">
+
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.datadriver.entity.ErpReceiptOrder">
+        <id column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="company_id" property="companyId" />
+        <result column="company_name" property="companyName" />
+        <result column="receipt_time" property="receiptTime" />
+        <result column="customer_id" property="customerId" />
+        <result column="customer_name" property="customerName" />
+        <result column="pay_method" property="payMethod" />
+        <result column="remark" property="remark" />
+        <result column="amount" property="amount" />
+        <result column="state" property="state" />
+        <result column="creator_id" property="creatorId" />
+        <result column="creator_enterprise_id" property="creatorEnterpriseId" />
+        <result column="create_time" property="createTime" />
+        <result column="file_name" property="fileName" />
+        <result column="file_url" property="fileUrl" />
+        <result column="deleted" property="deleted" />
+        <result column="modifier_id" property="modifierId" />
+        <result column="modify_time" property="modifyTime" />
+        <result column="sale_order_id" property="saleOrderId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,sale_order_id, code, company_id, company_name, receipt_time, customer_id, customer_name, pay_method, remark, amount, state, creator_id, creator_enterprise_id, create_time, file_name, file_url, deleted, modifier_id, modify_time
+    </sql>
+
+    <select id="searchReceiptOrderByCondition" resultType="com.bee.platform.datadriver.dto.ErpReceiptOrderSearchDTO" parameterType="com.bee.platform.datadriver.rq.ErpReceiptSearchRQ">
+                SELECT
+                m.id,
+                m.`code`,
+                m.company_id AS companyId,
+                m.receipt_time AS receiptTime,
+                c.cus_name AS customerName,
+                SUM(d.receipt_amount) AS amount,
+                m.state
+                FROM
+                erp_receipt_order m
+                LEFT JOIN erp_receipt_order_detail d ON d.receipt_order_id=m.id AND d.deleted=0
+                LEFT JOIN auth_customer c ON m.customer_id = c.id
+                WHERE
+                1 = 1
+                AND m.deleted = 0
+
+                <if test="companyId != null">
+                    AND m.company_id = #{companyId}
+                </if>
+                <if test="list != null and list.size > 0 and companyId == null ">
+                    AND m.company_id IN
+                    <foreach collection="list" item="item" separator="," open="(" close=")">
+                        #{item}
+                    </foreach>
+                </if>
+                <if test="customerName != null and customerName != ''">
+                    AND c.cus_name LIKE CONCAT('%',#{customerName},'%')
+                </if>
+                <if test="code != null and code != ''">
+                    AND m.`code` LIKE CONCAT('%',#{code},'%')
+                </if>
+                <if test="startTime != null and startTime != ''">
+                    AND m.receipt_time <![CDATA[ >= ]]>#{startTime}
+                </if>
+                <if test="endTime != null and endTime != ''">
+                    AND m.receipt_time <![CDATA[ <= ]]>#{endTime}
+                </if>
+                GROUP BY m.id
+                ORDER BY m.receipt_time DESC
+
+
+    </select>
+
+
+
+</mapper>

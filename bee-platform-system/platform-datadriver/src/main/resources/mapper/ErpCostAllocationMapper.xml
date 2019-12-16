@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.costcontrol.dao.mapper.ErpCostAllocationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.costcontrol.entity.ErpCostAllocationCr">
+        <id column="id" property="id"/>
+        <result column="company_id" property="companyId"/>
+        <result column="name" property="name"/>
+        <result column="chromium_recovery_rate" property="chromiumRecoveryRate"/>
+        <result column="iron_recovery_rate" property="ironRecoveryRate"/>
+        <result column="silicon_content" property="siliconContent"/>
+        <result column="carbon_content" property="carbonContent"/>
+        <result column="transport_Loss" property="transportLoss"/>
+        <result column="foreign_exchange_rate" property="foreignExchangeRate"/>
+        <result column="furnace_electricity_unit_price" property="furnaceElectricityUnitPrice"/>
+        <result column="furnace_electricity_ton_consume" property="furnaceElectricityTonConsume"/>
+        <result column="electricity_unit_price" property="electricityUnitPrice"/>
+        <result column="electricity_consume" property="electricityConsume"/>
+        <result column="fixed_carbon" property="fixedCarbon"/>
+        <result column="utilization_rate" property="utilizationRate"/>
+        <result column="coke_unit_price" property="cokeUnitPrice"/>
+        <result column="coke_ratio" property="cokeRatio"/>
+        <result column="semi_coke_unit_price" property="semiCokeUnitPrice"/>
+        <result column="semi_coke_ratio" property="semiCokeRatio"/>
+        <result column="electrode_paste_unit_price" property="electrodePasteUnitPrice"/>
+        <result column="electrode_paste_ton_consume" property="electrodePasteTonConsume"/>
+        <result column="silica_unit_price" property="silicaUnitPrice"/>
+        <result column="silica_ton_consume" property="silicaTonConsume"/>
+        <result column="manufacturing_cost" property="manufacturingCost"/>
+        <result column="consumable_accessorie" property="consumableAccessorie"/>
+        <result column="direct_labor" property="directLabor"/>
+        <result column="labour_service" property="labourService"/>
+        <result column="management_cost" property="managementCost"/>
+        <result column="sale_cost" property="saleCost"/>
+        <result column="finance_cost" property="financeCost"/>
+        <result column="status" property="status"/>
+        <result column="creator_id" property="creatorId"/>
+        <result column="creator" property="creator"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, company_id, name, chromium_recovery_rate, iron_recovery_rate, silicon_content, carbon_content, transport_Loss AS transportLoss,
+         foreign_exchange_rate, furnace_electricity_unit_price, furnace_electricity_ton_consume, electricity_unit_price, electricity_consume,
+          fixed_carbon, utilization_rate, coke_unit_price, coke_ratio, semi_coke_unit_price, semi_coke_ratio, electrode_paste_unit_price,
+          electrode_paste_ton_consume, silica_unit_price, silica_ton_consume, manufacturing_cost,consumable_accessorie, direct_labor,
+          labour_service, management_cost, sale_cost, finance_cost,status,creator_id,creator,create_time,update_time
+    </sql>
+
+    <select id="queryCreator" parameterType="list" resultType="com.bee.platform.user.dto.AuthUserBoxDTO">
+        select id,name from auth_platform_user a where a.deleted=0 and id
+        in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+</mapper>

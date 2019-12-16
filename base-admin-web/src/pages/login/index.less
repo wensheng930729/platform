@@ -1,0 +1,41 @@
+.login {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 720px;
+  background-color: #f0f2f5;
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 1000px;
+    height: 580px;
+    background-color: #ffffff;
+    .loginLeft {
+      flex: 1;
+      padding: 70px;
+      .loginTitle {
+        margin-bottom: 50px;
+        p {
+          font: 18px "Microsoft YaHei";
+          margin-bottom: 4px;
+        }
+        p + p {
+          font: 16px "Microsoft YaHei";
+        }
+      }
+    }
+    .loginRight {
+      height: 100%;
+      img {
+        height: 100%;
+      }
+    }
+  }
+  .footer {
+    position: absolute;
+    bottom: 0;
+    font: 14px/44px "Microsoft YaHei";
+  }
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.user.dao.mapper.AuthContactMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.customer.entity.AuthContact">
+        <id column="id" property="id" />
+        <result column="contact_no" property="contactNo" />
+        <result column="second_type" property="secondType" />
+        <result column="name" property="name" />
+        <result column="sex" property="sex" />
+        <result column="phone" property="phone" />
+        <result column="fixtel" property="fixtel" />
+        <result column="birthday" property="birthday" />
+        <result column="address" property="address" />
+        <result column="hobby" property="hobby" />
+        <result column="star_level" property="starLevel" />
+        <result column="work_brief" property="workBrief" />
+        <result column="status" property="status" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="deleted" property="deleted" />
+        <result column="deleted_time" property="deletedTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, contact_no, second_type, name, sex, phone, fixtel, birthday, address, hobby, star_level, work_brief, status, create_time, update_time, deleted,deleted_time
+    </sql>
+
+</mapper>

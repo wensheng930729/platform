@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bee.platform.dinas.datadriver.dao.mapper.DinasSaleOrderDetailMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.bee.platform.dinas.datadriver.entity.DinasSaleOrderDetail">
+        <id column="id" property="id" />
+        <result column="order_id" property="orderId" />
+        <result column="product_id" property="productId" />
+        <result column="product_spec_id" property="productSpecId" />
+        <result column="price" property="price" />
+        <result column="tax_price" property="taxPrice" />
+        <result column="num" property="num" />
+        <result column="deleted" property="deleted" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, order_id, product_id, product_spec_id, price, tax_price, num, deleted, create_time, update_time
+    </sql>
+
+    <select id="findInfoByOrderId" resultType="com.bee.platform.dinas.datadriver.dto.SaleOrderDetailDTO">
+        select dsod.product_id, dp.product_name, dp.unit, dsod.product_spec_id, dps.spec_name,
+        dsod.price, dsod.tax_price, dsod.num
+        from dinas_sale_order_detail dsod
+        left join dinas_product dp on dp.id = dsod.product_id and dp.deleted = 0
+        left join dinas_product_spec dps on dps.id = dsod.product_spec_id and dps.deleted = 0
+        where dsod.deleted = 0 and dsod.order_id = #{orderId}
+    </select>
+
+</mapper>
