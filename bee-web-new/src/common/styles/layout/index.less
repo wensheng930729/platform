@@ -1,0 +1,414 @@
+.pageWrap{
+  width:100%;
+}
+/**模块标题**/
+.moduleTitle {
+    font-size: .2rem;
+    font-weight: bold;
+    text-align: center;
+    padding-top:.2rem;
+    .codeLine{
+      font-weight:normal;
+    }
+    .partnerName{
+      font-size:.1067rem;
+      font-weight:normal;
+      text-transform:uppercase;
+    }
+}
+.bannerWrap{
+  width:12.80rem;
+  height:4.26rem;
+  overflow:hidden;
+  position:relative;
+  align-items: center;
+  background-repeat:no-repeat;
+  background-position: center top;
+  background-size: cover;
+  text-align: center;
+  .companyCulture{
+    width:100%;
+    position:absolute;
+    bottom:0;
+    left:0;
+    align-items: center;
+    .companyCultureList{
+      width:8.09rem;
+      padding:.1067rem 0 .1334rem 0;
+      align-items: center;
+      .companyCultureItem{
+        border-right:#8b9397 .01rem solid;
+        .cultureItemIcon{
+          width:.2934rem;
+          height:.2934rem;
+          margin-top:.0734rem;
+          overflow:hidden;
+        }
+        .cultureIcon{
+          width:.2934rem;
+          height:.2934rem;
+          vertical-align:middle;
+        }
+        .cultureItemInfo{
+          width:1.5467rem;
+          margin-left:.12rem;
+          text-align:left;
+          .cultureItemText{
+            line-height:.1334rem;
+          }
+        }
+      }
+      .cultureWt1{
+        width:2.5rem;
+        margin-right:.52rem;
+      }
+      .cultureWt2{
+        width:2.0934rem;
+        margin-right:.82rem;
+      }
+      .cultureWt3{
+        width:1.9334rem;
+        margin-right:0;
+        border:0;
+        .cultureItemInfo{
+          width:1.52rem;
+        }
+      }
+    }
+  }
+  .bannerMask{
+    display:block;
+    font-style:normal;
+    position:absolute;
+    left:0;
+    top:0;
+    width:12.80rem;
+    height:4.26rem;
+    background-repeat:no-repeat;
+    background-position: center top;
+    background-size: cover;
+  }
+  .earthRotation{
+    display:block;
+    font-style:normal;
+    position:absolute;
+    top:-.7867rem;
+    right:-1.4667rem;
+    width:5.36rem;
+    height:5.36rem;
+    animation:earthRotation 28s linear 0s infinite;
+  }
+  .meteorArrow{
+    display:block;
+    font-style:normal;
+    position:absolute;
+    top:0;
+    left:1.06rem;
+    width:.66rem;
+    height:.96rem;
+    animation:meteorArrow 3s linear 0s infinite;
+  }
+  .meteorArrow2{
+    left:6.534rem;
+    animation:meteorArrow2 3s linear 0s infinite;
+  }
+  .meteorArrow3{
+    left:8.0rem;
+    animation:meteorArrow3 3s linear 0s infinite;
+  }
+}
+
+/*箭头动画*/
+@keyframes meteorArrow {
+  0%{
+    opacity: 0.1;
+    top:-.96rem;
+    transform: scale(0.1);
+  }
+  10%{
+    opacity: 0.2;
+    top:0rem;
+    transform: scale(0.2);
+  }
+  20%{
+    opacity: 0.6;
+    top:.48rem;
+    transform: scale(0.6);
+  }
+  30%{
+    opacity: 0.8;
+    top:.96rem;
+    transform: scale(0.8);
+  }
+  40%{
+    opacity: 1;
+    top:1.44rem;
+    transform: scale(1);
+  }
+  50%{
+    opacity: 1;
+    top:1.92rem;
+    transform: scale(1);
+  }
+  60%{
+    opacity: 0.8;
+    top:2.4rem;
+    transform: scale(0.8);
+  }
+  70%{
+    opacity: 0.6;
+    top:2.88rem;
+    transform: scale(0.6);
+  }
+  80%{
+    opacity: 0.4;
+    top:3.36rem;
+    transform: scale(0.4);
+  }
+  90%{
+    opacity: 0.2;
+    top:3.84rem;
+    transform: scale(0.2);
+  }
+  100%{
+    top:4.26rem;
+    opacity: 0.1;
+    transform: scale(0.1);
+  }
+}
+/*箭头动画*/
+@keyframes meteorArrow2 {
+  0%{
+    opacity: 0.1;
+    top:-.96rem;
+    transform: scale(0.4);
+  }
+  10%{
+    opacity: 0.2;
+    top:0rem;
+    transform: scale(0.4);
+  }
+  20%{
+    opacity: 0.6;
+    top:.48rem;
+    transform: scale(0.4);
+  }
+  30%{
+    opacity: 0.8;
+    top:.96rem;
+    transform: scale(0.4);
+  }
+  40%{
+    opacity: 1;
+    top:1.44rem;
+    transform: scale(0.4);
+  }
+  50%{
+    opacity: 1;
+    top:1.92rem;
+    transform: scale(0.4);
+  }
+  60%{
+    opacity: 0.8;
+    top:2.4rem;
+    transform: scale(0.4);
+  }
+  70%{
+    opacity: 0.6;
+    top:2.88rem;
+    transform: scale(0.4);
+  }
+  80%{
+    opacity: 0.4;
+    top:3.36rem;
+    transform: scale(0.4);
+  }
+  90%{
+    opacity: 0.2;
+    top:3.84rem;
+    transform: scale(0.4);
+  }
+  100%{
+    top:4.26rem;
+    opacity: 0.1;
+    transform: scale(0.4);
+  }
+}
+/*箭头动画*/
+@keyframes meteorArrow3 {
+  0%{
+    opacity: 0.1;
+    top:-.96rem;
+    transform: scale(0.6);
+  }
+  10%{
+    opacity: 0.2;
+    top:0rem;
+    transform: scale(0.6);
+  }
+  20%{
+    opacity: 0.6;
+    top:.48rem;
+    transform: scale(0.6);
+  }
+  30%{
+    opacity: 0.8;
+    top:.96rem;
+    transform: scale(0.6);
+  }
+  40%{
+    opacity: 1;
+    top:1.44rem;
+    transform: scale(0.6);
+  }
+  50%{
+    opacity: 1;
+    top:1.92rem;
+    transform: scale(0.6);
+  }
+  60%{
+    opacity: 0.8;
+    top:2.4rem;
+    transform: scale(0.6);
+  }
+  70%{
+    opacity: 0.6;
+    top:2.88rem;
+    transform: scale(0.6);
+  }
+  80%{
+    opacity: 0.4;
+    top:3.36rem;
+    transform: scale(0.6);
+  }
+  90%{
+    opacity: 0.2;
+    top:3.84rem;
+    transform: scale(0.6);
+  }
+  100%{
+    top:4.26rem;
+    opacity: 0.1;
+    transform: scale(0.6);
+  }
+}
+
+/*地球动画*/
+@keyframes earthRotation{
+  0% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}
+
+
+/**产品模块**/
+.productWrap{
+  width:100%;
+  position:relative;
+  align-items: center;
+  background-repeat:no-repeat;
+  background-position: center top;
+  background-size: cover;
+  .productMain{
+    width:8.09rem;
+    align-items: center;
+    .productCont{
+      flex-wrap: wrap;
+      padding-top:.4rem;
+      .productItemWrap {
+        margin: 0 .0534rem .12rem;
+        width:1.8934rem;
+        height:2.2134rem;
+        align-items:center;
+        justify-content: center;
+        text-align: center;
+        background-repeat:no-repeat;
+        background-position: left top;
+        background-size:cover;
+        .productItem{
+          width:.94218rem;
+          height:.94218rem;
+          margin-top:.2267rem;
+          justify-content: center;
+          align-items: center;
+        }
+        .productItemIcon{
+          cursor:pointer;
+          height:.94218rem;
+          background-repeat:no-repeat;
+          background-position:0 0;
+          background-size:cover;
+          cite{
+            display:block;
+            font-style:normal;
+            visibility:hidden;
+            height:.1334rem;
+            font-size:.0934rem;
+            overflow:hidden;
+          }
+        }
+        .icon140{
+          width:.94218rem;
+        }
+        .icon110{
+          width:.740285rem;
+        }
+        .icon120{
+          width:.80759rem;
+        }
+        .icon130{
+          width:.86715rem;
+        }
+        .productItemText{
+          width:1.3334rem;
+          .productItemName{
+            font-size:.1334rem;
+            color:#ffce42;
+            font-weight:bold;
+            line-height:.1334rem;
+          }
+          .productInfo{
+            padding-top:.1467rem;
+            line-height:.1334rem;
+            font-size:.0934rem;
+            color:#76fadd;
+            text-align:left;
+          }
+        }
+      }
+    }
+  }
+  .moduleTitle{
+    padding-top:.6267rem;
+    .codeLine{
+        padding:0 .16rem;
+    }
+    .partnerName{
+      padding:.0134rem 0 0 0;
+    }
+    .productTitIcon{
+      margin-top:.0334rem;
+    }
+    .productIconSize{
+      width:.1467rem;
+      height:.1867rem;
+      vertical-align:middle;
+    }
+  }
+  .bannerGift{
+    position:absolute;
+  }
+
+}

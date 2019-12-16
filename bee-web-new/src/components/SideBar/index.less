@@ -1,0 +1,271 @@
+.sideContact {
+  width: 60px;
+  position: fixed;
+  right: 10px;
+  bottom: 200px;
+  z-index: 999;
+}
+.sideContactDetail {
+  width: 200px;
+  min-height: 180px;
+  background-color: #fff;
+  box-shadow: 1px 1px 16px #dedede;
+  position: absolute;
+  right: 62px;
+  top: 0;
+  text-align: center;
+  /* display: none; */
+  visibility: hidden;
+  opacity: 0;
+}
+.sideContactWay {
+  width: 200px;
+  min-height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 0;
+}
+.sideContactWay dl {
+  width: 180px;
+  height: 45px;
+  margin-bottom: 40px;
+}
+.sideContactWay dl:nth-last-of-type(1) {
+  margin-bottom: 0;
+}
+.sideContactWay dl dt {
+  float: left;
+  margin-right: 10px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+.sideContactWay dl dd {
+  width: 120px;
+  text-align: left;
+  float: left;
+}
+.sideContactWay dl dd h3 {
+  font-size: 18px;
+  color: rgba(51, 51, 51, 1);
+  margin: 0;
+}
+.sideContactWay dl dd p {
+  font-size: 14px;
+  color: rgba(46, 46, 46, 1);
+}
+.sideContactWx {
+  width: 200px;
+  height: 180px;
+  background-color: #fff;
+  box-shadow: 1px 1px 16px #dedede;
+  position: absolute;
+  right: 62px;
+  top: 0;
+  text-align: center;
+  visibility: hidden;
+  opacity: 0;
+  /* display: none; */
+}
+.sideContactWxWay {
+  width: 200px;
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.sideWx {
+  width: 150px;
+  /* height: 202px; */
+}
+.sideContactSign {
+  width: 60px;
+  height: 180px;
+  box-shadow: 1px 1px 16px #dedede;
+  float: left;
+}
+.sideContactBox {
+  width: 60px;
+  height: 60px;
+  background-color: #fff;
+  border-bottom: 1px solid #dedede;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+  z-index: 9;
+  font-weight: 600;
+}
+.sideWhiteCode {
+  width: 30px;
+  height: 30px;
+  display: none;
+}
+.sideWhiteResponse {
+  width: 30px;
+  height: 30px;
+  display: none;
+}
+.sideResponse {
+  width: 30px;
+  height: 30px;
+}
+.sideCode {
+  width: 30px;
+  height: 30px;
+}
+.sideContactBox:nth-of-type(1):hover .sideResponse {
+  display: none;
+}
+.sideContactBox:nth-of-type(1):hover .sideWhiteResponse {
+  display: block;
+}
+
+.sideContactBox:nth-of-type(1):hover .sideContactDetail {
+  width: 200px;
+  height: 180px;
+  visibility: visible;
+  opacity: 1;
+  transition: all 0.2s;
+}
+.sideContactBox:nth-of-type(2):hover .sideCode {
+  display: none;
+}
+.sideContactBox:nth-of-type(2):hover .sideContactWx {
+  width: 200px;
+  height: 180px;
+  visibility: visible;
+  opacity: 1;
+  transition: all 0.2s;
+}
+.sideContactBox:nth-of-type(2):hover .sideWhiteCode {
+  display: block;
+}
+.sideContactBox:nth-last-of-type(1) {
+  border: 0;
+  cursor: pointer;
+}
+.sideContactBox:nth-last-of-type(1):hover div {
+  border-width: 0 1 1;
+  border-style: solid;
+  border-color: transparent transparent #fff;
+}
+.sideContactBox:nth-last-of-type(1):hover span {
+  color: #fff;
+}
+.sideContactBox:nth-last-of-type(1) div {
+  width: 16px;
+  height: 16px;
+  border-width: 0 10px 10px;
+  border-style: solid;
+  border-color: transparent transparent #333;
+}
+.sideContactBox:nth-last-of-type(1) span {
+  font-size: 14px;
+}
+.sideContactBox:hover {
+  background: linear-gradient(
+    90deg,
+    rgba(252, 220, 1, 1) 0%,
+    rgba(252, 187, 1, 1) 100%
+  );
+  transition: all 0.5s;
+}
+:global(.homeSideContactBox:hover) {
+  background: linear-gradient(
+    90deg,
+    rgba(252, 220, 1, 1) 0%,
+    rgba(252, 187, 1, 1) 100%
+  );
+  transition: all 0.5s;
+}
+:global(.supplyChainSideContactBox:hover) {
+  background: linear-gradient(
+    90deg,
+    rgba(227, 187, 113, 1) 0%,
+    rgba(213, 141, 78, 1) 100%
+  );
+  transition: all 0.5s;
+}
+:global(.logisticsSideContactBox:hover) {
+  background: linear-gradient(
+    90deg,
+    rgba(4, 203, 251, 1) 0%,
+    rgba(53, 131, 217, 1) 100%
+  );
+  transition: all 0.5s;
+}
+:global(.ifmsSideContactBox:hover) {
+  background: linear-gradient(
+    90deg,
+    rgba(97, 100, 244, 1) 0%,
+    rgba(153, 84, 246, 1) 100%
+  );
+  transition: all 0.5s;
+}
+:global(.erpSideContactBox:hover) {
+  background: linear-gradient(
+    90deg,
+    rgba(42, 175, 180, 1) 0%,
+    rgba(69, 223, 227, 1) 99%
+  );
+  transition: all 0.5s;
+}
+:global(.tradeSideContactBox:hover) {
+  background: linear-gradient(
+    90deg,
+    rgba(240, 172, 25, 1) 0%,
+    rgba(248, 100, 60, 1) 100%
+  );
+  transition: all 0.5s;
+}
+
+body:hover .sideContactDetail {
+  visibility: hidden;
+  opacity: 0;
+
+  transition: all 0.7s;
+}
+body:hover .sideContactWx {
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.7s;
+}
+@keyframes rise {
+  0% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+  50% {
+    transform: translate3d(0px, -20px, 0px);
+  }
+  100% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+}
+@keyframes colorRise {
+  0% {
+    opacity: 0;
+    height: 0%;
+    transform: translate3d(0px, 0px, 0px);
+  }
+  100% {
+    opacity: 1;
+    height: 55%;
+    transform: translate3d(0px, -20px, 0px);
+  }
+}
+@keyframes disappear {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+    margin: 0;
+  }
+}

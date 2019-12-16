@@ -1,0 +1,216 @@
+.erpWrap {
+  width: 100%;
+  background: url('https://obs-fe91.obs.cn-south-1.myhuaweicloud.com:443/%2Fhome%2Fbee%2Fproject%2Ftemp%2F542c138808bc4a1584387ffa6c379774.png')
+    no-repeat top center;
+  background-size: cover;
+  // background-size: 100% 9.4467rem !important;
+  // background-color: #041926;
+  // align-items: center;
+  // background: url('') no-repeat center center;
+  .moduleTitle {
+    padding-top: 0rem;
+    .codeLine {
+      padding: 0 0.16rem;
+    }
+    .partnerName {
+      font-weight: bold;
+      padding: 0.0134rem 0 0 0;
+    }
+    .productTitIcon {
+      margin-top: 0.0334rem;
+    }
+    .productIconSize {
+      width: 0.1467rem;
+      height: 0.1867rem;
+      vertical-align: middle;
+    }
+  }
+  .erpBannerWrap {
+    width: 100%;
+    height: 3.35rem;
+    align-items: center;
+    .iconSize {
+      width: 100%;
+      // height: 2.906rem;
+      padding-top: 1.49rem;
+      h2 {
+        text-align: center;
+        font-size: 0.6rem;
+        // margin-bottom: 0.133rem;
+        font-weight: bold;
+        color: #fff;
+        span {
+          font-size: 0.6rem;
+          color: #ffce42;
+        }
+        text-shadow: 3px 3px 6px rgba(2, 13, 88, 0.49);
+      }
+      h3 {
+        text-align: center;
+        font-size: 0.16rem;
+        color: #fff;
+        margin-bottom: 0.133rem;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px rgba(2, 13, 88, 0.49);
+      }
+      h4 {
+        text-align: center;
+        font-size: 0.12rem;
+        height: 0.3867rem;
+        span {
+          display: inline-block;
+          width: 2.773rem;
+          height: 0.3867rem;
+          line-height: 0.3867rem;
+          border-radius: 0.193rem;
+          background-color: #ffce42;
+        }
+      }
+    }
+  }
+  .erpIntroWrap {
+    width: 100%;
+    align-items: center;
+    background: none !important;
+    .erpIntroCont {
+      width: 5.6534rem;
+      align-items: center;
+      padding-top: 0.7067rem;
+      padding-bottom: 0.6734rem;
+    }
+    .moduleTitle {
+      .codeLine {
+        padding: 0 0.1334rem;
+      }
+    }
+    .erpInfoText {
+      padding-top: 0.4rem;
+      font-size: 0.1334rem;
+      line-height: 0.2rem;
+      text-align: center;
+    }
+  }
+  .erpFunctionWrap {
+    width: 8.09rem;
+    align-items: center;
+    padding-bottom: 1.06rem;
+    .erpFunction {
+      width: 100%;
+      justify-content: space-between;
+      padding-top: 0.1rem;
+      .erpFunctionItem {
+        flex: 1;
+        align-items: center;
+        .functionIcon {
+          margin-bottom: 0.3734rem;
+          .iconSize {
+            width: 0.4667rem;
+            height: 0.4934rem;
+            vertical-align: middle;
+          }
+          .iconSize:hover {
+            animation: functionIcon 1s;
+          }
+        }
+        .functionName {
+          font-size: 0.16rem;
+          font-weight: 400;
+        }
+      }
+    }
+  }
+
+  .erpValue {
+    width: 100%;
+    align-items: center;
+    padding-top: 0.0667rem;
+    padding-bottom: 0.9rem;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: cover;
+    .moduleTitle {
+      padding-top: 0rem;
+    }
+    .erpValueContair {
+      width: 8.09rem;
+      align-items: center;
+    }
+    .erpValueCont {
+      width: 100%;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-top: 0.7734rem;
+      .erpValueItem {
+        flex: 1;
+        justify-content: center;
+        align-items: center;
+        margin-right: 0.08rem;
+        position: relative;
+        .picSize {
+          display: block;
+          width: 1.9334rem;
+          height: 2.4867rem;
+          vertical-align: top;
+        }
+        .erpValueInfo {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          left: 0;
+          top: 0;
+          align-items: center;
+          justify-content: center;
+        }
+        .erpValueInfoCot {
+          top: -0.3rem;
+          position: relative;
+          align-items: center;
+          justify-content: center;
+          padding: 0 0.1934rem;
+        }
+        .erpProductIcon {
+          .erpProductSize {
+            width: 0.6667rem;
+            height: 0.7734rem;
+            vertical-align: middle;
+          }
+        }
+        .erpItemName {
+          margin-top: 0.6067rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-weight: bold;
+          font-size: 0.1334rem;
+        }
+        .erpItemText {
+          margin-top: 0.1267rem;
+          text-align: left;
+          font-size: 0.0934rem;
+          font-weight: 400;
+          height: 0.9334rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+      .erpValueItem:last-child {
+        margin-right: 0;
+      }
+      .erpValueItem:hover {
+      }
+    }
+  }
+}
+@keyframes functionIcon {
+  0% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+
+  50% {
+    transform: translate3d(0px, -20px, 0px);
+  }
+
+  100% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+}

@@ -1,0 +1,181 @@
+.loginWrap {
+  width: 100%;
+  // height: 7.193rem;
+  padding-top: 0.4534rem;
+  background: url('https://obs-fe91.obs.cn-south-1.myhuaweicloud.com:443/%2Fhome%2Fbee%2Fproject%2Ftemp%2F5ecf82cff0594646b683ccef440b1703.png')
+    no-repeat center center;
+  background-size: 12.8rem 7.193rem;
+  .loginSlogan {
+    padding-top: 4rem;
+    float: left;
+    margin-left: 1.0067rem;
+    .loginSloganTitle {
+      font-weight: bold;
+      color: rgba(255, 255, 255, 1);
+      font-size: 0.32rem;
+      margin-bottom: 0.293rem;
+    }
+    .loginSloganContent {
+      font-size: 0.16rem;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 1);
+    }
+  }
+  .loginBox {
+    width: 10.06rem;
+    height: 6.746rem;
+    margin: 0 auto;
+    padding: 1.76rem 0;
+    .loginContent {
+      width: 3.326rem;
+      height: 3.226rem;
+      background: url('https://obs-fe91.obs.cn-south-1.myhuaweicloud.com:443/%2Fhome%2Fbee%2Fproject%2Ftemp%2F26379035584147038c94557caf86101c.png')
+        no-repeat center center;
+      background-size: 3.326rem 3.226rem;
+      padding: 0.393rem 0.32rem;
+      float: right;
+      .loginNav {
+        width: 100%;
+        height: 0.213rem;
+        margin-bottom: 0.333rem;
+        li {
+          height: 0.213rem;
+          float: left;
+          cursor: pointer;
+        }
+        li:nth-last-child(1) {
+          margin-left: 0.267rem;
+        }
+        .loginActive {
+          font-size: 0.2rem;
+          font-weight: 400;
+          color: rgba(255, 255, 255, 1);
+        }
+        .loginNormal {
+          padding-top: 0.107rem;
+          font-size: 0.106rem;
+          font-weight: 400;
+          color: rgba(255, 255, 255, 1);
+          opacity: 0.5;
+        }
+        .loginNormal:hover {
+          opacity: 1;
+        }
+      }
+    }
+    .codeLogin {
+      .loginForm {
+        margin-bottom: 0.173rem;
+        .loginInputBox {
+          .ant-input-prefix {
+            width: 0.173rem;
+            height: 0.173rem;
+            img {
+              width: 0.173rem;
+              height: 0.173rem;
+            }
+          }
+          input {
+            width: 100%;
+            height: 0.373rem;
+            padding-left: 0.3rem;
+            background-color: rgba(0, 0, 0, 0);
+            color: rgba(255, 255, 255, 1);
+            border-radius: 6px;
+          }
+          input:-internal-autofill-selected {
+            background-color: rgba(0, 0, 0, 0) !important;
+          }
+          input:focus {
+            border-color: #00d2ff;
+          }
+          input:hover {
+            border-color: #00d2ff;
+          }
+          .has-error .ant-input-affix-wrapper .ant-input,
+          .has-error .ant-input-affix-wrapper .ant-input:hover {
+            border-color: #ffce42;
+          }
+          .has-error .ant-input,
+          .has-error .ant-input:hover {
+            border-color: #ffce42;
+          }
+          .ant-form-explain {
+            color: #ffce42;
+          }
+          input:-webkit-autofill,
+          textarea:-webkit-autofill,
+          select:-webkit-autofill {
+            -webkit-text-fill-color: #fff !important;
+            background-color: transparent;
+            background-image: none;
+            transition: background-color 50000s ease-in-out 0s;
+            caret-color: #fff !important;
+          }
+        }
+        .loginForgetCode {
+          width: 100%;
+          height: 0.2667rem;
+          margin-bottom: 0.213rem;
+          a {
+            color: #ffce42;
+            font-size: 0.1067rem;
+          }
+          a:nth-last-child(1) {
+            float: right;
+          }
+          a:nth-child(1) {
+            float: left;
+            margin-left: 0.153rem;
+          }
+        }
+        .loginBtn {
+          width: 100%;
+          height: 0.373rem;
+          background: rgba(255, 206, 66, 1);
+          border-radius: 6px;
+          border: 0;
+          font-size: 0.173rem;
+          color: #000116;
+        }
+        .loginBtn:hover {
+          background: #ffe258;
+        }
+        .loginBtn:active {
+          transition-duration: 0.3s;
+          background: rgba(255, 206, 66, 1);
+        }
+      }
+    }
+    .phoneLogin {
+      .codeLogin>.loginForm;
+      .loginGetCode {
+        width: 0.786rem;
+        .loginLine {
+          font-size: 0.12rem;
+          color: rgba(255, 255, 255, 0.5);
+          margin-right: 0.1067rem;
+        }
+        .loginInputCode {
+          padding-right: 0.786rem;
+        }
+        .loginBtnClass {
+          width: 0.6067rem;
+          text-align: center;
+          font-size: 0.1067rem;
+          display: inline-block;
+          color: #ffce42;
+          cursor: pointer;
+        }
+        .loginNormalBtnClass {
+          width: 0.6067rem;
+          text-align: center;
+          font-size: 0.1067rem;
+          color: rgba(255, 255, 255, 0.5);
+          display: inline-block;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

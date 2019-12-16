@@ -1,0 +1,219 @@
+.news-main {
+  background: #fff;
+  // padding-top: 11px;
+  box-sizing: border-box;
+  .banner {
+    // margin-top: 11px;
+    width: 100%;
+    height: 5.693rem;
+    position: absolute;
+    & > div {
+      height: 5.693rem;
+      width: 100%;
+
+      background: url('https://obs-fe91.obs.cn-south-1.myhuaweicloud.com:443/%2Fhome%2Fbee%2Fproject%2Ftemp%2Fa5c81b39a0da4ec18f601b004ebb7d48.png')
+        no-repeat center center;
+    }
+    // position: relative;
+    // // margin:  0 auto;
+
+    // background-size: 1920px 639px;
+  }
+  .body {
+    padding-top: 4.36rem;
+    width: 100%;
+    height: 100%;
+    // margin-top: 20px;
+    background-color: #041b29;
+    .bodyWrapper {
+      width: 1200px;
+      height: 100%;
+      margin: 0 auto;
+      // border: 1px solid red;
+      display: flex;
+      .bodyLeft {
+        width: 200px;
+        height: 500px;
+        // background-color: burlywood;
+        .xinwentu {
+          // background:url('../../../assets//news/xinwentu.png') no-repeat center center;
+          width: 200px;
+          height: 50px;
+          // margin-bottom: 20px;
+        }
+        .nav {
+          position: relative;
+          z-index: 100;
+          width: 158px;
+          height: 300px;
+          font-size: 16px;
+          background-color: #04323d;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          border: 1px solid rgba(0, 250, 238, 1);
+          .navItem {
+            width: 100%;
+            height: 60px;
+            padding-left: 25px;
+            padding-top: 15px;
+            // padding-bottom: 15px;
+            cursor: pointer;
+            color: white;
+          }
+          .navItemAc {
+            width: 100%;
+            height: 60px;
+            padding-left: 25px;
+            padding-top: 15px;
+            background-color: #04464f;
+            // padding-bottom: 15px;
+            color: rgba(252, 187, 1, 1);
+            cursor: pointer;
+          }
+        }
+      }
+      .bodyRight {
+        width: 950px;
+        flex: 1;
+        // background-color: aqua;
+        margin-left: 30px;
+        padding-top: 40px;
+        .rightHead {
+          width: 100%;
+          border-bottom: 1px dashed rgba(71, 77, 84, 1);
+          padding-bottom: 10px;
+          margin-bottom: 20px;
+          // display: flex;
+          align-items: center;
+          .title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333333;
+          }
+        }
+        .contentWrapper {
+          width: 100%;
+          // height:208px;
+          // margin: 0 auto;
+          // background: #fff;
+          .contentImg {
+            width: 100%;
+            height: 208px;
+            position: relative;
+            border-bottom: 1px dashed rgba(71, 77, 84, 1);
+            .left {
+              width: 580px;
+              height: 100%;
+              float: left;
+              position: absolute;
+              // margin-top: 68px;
+              top: 58px;
+              .zuo {
+                float: left;
+              }
+              .you {
+                float: right;
+                width: 490px;
+                .desc {
+                  height: 40px;
+                  font-size: 14px;
+                  color: 'rgba(158,161,164,1)';
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 3;
+                  -webkit-box-orient: vertical;
+                }
+              }
+            }
+            .right {
+              width: 240px;
+              height: 160px;
+              float: right;
+              // margin-top: 48px;
+              position: absolute;
+              right: -47px;
+              top: 48px;
+            }
+          }
+        }
+      }
+    }
+    :global {
+      .ant-pagination-item {
+        background-color: #04323d;
+        // border: 1px solid #04323D;
+        border-color: #04323d;
+      }
+      .ant-pagination-item-active {
+        opacity: 0.5;
+        border: 1px solid #00faee;
+      }
+      .ant-pagination-item a {
+        color: #00f1e6;
+      }
+      .ant-pagination-item-link {
+        background-color: #04323d;
+        // border: 1px solid #04323D;
+        border-color: #04323d;
+        color: #00f1e6;
+      }
+      .ant-select-selection {
+        background-color: #04323d;
+        // border: 1px solid #04323D;
+        border-color: #04323d;
+        color: #00f1e6;
+      }
+      .ant-pagination-options-quick-jumper input {
+        background-color: #04323d;
+        // border: 1px solid #04323D;
+        border-color: #04323d;
+        color: #00f1e6;
+      }
+      .ant-pagination-item-container .ant-pagination-item-link-icon {
+        color: #00f1e6;
+      }
+      .ant-pagination-item-container .ant-pagination-item-ellipsis {
+        color: #00f1e6;
+      }
+    }
+  }
+  .navTop {
+    display: flex;
+    width: 1200px;
+    margin: 0 auto;
+    font-size: 20px;
+    font-weight: bold;
+    color: rgba(50, 50, 50, 1);
+    background: #fff;
+    padding: 30px 5px 45px 5px;
+    .navItem {
+      flex: 1;
+      color: #747474;
+      font-size: 20px;
+      text-align: center;
+    }
+    .navItem:hover {
+      color: rgba(252, 187, 1, 1);
+    }
+    .navItemAc {
+      flex: 1;
+      color: rgba(252, 187, 1, 1);
+      font-size: 20px;
+      text-align: center;
+      position: relative;
+    }
+    .navItemAc:after {
+      content: ' ';
+      position: absolute;
+      left: 41%;
+      bottom: -29px;
+      height: 3px;
+      width: 108px;
+      margin-left: -30px;
+      background: rgba(252, 187, 1, 1);
+    }
+  }
+}

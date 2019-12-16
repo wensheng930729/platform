@@ -1,0 +1,225 @@
+.modalImg {
+  margin-right: 10px;
+}
+
+.wrapper {
+}
+
+.nextResponseBox {
+  :global {
+    .ant-modal-close-x {
+      color: #fff;
+    }
+    .ant-modal-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .ant-modal-header {
+      padding-top: 32px;
+      border-bottom: none;
+      background-color: transparent;
+      color: #fff;
+    }
+    .ant-modal-content {
+      background: url(../../assets/register/bg.png) no-repeat center center;
+      background-size: 100% 100%;
+      background-color: #112734;
+    }
+  }
+  .modalText {
+    padding: 0 50px;
+    color: #fff;
+    & > span {
+      color: #ffce42;
+    }
+  }
+  .nextDiv {
+    text-align: center;
+    margin-top: 50px;
+    button {
+      text-align: center;
+      width: 1.2rem;
+      height: 0.32rem;
+      line-height: 0.32rem;
+      font-size: 0.12rem;
+      cursor: pointer;
+      background-color: #ffce42;
+      color: #112734;
+    }
+  }
+}
+
+.sideResponseBox {
+  :global {
+    .ant-modal-close-x {
+      color: #fff;
+    }
+    .ant-modal-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .ant-modal-header {
+      padding-top: 32px;
+      border-bottom: none;
+      background-color: transparent;
+      color: #fff;
+    }
+    .ant-modal-content {
+      background: url(../../assets/register/bg.png) no-repeat center center;
+      background-size: 100% 100%;
+      background-color: #112734;
+    }
+
+    .ant-form-item-label > label {
+      font-size: 14px;
+      font-weight: bold;
+      color: rgba(136, 136, 136, 1);
+    }
+  }
+  .form {
+    // background: rgba(255, 255, 255, 1);
+    border-radius: 2px;
+
+    h3 {
+      padding: 0 48px;
+      width: 100%;
+      text-align: left;
+      margin-top: 58px;
+      font-size: 30px;
+      font-weight: 400;
+      color: #fff;
+    }
+    form {
+      padding: 48px;
+      padding-top: 0;
+      .btnClass {
+        display: flex;
+        justify-content: space-between;
+        & > button {
+          width: 1.2rem;
+          height: 0.32rem;
+          text-align: center;
+          line-height: 0.32rem;
+          font-size: 0.12rem;
+          cursor: pointer;
+          background: none;
+        }
+        & > button:nth-child(1) {
+          color: #ffce42;
+          border: 1px solid #ffce42;
+        }
+        & > button:nth-child(2) {
+          color: #112734;
+          background-color: #ffce42;
+        }
+      }
+      .textArea {
+        position: relative;
+        img {
+          position: absolute;
+        }
+        textarea {
+          border: 2px solid rgba(0, 75, 119, 1);
+          border-radius: 6px 6px 6px 6px;
+        }
+      }
+      :global {
+        .ant-input {
+          border: none;
+          color: rgba(255, 255, 255, 1);
+          background-color: transparent;
+          height: 56px;
+          font-size: 16px;
+        }
+        .ant-input:focus {
+          // border: 1px solid rgba(0, 210, 255, 1);
+          outline: 0;
+          box-shadow: none;
+        }
+        .ant-checkbox-wrapper + span,
+        .ant-checkbox + span {
+          color: #fff;
+        }
+        .ant-checkbox-inner {
+          background: transparent;
+        }
+        .ant-input:hover {
+          // border: 1px solid rgba(0, 210, 255, 1);
+          outline: 0;
+          box-shadow: none;
+        }
+        .ant-input-group {
+          border: 1px solid rgba(0, 75, 119, 1);
+          border-radius: 6px 6px 6px 6px;
+        }
+        .ant-input-group:hover {
+          border: 1px solid rgba(0, 210, 255, 1);
+        }
+        .ant-input-group-addon {
+          // background: linear-gradient(
+          //   90deg,
+          //   rgba(252, 187, 1, 1) 0%,
+          //   rgba(252, 220, 1, 1) 100%
+          // );
+          border: none;
+          background-color: transparent;
+        }
+        .anticon {
+          color: #fff;
+          opacity: 0.8;
+          font-size: 26px;
+        }
+        .ant-checkbox-inner::after {
+          content: ' ';
+          background: rgba(236, 167, 2, 1);
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 8px;
+          height: 8px;
+          border: none;
+        }
+      }
+      .row {
+        :global {
+          .ant-divider {
+            background: rgba(255, 255, 255, 1);
+            opacity: 0.5;
+          }
+        }
+      }
+
+      .radio {
+        color: rgba(102, 102, 102, 1);
+        :global {
+          .ant-checkbox-inner {
+            border-radius: 50%;
+            border-color: rgba(252, 187, 1, 1);
+          }
+        }
+      }
+      .registerBtn {
+        font-size: 22px;
+        // font-weight: bold;
+        color: rgba(0, 1, 22, 1);
+        border: none;
+        width: 403px;
+        height: 56px;
+        background: rgba(255, 206, 66, 1);
+        border-radius: 6px 6px 6px 6px;
+        &:hover {
+          background: rgba(255, 226, 88, 1);
+        }
+        &:active {
+          background: rgba(242, 189, 39, 1);
+        }
+      }
+    }
+  }
+}

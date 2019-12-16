@@ -1,0 +1,28 @@
+{
+  "name": "supply-chain",
+  "version": "2.1.1",
+  "description": "An out-of-box UI solution for enterprise applications",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env PORT=9090 NODE_ENV=dev umi dev",
+    "dev:test": "cross-env PORT=9090 WATCH_FILES=none BROWSER=none CLEAR_CONSOLE=none COMPILE_ON_DEMAND=none COVERAGE=true umi dev",
+    "test": "macaca run -d ./test --verbose",
+    "serve": "npm run dev:test &",
+    "build:pro": "cross-env BUILD_ENV=pro umi build",
+    "build:qa": "cross-env BUILD_ENV=qa umi build",
+    "build:test": "cross-env BUILD_ENV=test umi build",
+    "build:qa1": "cross-env BUILD_ENV=qa1 umi build",
+    "build": "cross-env BUILD_ENV=dev umi build"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.2.5",
+    "antd": "^3.10.3",
+    "moment": "^2.22.1",
+    "umi-plugin-react": "1.8.4"
+  },
+  "devDependencies": {
+    "cross-env": "^5.1.4",
+    "mockjs": "^1.0.1-beta3",
+    "numeral": "^2.0.6"
+  }
+}

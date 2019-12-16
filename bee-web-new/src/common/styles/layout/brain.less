@@ -1,0 +1,186 @@
+.brainWrap {
+  width: 100%;
+  align-items: center;
+  .moduleTitle {
+    padding-top: 0rem;
+    .codeLine {
+      padding: 0 0.16rem;
+    }
+    .partnerName {
+      font-weight: bold;
+      padding: 0.0134rem 0 0 0;
+    }
+    .productTitIcon {
+      margin-top: 0.0334rem;
+    }
+    .productIconSize {
+      width: 0.1467rem;
+      height: 0.1867rem;
+      vertical-align: middle;
+    }
+  }
+  .bannerWrap {
+    width: 12.8rem;
+    height: 8.04rem;
+    overflow: hidden;
+    position: relative;
+    align-items: center;
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: cover;
+    text-align: center;
+    .moduleTitle {
+      padding-top: 0rem;
+      .partnerName {
+      }
+    }
+    .bannerBaseInfo {
+      position: absolute;
+      left: 0;
+      bottom: 0.4rem;
+      width: 100%;
+      align-items: center;
+      .bannerBaseInfoText {
+        width: 5.6rem;
+        align-items: center;
+        padding-bottom: 0.2934rem;
+        .brainIntroduce {
+          padding-top: 0.345rem;
+          font-weight: 400;
+          line-height: 0.2rem;
+          font-size: 0.1334rem;
+        }
+        .arrowDown {
+          padding-bottom: 0.3667rem;
+          .arrowSize {
+            width: 0.1867rem;
+            height: 0.3334rem;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+  }
+  .brainProductContair {
+    width: 8.09rem;
+    align-items: center;
+  }
+  .brainFunction {
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 0.1rem;
+    .braninFunctionItem {
+      flex: 1;
+      align-items: center;
+      .functionIcon {
+        margin-bottom: 0.12rem;
+        .iconSize {
+          // width:.5534rem;
+          // height:.5534rem;
+          vertical-align: middle;
+        }
+        .iconSize:hover {
+          animation: functionIcon 1s;
+        }
+      }
+      .functionName {
+        font-size: 0.12rem;
+        font-weight: 400;
+      }
+    }
+  }
+  .brainProcess {
+    width: 100%;
+    align-items: center;
+    .moduleTitle {
+      padding-top: 1.12rem;
+    }
+    .brainProcess {
+      margin-top: 0.44rem;
+      align-items: center;
+      .processSize {
+        width: 7.9734rem;
+        height: 3.2934rem;
+        vertical-align: middle;
+      }
+    }
+  }
+  .brainValue {
+    width: 100%;
+    align-items: center;
+    padding-bottom: 1.5067rem;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: cover;
+    margin-top: 1.1934rem;
+    .moduleTitle {
+      padding-top: 0rem;
+    }
+    .brainValueContair {
+      width: 8.09rem;
+      align-items: center;
+    }
+    .brainValueCont {
+      width: 100%;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-top: 0.42rem;
+      .brainValueItem {
+        width: 1.853rem;
+        // flex: 1;
+        height: 2.3rem;
+        align-items: center;
+        // margin-right: 0.2rem;
+        padding-bottom: 0.2667rem;
+        border: 0.01rem solid rgba(0, 250, 238, 1);
+        background: rgba(0, 250, 238, 0.1);
+      }
+      .brainValueItem:last-child {
+        // margin-right: 0;
+      }
+      .brainValueItem:hover {
+        background: rgba(0, 250, 238, 0.3);
+        border: 0.01rem solid rgba(0, 250, 238, 1);
+        box-shadow: 0rem 0.1067rem 0.1934rem 0rem rgba(0, 0, 0, 1);
+      }
+      .valueItemIcon {
+        margin-top: 0.26rem;
+        padding: 0 0.1934rem;
+        .iconSize {
+          width: 0.4rem;
+          height: 0.4rem;
+          vertical-align: middle;
+        }
+      }
+      .valueItemName {
+        margin-top: 0.3267rem;
+        padding: 0 0.1934rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: bold;
+        font-size: 0.1334rem;
+      }
+      .valueItemText {
+        margin-top: 0.1267rem;
+        padding: 0 0.4rem;
+        text-align: left;
+        font-size: 0.0934rem;
+        font-weight: 400;
+      }
+    }
+  }
+}
+@keyframes functionIcon {
+  0% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+
+  50% {
+    transform: translate3d(0px, -20px, 0px);
+  }
+
+  100% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+}

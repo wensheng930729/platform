@@ -1,0 +1,195 @@
+.crmWrap {
+  width: 100%;
+  background: url('https://obs-fe91.obs.cn-south-1.myhuaweicloud.com:443/%2Fhome%2Fbee%2Fproject%2Ftemp%2F6e5f5687fce64decae2722586fda83da.png')
+    no-repeat top center;
+  background-size: cover;
+  // background-size: 100% 8.333rem !important;
+  .moduleTitle {
+    padding-top: 0rem;
+    .codeLine {
+      padding: 0 0.16rem;
+    }
+    .partnerName {
+      font-weight: bold;
+      padding: 0.0134rem 0 0 0;
+    }
+    .productTitIcon {
+      margin-top: 0.0334rem;
+    }
+    .productIconSize {
+      width: 0.1467rem;
+      height: 0.1867rem;
+      vertical-align: middle;
+    }
+  }
+  .crmBannerWrap {
+    width: 100%;
+    align-items: center;
+    .iconSize {
+      width: 12.8;
+      height: 3.4rem;
+      padding-top: 1.473rem;
+      h2 {
+        text-align: center;
+        font-size: 0.6rem;
+        margin-bottom: 0.133rem;
+        color: #fff;
+        span {
+          font-size: 0.6rem;
+          color: #ffce42;
+        }
+      }
+      h3 {
+        text-align: center;
+        font-size: 0.16rem;
+        color: #fff;
+        margin-bottom: 0.133rem;
+      }
+      h4 {
+        text-align: center;
+        font-size: 0.12rem;
+        height: 0.3867rem;
+        span {
+          display: inline-block;
+          // width: 2.773rem;
+          height: 0.3867rem;
+          line-height: 0.3867rem;
+          border-radius: 0.193rem;
+          color: #ffce42;
+          // background-color: #FFCE42;
+        }
+      }
+    }
+  }
+  .crmIntroWrap {
+    width: 100%;
+    align-items: center;
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: cover;
+    background: none !important;
+    .crmIntroCont {
+      width: 5.6534rem;
+      align-items: center;
+      padding-top: 0.7067rem;
+      padding-bottom: 0.2867rem;
+    }
+    .moduleTitle {
+      .codeLine {
+        padding: 0 0.1334rem;
+      }
+    }
+    .crmInfoText {
+      padding-top: 0.4rem;
+      font-size: 0.1334rem;
+      line-height: 0.2rem;
+      text-align: center;
+    }
+  }
+  .crmFunctionWrap {
+    width: 8.09rem;
+    align-items: center;
+    padding-bottom: 1rem;
+    .crmFunction {
+      width: 100%;
+      justify-content: space-between;
+      padding-top: 0.1rem;
+      .crmFunctionItem {
+        flex: 1;
+        align-items: center;
+        .functionIcon {
+          margin-bottom: 0.18rem;
+          .iconSize {
+            width: 0.6667rem;
+            height: 0.6667rem;
+            vertical-align: middle;
+          }
+          .iconSize:hover {
+            animation: functionIcon 1s;
+          }
+        }
+        .functionName {
+          font-size: 0.16rem;
+          font-weight: 400;
+        }
+      }
+    }
+  }
+
+  .crmValue {
+    width: 100%;
+    align-items: center;
+    padding-top: 0.18rem;
+    padding-bottom: 1.32rem;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: cover;
+    .moduleTitle {
+      padding-top: 0rem;
+    }
+    .crmValueContair {
+      width: 8.09rem;
+      align-items: center;
+    }
+    .crmValueCont {
+      width: 100%;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-top: 0.7668rem;
+      .crmValueItem {
+        flex: 1;
+        justify-content: center;
+        align-items: center;
+        margin-right: 0.08rem;
+        position: relative;
+        .crmValueInfoCot {
+          top: -0.4467rem;
+          position: relative;
+          align-items: center;
+          justify-content: center;
+          padding: 0 0.1934rem;
+        }
+        .crmProductIcon {
+          .crmProductSize {
+            width: 0.9rem;
+            height: 1.0067rem;
+            vertical-align: middle;
+          }
+        }
+        .crmItemName {
+          margin-top: 0.4067rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-weight: bold;
+          font-size: 0.16rem;
+        }
+        .crmItemText {
+          margin-top: 0.1rem;
+          text-align: left;
+          font-size: 0.0934rem;
+          font-weight: 400;
+          height: 0.9334rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+      .crmValueItem:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
+@keyframes functionIcon {
+  0% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+
+  50% {
+    transform: translate3d(0px, -20px, 0px);
+  }
+
+  100% {
+    transform: translate3d(0px, 0px, 0px);
+  }
+}

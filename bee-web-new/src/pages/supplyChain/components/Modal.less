@@ -1,0 +1,137 @@
+.modalWrap {
+  position: 'relative';
+}
+
+.modal {
+  height: 100%;
+
+  .form {
+    // width: 499px;
+    // height: 759px;
+
+    // background-size: 100% 100%;
+    border-radius: 2px;
+    h3 {
+      padding: 0 48px;
+      width: 100%;
+      text-align: left;
+      margin-top: 58px;
+      font-size: 30px;
+      font-weight: 400;
+      color: #fff;
+    }
+    form {
+      :global {
+        .ant-input {
+          border: none;
+          color: rgba(255, 255, 255, 1);
+          background-color: transparent;
+          height: 56px;
+        }
+        .ant-select-selection--single {
+          height: 56px;
+        }
+        .ant-select-selection__rendered {
+          height: 100%;
+        }
+        .ant-form-item-label label {
+          color: #fff;
+        }
+
+        .ant-form-item-required {
+          line-height: 56px;
+        }
+
+        .ant-form-item-label label::before {
+          color: #ffce42;
+        }
+        .ant-input:focus {
+          // border: 1px solid rgba(0, 210, 255, 1);
+          outline: 0;
+          box-shadow: none;
+        }
+
+        .ant-input:hover {
+          // border: 1px solid rgba(0, 210, 255, 1);
+          outline: 0;
+          box-shadow: none;
+        }
+        .ant-input {
+          border: 1px solid rgba(0, 75, 119, 1);
+          border-radius: 6px 6px 6px 6px;
+        }
+        .ant-input:hover {
+          border: 1px solid rgba(0, 210, 255, 1);
+        }
+        .ant-input-group-addon {
+          // background: linear-gradient(
+          //   90deg,
+          //   rgba(252, 187, 1, 1) 0%,
+          //   rgba(252, 220, 1, 1) 100%
+          // );
+          border: none;
+          background-color: transparent;
+        }
+        .anticon {
+          color: #fff;
+          opacity: 0.8;
+        }
+        .ant-select-selection {
+          background-color: transparent;
+          border: 1px solid rgba(0, 75, 119, 1);
+          border-radius: 6px 6px 6px 6px;
+        }
+        .ant-select-selection-selected-value {
+          color: #fff;
+          line-height: 56px;
+        }
+      }
+
+      // .registerBtn {
+      //   font-size: 22px;
+      //   // font-weight: bold;
+      //   color: rgba(0, 1, 22, 1);
+      //   border: none;
+      //   width: 403px;
+      //   height: 56px;
+      //   background: #ffce42;
+      //   border-radius: 6px 6px 6px 6px;
+      // }
+    }
+  }
+  :global {
+    .ant-modal-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .ant-modal-header {
+      padding-top: 32px;
+      border-bottom: none;
+      background-color: transparent;
+      color: #fff;
+    }
+    .ant-modal-content {
+      background: url(../../../assets/register/bg.png) no-repeat center center;
+      background-size: 100% 100%;
+      background-color: #112734;
+    }
+    .ant-form-item {
+      margin-bottom: 14px;
+    }
+    .ant-form-item-label > label {
+      font-size: 14px;
+      font-weight: bold;
+      color: rgba(136, 136, 136, 1);
+    }
+  }
+  .closeBox {
+    position: absolute;
+    padding: 20px;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    color: #fff;
+  }
+}
